@@ -1,111 +1,250 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akash Automatic Gateway</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: #f4f6f9; padding: 20px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Print Cards</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #de2e2e;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar .brand {
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        .sidebar .nav-link {
+            color: #444;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .badge-new {
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            float: right;
+        }
 
-    .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 20px; text-align: center; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    
-    .container { max-width: 500px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-    
-    h3 { color: #333; margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 8px; font-size: 20px; }
-    
-    label { display: block; font-weight: bold; font-size: 14px; color: #555; margin-top: 15px; }
-    input, select { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; }
-    input:focus, select:focus { border-color: #007bff; }
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
 
-    .btn-pay { width: 100%; margin-top: 25px; padding: 14px; background: #28a745; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .btn-pay:hover { background: #218838; }
+        /* Top Header */
+        .top-header {
+            background-color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
 
-    .secure-badge { text-align: center; margin-top: 15px; font-size: 12px; color: #28a745; font-weight: bold; }
-    
-    #loading-spinner { display: none; text-align: center; margin-top: 15px; font-weight: bold; color: #007bff; }
-    .upi-info { background: #e9ecef; padding: 8px; border-radius: 5px; text-align: center; font-size: 13px; font-weight: bold; margin-top: 10px; color: #333; }
-  </style>
+        /* Cards & Banner */
+        .referral-banner {
+            background-color: #0088ff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .membership-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>Akash Automatic Gateway</h1>
-    <p>Instant Auto Verification & Wallet Top-up</p>
-  </div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-user-circle me-2"></i> RAJU
+        </div>
+        <div class="p-2">
+            <input type="text" class="form-control form-control-sm" placeholder="Search menu...">
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-clock-history"></i> Transaction List</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-wallet"></i> Wallet Recharge</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-id-card"></i> NSDL PAN Service</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-id-card"></i> UTI PAN Service</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-fingerprint"></i> Aadhar Service</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-file-pdf"></i> Instant Aadhar PDF</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-check-double"></i> Voter Service</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-car"></i> DL Service <span class="badge-new">NEW</span></a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-truck"></i> Vehicle Status</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-heart-pulse"></i> Ayushman Service</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-star"></i> Kundli Service <span class="badge-new">NEW</span></a>
+            <a class="nav-link text-danger" href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </div>
 
-  <div class="container">
-    <h3>💳 Auto Payment Checkout</h3>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header Bar -->
+        <div class="top-header">
+            <div>
+                <i class="fa-solid fa-bars me-2"></i>
+                <small class="text-muted" id="current-time">Sunday, 6 September 2026</small>
+            </div>
+            <div>
+                <button class="btn btn-danger btn-sm me-1"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
+                <button class="btn btn-warning btn-sm text-white me-1"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
+                <button class="btn btn-success btn-sm"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
+            </div>
+        </div>
 
-    <div class="upi-info">Payee UPI: rameshchandra908080@okaxis</div>
+        <!-- Referral Link Banner -->
+        <div class="referral-banner" onclick="copyReferral()">
+            YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
+        </div>
 
-    <label>Mobile Number</label>
-    <input type="number" id="user-mobile" placeholder="Enter 10 digit mobile number">
+        <!-- Membership Alert Card -->
+        <div class="membership-card">
+            <h5 class="text-danger fw-bold">Membership Not Active</h5>
+            <p class="mb-2">Hello <strong>Raju</strong>,</p>
+            <p class="text-muted">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
+            <button class="btn btn-danger px-4">🎯 VIEW PLANS</button>
+        </div>
 
-    <label>Select Service</label>
-    <select id="service-type">
-      <option value="Wallet Topup">Wallet Add Money</option>
-      <option value="Jio Recharge">Jio Recharge</option>
-      <option value="Airtel Recharge">Airtel Recharge</option>
-      <option value="Google Play Code">Google Play Redeem Code</option>
-    </select>
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div>
+                <h6 class="mb-1">BALANCE</h6>
+                <h2 class="mb-0">₹ 24.00</h2>
+            </div>
+            <div>
+                <i class="fa-solid fa-user-circle fa-3x opacity-75"></i>
+            </div>
+        </div>
 
-    <label>Enter Amount (₹)</label>
-    <input type="number" id="pay-amount" placeholder="e.g. 100, 299, 500">
+        <!-- Weekly Top Performers Table -->
+        <div class="table-container">
+            <h5 class="mb-3 text-center text-primary">Weekly Top 10 Performers</h5>
+            <p class="text-center text-muted small">31 Aug - 06 Sep, 2026</p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>RANK</th>
+                            <th>NAME</th>
+                            <th>STATE</th>
+                            <th>SERVICES</th>
+                            <th>SPENT</th>
+                            <th>NOTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#1</strong></td>
+                            <td>Rohit</td>
+                            <td>Jharkhand</td>
+                            <td>1</td>
+                            <td>₹ 150.00</td>
+                            <td><span class="badge bg-success">Champion - 100 credited</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#2</strong></td>
+                            <td>RAVI KUMAR</td>
+                            <td>Rajasthan</td>
+                            <td>1</td>
+                            <td>₹ 51.00</td>
+                            <td><span class="badge bg-info text-dark">2nd Place - 70 reward</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#3</strong></td>
+                            <td>9172999529</td>
+                            <td>Maharashtra</td>
+                            <td>1</td>
+                            <td>₹ 51.00</td>
+                            <td><span class="badge bg-warning text-dark">3rd Place - 50 reward</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <button class="btn-pay" onclick="startAutoPayment()">Pay & Verify Automatically</button>
-    
-    <div id="loading-spinner">⏳ Opening Secure Payment Gateway...</div>
-    <div class="secure-badge">🔒 Encrypted Auto Gateway</div>
-  </div>
-
-  <script>
-    // Configured Credentials
-    const BOT_TOKEN = "7060236112:AAFSZSgRdoegdb4e_8FJ9s4h0BtGkgEwE1s";
-    const CHAT_ID = "6318395817"; 
-    const UPI_ID = "rameshchandra908080@okaxis"; 
-
-    function startAutoPayment() {
-      const mobile = document.getElementById("user-mobile").value;
-      const service = document.getElementById("service-type").value;
-      const amount = document.getElementById("pay-amount").value;
-      const spinner = document.getElementById("loading-spinner");
-
-      if (!mobile || mobile.length !== 10) {
-        alert("Kripya sahi 10-digit mobile number bharein!");
-        return;
-      }
-
-      if (!amount || amount < 1) {
-        alert("Kripya valid amount bharein!");
-        return;
-      }
-
-      spinner.style.display = "block";
-
-      // Unique Order ID for Auto Tracking
-      const orderId = "ORD" + Date.now();
-
-      // Deep-link UPI Payment URL
-      const upiPayUrl = `upi://pay?pa=${UPI_ID}&pn=AkashStore&tr=${orderId}&am=${amount}&cu=INR&tn=${encodeURIComponent(service)}`;
-
-      // Notification Message for Telegram Bot
-      const initMsg = `🚨 *NEW AUTOMATIC PAYMENT REQUEST*\n\n🆔 *Order ID:* \`${orderId}\`\n📱 *Mobile:* ${mobile}\n📌 *Service:* ${service}\n💵 *Amount:* ₹${amount}\n🏦 *UPI ID:* ${UPI_ID}\n⏳ *Status:* Redirected to UPI App\n⏰ *Time:* ${new Date().toLocaleString()}`;
-
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: initMsg, parse_mode: "Markdown" })
-      }).then(() => {
-        spinner.style.display = "none";
-        
-        // Auto Redirect User to UPI App (PhonePe/GPay/Paytm)
-        window.location.href = upiPayUrl;
-      }).catch(err => {
-        spinner.style.display = "none";
-        alert("Network Error! Try again.");
-      });
-    }
-  </script>
+    <!-- JavaScript -->
+    <script>
+        function copyReferral() {
+            const link = "HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE=";
+            navigator.clipboard.writeText(link);
+            alert("Referral link copied to clipboard!");
+        }
+    </script>
 </body>
 </html>
