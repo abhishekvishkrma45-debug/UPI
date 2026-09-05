@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto Payment Gateway Portal</title>
+  <title>Akash Automatic Gateway</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
     body { background-color: #f4f6f9; padding: 20px; }
@@ -24,6 +24,7 @@
     .secure-badge { text-align: center; margin-top: 15px; font-size: 12px; color: #28a745; font-weight: bold; }
     
     #loading-spinner { display: none; text-align: center; margin-top: 15px; font-weight: bold; color: #007bff; }
+    .upi-info { background: #e9ecef; padding: 8px; border-radius: 5px; text-align: center; font-size: 13px; font-weight: bold; margin-top: 10px; color: #333; }
   </style>
 </head>
 <body>
@@ -35,6 +36,8 @@
 
   <div class="container">
     <h3>💳 Auto Payment Checkout</h3>
+
+    <div class="upi-info">Payee UPI: rameshchandra908080@okaxis</div>
 
     <label>Mobile Number</label>
     <input type="number" id="user-mobile" placeholder="Enter 10 digit mobile number">
@@ -53,29 +56,20 @@
     <button class="btn-pay" onclick="startAutoPayment()">Pay & Verify Automatically</button>
     
     <div id="loading-spinner">⏳ Opening Secure Payment Gateway...</div>
-    <div class="secure-badge">🔒 256-Bit SSL Encrypted Auto Gateway</div>
+    <div class="secure-badge">🔒 Encrypted Auto Gateway</div>
   </div>
 
   <script>
-    // ---------------- CONFIGURATION ----------------
+    // Configured Credentials
     const BOT_TOKEN = "7060236112:AAFSZSgRdoegdb4e_8FJ9s4h0BtGkgEwE1s";
-    const CHAT_ID = "YOUR_CHAT_ID"; // Apni Telegram ID daalein
-    
-    // Aapke Paytm Business / UPI Gateway Merchant Details
-    const PAYTM_MID = "YOUR_PAYTM_MERCHANT_ID"; 
-    const UPI_ID = "YOUR_UPI_ID@paytm"; 
-    // -----------------------------------------------
+    const CHAT_ID = "6318395817"; 
+    const UPI_ID = "rameshchandra908080@okaxis"; 
 
     function startAutoPayment() {
       const mobile = document.getElementById("user-mobile").value;
       const service = document.getElementById("service-type").value;
       const amount = document.getElementById("pay-amount").value;
       const spinner = document.getElementById("loading-spinner");
-
-      if (CHAT_ID === "YOUR_CHAT_ID") {
-        alert("Pehle code me JavaScript section ke andar CHAT_ID daalein!");
-        return;
-      }
 
       if (!mobile || mobile.length !== 10) {
         alert("Kripya sahi 10-digit mobile number bharein!");
@@ -89,14 +83,14 @@
 
       spinner.style.display = "block";
 
-      // Unique Order ID for Automatic Tracking
+      // Unique Order ID for Auto Tracking
       const orderId = "ORD" + Date.now();
 
-      // Deep-link UPI Payment URL for Instant Auto-checkout
+      // Deep-link UPI Payment URL
       const upiPayUrl = `upi://pay?pa=${UPI_ID}&pn=AkashStore&tr=${orderId}&am=${amount}&cu=INR&tn=${encodeURIComponent(service)}`;
 
-      // 1. Send Pending Order Notification to Telegram
-      const initMsg = `🔄 *AUTOMATIC PAYMENT INITIATED*\n\n🆔 *Order ID:* \`${orderId}\`\n📱 *Mobile:* ${mobile}\n📌 *Service:* ${service}\n💵 *Amount:* ₹${amount}\n⏳ *Status:* Redirected to Gateway\n⏰ *Time:* ${new Date().toLocaleString()}`;
+      // Notification Message for Telegram Bot
+      const initMsg = `🚨 *NEW AUTOMATIC PAYMENT REQUEST*\n\n🆔 *Order ID:* \`${orderId}\`\n📱 *Mobile:* ${mobile}\n📌 *Service:* ${service}\n💵 *Amount:* ₹${amount}\n🏦 *UPI ID:* ${UPI_ID}\n⏳ *Status:* Redirected to UPI App\n⏰ *Time:* ${new Date().toLocaleString()}`;
 
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: "POST",
@@ -105,11 +99,8 @@
       }).then(() => {
         spinner.style.display = "none";
         
-        // 2. Auto Redirect User to UPI Gateway / PhonePe / Paytm
+        // Auto Redirect User to UPI App (PhonePe/GPay/Paytm)
         window.location.href = upiPayUrl;
-
-        // Note: For full automatic server verification without manual UTR,
-        // webhook needs to be connected to Node.js backend.
       }).catch(err => {
         spinner.style.display = "none";
         alert("Network Error! Try again.");
