@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Print Cards</title>
+    <title>Print Cards - Interactive Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -37,10 +37,12 @@
             padding: 10px 20px;
             font-size: 0.9rem;
             border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
         }
-        .sidebar .nav-link:hover {
-            background-color: #f1f1f1;
-            color: #007bff;
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #e9f0fe;
+            color: #0d6efd;
+            font-weight: bold;
         }
         .sidebar .nav-link i {
             margin-right: 10px;
@@ -104,6 +106,14 @@
             align-items: center;
         }
 
+        /* Content Sections */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+
         /* Table Styling */
         .table-container {
             background: #ffffff;
@@ -112,7 +122,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .sidebar {
                 position: relative;
@@ -127,123 +136,218 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Menu -->
     <div class="sidebar">
         <div class="brand">
             <i class="fa-solid fa-user-circle me-2"></i> RAJU
         </div>
         <div class="p-2">
-            <input type="text" class="form-control form-control-sm" placeholder="Search menu...">
+            <input type="text" id="menuSearch" class="form-control form-control-sm" placeholder="Search menu..." onkeyup="filterMenu()">
         </div>
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Dashboard</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-clock-history"></i> Transaction List</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-wallet"></i> Wallet Recharge</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-id-card"></i> NSDL PAN Service</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-id-card"></i> UTI PAN Service</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-fingerprint"></i> Aadhar Service</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-file-pdf"></i> Instant Aadhar PDF</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-check-double"></i> Voter Service</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-car"></i> DL Service <span class="badge-new">NEW</span></a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-truck"></i> Vehicle Status</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-heart-pulse"></i> Ayushman Service</a>
-            <a class="nav-link" href="#"><i class="fa-solid fa-star"></i> Kundli Service <span class="badge-new">NEW</span></a>
-            <a class="nav-link text-danger" href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        <nav class="nav flex-column" id="sidebarMenu">
+            <a class="nav-link active" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a class="nav-link" onclick="switchPage('transactions', this)"><i class="fa-solid fa-clock-rotate-left"></i> Transaction List</a>
+            <a class="nav-link" onclick="switchPage('recharge', this)"><i class="fa-solid fa-wallet"></i> Wallet Recharge</a>
+            <a class="nav-link" onclick="switchPage('nsdl', this)"><i class="fa-solid fa-id-card"></i> NSDL PAN Service</a>
+            <a class="nav-link" onclick="switchPage('uti', this)"><i class="fa-solid fa-id-card"></i> UTI PAN Service</a>
+            <a class="nav-link" onclick="switchPage('aadhar', this)"><i class="fa-solid fa-fingerprint"></i> Aadhar Service</a>
+            <a class="nav-link" onclick="switchPage('voter', this)"><i class="fa-solid fa-check-double"></i> Voter Service</a>
+            <a class="nav-link" onclick="switchPage('dl', this)"><i class="fa-solid fa-car"></i> DL Service <span class="badge-new">NEW</span></a>
+            <a class="nav-link text-danger" onclick="alert('Logging out...')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </nav>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Body -->
     <div class="main-content">
-        <!-- Top Header Bar -->
+        <!-- Top Navigation Header -->
         <div class="top-header">
             <div>
                 <i class="fa-solid fa-bars me-2"></i>
-                <small class="text-muted" id="current-time">Sunday, 6 September 2026</small>
+                <small class="text-muted">Sunday, 6 September 2026</small>
             </div>
             <div>
-                <button class="btn btn-danger btn-sm me-1"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
-                <button class="btn btn-warning btn-sm text-white me-1"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
-                <button class="btn btn-success btn-sm"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
+                <button class="btn btn-danger btn-sm me-1" onclick="alert('Contacting Support')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
+                <button class="btn btn-warning btn-sm text-white me-1" onclick="switchPage('recharge', null)"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
+                <button class="btn btn-success btn-sm" onclick="alert('Current Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
             </div>
         </div>
 
-        <!-- Referral Link Banner -->
-        <div class="referral-banner" onclick="copyReferral()">
-            YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
-        </div>
-
-        <!-- Membership Alert Card -->
-        <div class="membership-card">
-            <h5 class="text-danger fw-bold">Membership Not Active</h5>
-            <p class="mb-2">Hello <strong>Raju</strong>,</p>
-            <p class="text-muted">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
-            <button class="btn btn-danger px-4">🎯 VIEW PLANS</button>
-        </div>
-
-        <!-- Balance Card -->
-        <div class="balance-card">
-            <div>
-                <h6 class="mb-1">BALANCE</h6>
-                <h2 class="mb-0">₹ 24.00</h2>
+        <!-- 1. DASHBOARD PAGE -->
+        <div id="dashboard" class="page-section active">
+            <div class="referral-banner" onclick="copyReferral()">
+                YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
             </div>
-            <div>
-                <i class="fa-solid fa-user-circle fa-3x opacity-75"></i>
+
+            <div class="membership-card">
+                <h5 class="text-danger fw-bold">Membership Not Active</h5>
+                <p class="mb-2">Hello <strong>Raju</strong>,</p>
+                <p class="text-muted">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
+                <button class="btn btn-danger px-4" onclick="alert('Plans List Loading...')">🎯 VIEW PLANS</button>
+            </div>
+
+            <div class="balance-card">
+                <div>
+                    <h6 class="mb-1">BALANCE</h6>
+                    <h2 class="mb-0">₹ 24.00</h2>
+                </div>
+                <div>
+                    <i class="fa-solid fa-user-circle fa-3x opacity-75"></i>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h5 class="mb-3 text-center text-primary">Weekly Top 10 Performers</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>RANK</th>
+                                <th>NAME</th>
+                                <th>STATE</th>
+                                <th>SERVICES</th>
+                                <th>SPENT</th>
+                                <th>NOTE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#1</strong></td>
+                                <td>Rohit</td>
+                                <td>Jharkhand</td>
+                                <td>1</td>
+                                <td>₹ 150.00</td>
+                                <td><span class="badge bg-success">Champion - 100 credited</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>#2</strong></td>
+                                <td>RAVI KUMAR</td>
+                                <td>Rajasthan</td>
+                                <td>1</td>
+                                <td>₹ 51.00</td>
+                                <td><span class="badge bg-info text-dark">2nd Place - 70 reward</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Weekly Top Performers Table -->
-        <div class="table-container">
-            <h5 class="mb-3 text-center text-primary">Weekly Top 10 Performers</h5>
-            <p class="text-center text-muted small">31 Aug - 06 Sep, 2026</p>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover text-center align-middle">
-                    <thead class="table-primary">
+        <!-- 2. TRANSACTIONS PAGE -->
+        <div id="transactions" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h4>
+                <p class="text-muted">Aapke saare pichhle transactions yahan dikhenge.</p>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <th>RANK</th>
-                            <th>NAME</th>
-                            <th>STATE</th>
-                            <th>SERVICES</th>
-                            <th>SPENT</th>
-                            <th>NOTE</th>
+                            <th>Txn ID</th>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>#1</strong></td>
-                            <td>Rohit</td>
-                            <td>Jharkhand</td>
-                            <td>1</td>
-                            <td>₹ 150.00</td>
-                            <td><span class="badge bg-success">Champion - 100 credited</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#2</strong></td>
-                            <td>RAVI KUMAR</td>
-                            <td>Rajasthan</td>
-                            <td>1</td>
-                            <td>₹ 51.00</td>
-                            <td><span class="badge bg-info text-dark">2nd Place - 70 reward</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#3</strong></td>
-                            <td>9172999529</td>
-                            <td>Maharashtra</td>
-                            <td>1</td>
-                            <td>₹ 51.00</td>
-                            <td><span class="badge bg-warning text-dark">3rd Place - 50 reward</span></td>
+                            <td>TXN100293</td>
+                            <td>05 Sep 2026</td>
+                            <td>Aadhar Print</td>
+                            <td>₹ 10.00</td>
+                            <td><span class="badge bg-success">Success</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- 3. WALLET RECHARGE PAGE -->
+        <div id="recharge" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-wallet me-2"></i>Add Balance</h4>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">Enter Amount (₹)</label>
+                    <input type="number" class="form-control" placeholder="100">
+                </div>
+                <button class="btn btn-primary" onclick="alert('Redirecting to Payment Gateway...')">Proceed to Pay</button>
+            </div>
+        </div>
+
+        <!-- 4. GENERIC SERVICE PAGE TEMPLATE -->
+        <div id="nsdl" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-id-card me-2"></i>NSDL PAN Service</h4>
+                <p>New PAN Apply ya Correction ke liye form yahan se bharein.</p>
+                <button class="btn btn-success" onclick="alert('Form Opening...')">Apply New PAN</button>
+            </div>
+        </div>
+
+        <div id="uti" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-id-card me-2"></i>UTI PAN Service</h4>
+                <p>UTI Portal Service integration page.</p>
+            </div>
+        </div>
+
+        <div id="aadhar" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-fingerprint me-2"></i>Aadhar Services</h4>
+                <p>Aadhar download aur find services.</p>
+            </div>
+        </div>
+
+        <div id="voter" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-check-double me-2"></i>Voter Card Services</h4>
+                <p>Instant Voter Card PDF Download.</p>
+            </div>
+        </div>
+
+        <div id="dl" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-car me-2"></i>Driving License Service</h4>
+                <p>DL details and PDF search.</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript For Interactivity -->
     <script>
+        // Pages switch karne ka function
+        function switchPage(pageId, element) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => page.classList.remove('active'));
+
+            // Show selected page
+            const selectedPage = document.getElementById(pageId);
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+            }
+
+            // Highlight active sidebar item
+            if (element) {
+                const links = document.querySelectorAll('.sidebar .nav-link');
+                links.forEach(link => link.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
+
+        // Copy referral code
         function copyReferral() {
             const link = "HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE=";
             navigator.clipboard.writeText(link);
             alert("Referral link copied to clipboard!");
+        }
+
+        // Filter sidebar links from Search box
+        function filterMenu() {
+            const input = document.getElementById('menuSearch').value.toLowerCase();
+            const links = document.querySelectorAll('#sidebarMenu .nav-link');
+            links.forEach(link => {
+                const text = link.innerText.toLowerCase();
+                link.style.display = text.includes(input) ? "block" : "none";
+            });
         }
     </script>
 </body>
