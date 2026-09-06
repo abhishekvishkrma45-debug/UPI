@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Cards - Full Portal</title>
+    <title>Print Cards - Full Portal with Admin</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -11,7 +11,11 @@
     <style>
         body { background-color: #f4f6f9; font-family: Arial, sans-serif; }
         
-        /* Sidebar Styling */
+        /* Auth Screen */
+        .auth-container { max-width: 450px; margin: 60px auto; }
+        
+        /* Portal Layout */
+        #portalView { display: none; }
         .sidebar {
             width: 260px; height: 100vh; position: fixed; top: 0; left: 0;
             background-color: #ffffff; border-right: 1px solid #de2e2e;
@@ -24,7 +28,6 @@
         
         .badge-new { background-color: #dc3545; color: white; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; float: right; }
 
-        /* Main Content */
         .main-content { margin-left: 260px; padding: 20px; }
         
         .top-header {
@@ -37,11 +40,6 @@
             background-color: #0088ff; color: white; padding: 12px 20px;
             border-radius: 8px; text-align: center; font-weight: bold;
             margin-bottom: 20px; cursor: pointer;
-        }
-
-        .membership-card {
-            background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
-            padding: 20px; text-align: center; margin-bottom: 20px;
         }
 
         .balance-card {
@@ -58,15 +56,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        /* Modal Banner Styling */
-        .membership-banner-modal {
-            background: #1e293b; color: white; text-align: center; padding: 10px; border-radius: 8px 8px 0 0;
-        }
-        .discount-card {
-            background: #d1e7dd; border: 1px solid #badbcc; color: #0f5132;
-            border-radius: 8px; padding: 12px; font-weight: bold; text-align: center;
-        }
-
         @media (max-width: 768px) {
             .sidebar { position: relative; width: 100%; height: auto; }
             .main-content { margin-left: 0; }
@@ -75,229 +64,301 @@
 </head>
 <body>
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar">
-        <div class="brand">
-            <i class="fa-solid fa-user-circle me-2"></i> RAJU
+    <!-- ================= LOGIN / REGISTER / ADMIN LOGIN SCREEN ================= -->
+    <div id="authView" class="container auth-container">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">PRINT CARDS PORTAL</h4>
+            </div>
+            <div class="card-body p-4">
+                <ul class="nav nav-pills nav-justified mb-3" id="authTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" onclick="showAuthTab('userLogin')">User Login</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="showAuthTab('userRegister')">Register</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link text-danger fw-bold" onclick="showAuthTab('adminLogin')">Admin Login</button>
+                    </li>
+                </ul>
+
+                <!-- User Login Form -->
+                <form id="userLoginForm" onsubmit="event.preventDefault(); loginUser('user');">
+                    <div class="mb-3">
+                        <label class="form-label">Mobile / Username</label>
+                        <input type="text" class="form-control" required placeholder="Enter mobile number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login as User</button>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="userRegisterForm" class="d-none" onsubmit="event.preventDefault(); alert('Registration Successful! Please Login.'); showAuthTab('userLogin');">
+                    <div class="mb-2">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" required placeholder="Enter full name">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" required placeholder="Enter mobile number">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" required placeholder="Enter email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Set Password</label>
+                        <input type="password" class="form-control" required placeholder="Set password">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Create Account</button>
+                </form>
+
+                <!-- Admin Login Form -->
+                <form id="adminLoginForm" class="d-none" onsubmit="event.preventDefault(); loginUser('admin');">
+                    <div class="alert alert-warning py-1 small">Admin Login: username = <strong>admin</strong>, password = <strong>admin123</strong></div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Username</label>
+                        <input type="text" id="adminUser" class="form-control" required placeholder="admin">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Password</label>
+                        <input type="password" id="adminPass" class="form-control" required placeholder="admin123">
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">Admin Login</button>
+                </form>
+            </div>
         </div>
-        <div class="p-2">
-            <input type="text" id="menuSearch" class="form-control form-control-sm" placeholder="Search menu..." onkeyup="filterMenu()">
-        </div>
-        <nav class="nav flex-column" id="sidebarMenu">
-            <a class="nav-link active" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a>
-            <a class="nav-link" onclick="switchPage('mobile_details', this)"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Info Details <span class="badge-new">₹50</span></a>
-            <a class="nav-link" onclick="switchPage('ration_pdf', this)"><i class="fa-solid fa-file-pdf"></i> Ration PDF Service <span class="badge-new">NEW</span></a>
-            <a class="nav-link" onclick="switchPage('transactions', this)"><i class="fa-solid fa-clock-rotate-left"></i> Transaction List</a>
-            <a class="nav-link" onclick="switchPage('recharge', this)"><i class="fa-solid fa-wallet"></i> Wallet Recharge</a>
-            <a class="nav-link" onclick="switchPage('nsdl', this)"><i class="fa-solid fa-id-card"></i> NSDL PAN Service</a>
-            <a class="nav-link" onclick="switchPage('uti', this)"><i class="fa-solid fa-id-card"></i> UTI PAN Service</a>
-            <a class="nav-link" onclick="switchPage('aadhar', this)"><i class="fa-solid fa-fingerprint"></i> Aadhar Service</a>
-            <a class="nav-link" onclick="switchPage('voter', this)"><i class="fa-solid fa-check-double"></i> Voter Service</a>
-            <a class="nav-link" onclick="switchPage('dl', this)"><i class="fa-solid fa-car"></i> DL Service</a>
-            <a class="nav-link text-danger" onclick="alert('Logged out!')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-        </nav>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="top-header">
-            <div>
-                <i class="fa-solid fa-bars me-2"></i>
-                <small class="text-muted">Sunday, 6 September 2026</small>
+    <!-- ================= MAIN PORTAL SYSTEM ================= -->
+    <div id="portalView">
+        <!-- Sidebar Menu -->
+        <div class="sidebar">
+            <div class="brand" id="userBrand">
+                <i class="fa-solid fa-user-circle me-2"></i> RAJU
             </div>
-            <div>
-                <button class="btn btn-danger btn-sm me-1" onclick="alert('Helpdesk Online')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
-                <button class="btn btn-warning btn-sm text-white me-1" data-bs-toggle="modal" data-bs-target="#membershipModal"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
-                <button class="btn btn-success btn-sm" onclick="alert('Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
+            <div class="p-2">
+                <input type="text" id="menuSearch" class="form-control form-control-sm" placeholder="Search menu..." onkeyup="filterMenu()">
             </div>
+            <nav class="nav flex-column" id="sidebarMenu">
+                <a class="nav-link active" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a class="nav-link" onclick="switchPage('recharge', this)"><i class="fa-solid fa-wallet"></i> Add Balance (UPI Manual)</a>
+                <a class="nav-link" onclick="switchPage('mobile_details', this)"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Info Details <span class="badge-new">₹50</span></a>
+                <a class="nav-link" onclick="switchPage('ration_pdf', this)"><i class="fa-solid fa-file-pdf"></i> Ration PDF Service <span class="badge-new">NEW</span></a>
+                <a class="nav-link" onclick="switchPage('transactions', this)"><i class="fa-solid fa-clock-rotate-left"></i> Transaction List</a>
+                
+                <!-- Admin Only Option -->
+                <a class="nav-link text-danger d-none" id="adminMenuOpt" onclick="switchPage('admin_panel', this)"><i class="fa-solid fa-user-shield"></i> Admin Panel</a>
+                
+                <a class="nav-link text-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </nav>
         </div>
 
-        <!-- 1. DASHBOARD -->
-        <div id="dashboard" class="page-section active">
-            <div class="referral-banner" onclick="copyReferral()">
-                YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
-            </div>
-
-            <div class="membership-card">
-                <h5 class="text-danger fw-bold">Membership Not Active</h5>
-                <p class="mb-2">Hello <strong>Raju</strong>,</p>
-                <p class="text-muted mb-2">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
-                <button class="btn btn-danger px-4" data-bs-toggle="modal" data-bs-target="#membershipModal">🎯 VIEW PLANS</button>
-            </div>
-
-            <div class="balance-card">
+        <!-- Main Content Body -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="top-header">
                 <div>
-                    <h6 class="mb-1">BALANCE</h6>
-                    <h2 class="mb-0">₹ 24.00</h2>
+                    <i class="fa-solid fa-bars me-2"></i>
+                    <small class="text-muted">Sunday, 6 September 2026</small>
                 </div>
                 <div>
-                    <i class="fa-solid fa-user-circle fa-3x opacity-75"></i>
+                    <button class="btn btn-danger btn-sm me-1" onclick="alert('Support Desk Active')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
+                    <button class="btn btn-success btn-sm" onclick="alert('Wallet Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Balance</button>
                 </div>
             </div>
 
-            <div class="table-container">
-                <h5 class="mb-3 text-center text-primary">Weekly Top 10 Performers</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover text-center align-middle">
-                        <thead class="table-primary">
+            <!-- 1. DASHBOARD -->
+            <div id="dashboard" class="page-section active">
+                <div class="referral-banner" onclick="alert('Link Copied!')">
+                    YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
+                </div>
+
+                <div class="balance-card">
+                    <div>
+                        <h6 class="mb-1">CURRENT BALANCE</h6>
+                        <h2 class="mb-0">₹ 24.00</h2>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-wallet fa-3x opacity-75"></i>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h5 class="mb-3 text-center text-primary">Weekly Top Performers</h5>
+                    <p class="text-center text-muted small">Live System Data</p>
+                </div>
+            </div>
+
+            <!-- 2. MANUAL ADD BALANCE SECTION -->
+            <div id="recharge" class="page-section">
+                <div class="table-container">
+                    <h4><i class="fa-solid fa-qrcode me-2"></i>Manual Wallet Recharge (UPI QR)</h4>
+                    <p class="text-muted">Niche diye gaye UPI ID par payment karein aur UTR/Transaction Number submit karein.</p>
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6 text-center border-end">
+                            <h6 class="text-primary fw-bold mb-3">Scan QR or Pay to UPI ID</h6>
+                            
+                            <!-- Dynamic QR Code generated using Google Chart API -->
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=laxmihi@ptyes&pn=PrintCards" alt="UPI QR Code" class="img-fluid border p-2 rounded mb-3">
+                            
+                            <div class="bg-light p-2 rounded border">
+                                <small class="text-muted d-block">UPI ID:</small>
+                                <strong class="text-danger fs-5">laxmihi@ptyes</strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <h6 class="fw-bold mb-3">Payment Detail Submit Karein</h6>
+                            <form onsubmit="event.preventDefault(); submitManualPayment();">
+                                <div class="mb-3">
+                                    <label class="form-label">Recharge Amount (₹)</label>
+                                    <input type="number" id="payAmount" class="form-control" required placeholder="e.g. 100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">UTR / Transaction Ref No. (12 Digits)</label>
+                                    <input type="text" id="payUtr" class="form-control" maxlength="12" minlength="12" required placeholder="Enter 12 Digit UTR No.">
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Submit Payment Request</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. MOBILE INFO DETAILS -->
+            <div id="mobile_details" class="page-section">
+                <div class="table-container">
+                    <h4><i class="fa-solid fa-mobile-screen-button me-2"></i>Mobile Number Full Details</h4>
+                    <div class="alert alert-info fw-bold mt-2">Rate: ₹ 50.00 per search</div>
+                    <div class="mb-3">
+                        <label class="form-label">Enter 10-Digit Mobile Number:</label>
+                        <input type="text" class="form-control" placeholder="9876543210" maxlength="10">
+                    </div>
+                    <button class="btn btn-primary" onclick="alert('₹50 will be deducted for processing.')">Search Info</button>
+                </div>
+            </div>
+
+            <!-- 4. RATION PDF SERVICE -->
+            <div id="ration_pdf" class="page-section">
+                <div class="table-container">
+                    <h4><i class="fa-solid fa-file-pdf me-2"></i>Ration PDF Service</h4>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Ration Card Number:</label>
+                        <input type="text" class="form-control" placeholder="Enter Card No.">
+                    </div>
+                    <button class="btn btn-success" onclick="alert('Generating Ration PDF...')">Download PDF</button>
+                </div>
+            </div>
+
+            <!-- 5. TRANSACTIONS LIST -->
+            <div id="transactions" class="page-section">
+                <div class="table-container">
+                    <h4><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h4>
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr><th>Txn ID</th><th>UTR No</th><th>Amount</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="txnTableBody">
+                            <tr><td>TXN100293</td><td>123456789012</td><td>₹ 100.00</td><td><span class="badge bg-success">Success</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 6. ADMIN PANEL (Only visible to Admin) -->
+            <div id="admin_panel" class="page-section">
+                <div class="table-container">
+                    <h4 class="text-danger"><i class="fa-solid fa-user-shield me-2"></i>Admin Management Control</h4>
+                    <p class="text-muted">Users dwaara bheji gayi pending UTR Payment Requests ko approve karein.</p>
+                    
+                    <h5 class="mt-4">Pending Manual Recharge Requests</h5>
+                    <table class="table table-bordered text-center">
+                        <thead class="table-dark">
                             <tr>
-                                <th>RANK</th>
-                                <th>NAME</th>
-                                <th>STATE</th>
-                                <th>SERVICES</th>
-                                <th>SPENT</th>
-                                <th>NOTE</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>UTR Number</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="adminPendingBody">
                             <tr>
-                                <td><strong>#1</strong></td>
-                                <td>Rohit</td>
-                                <td>Jharkhand</td>
-                                <td>1</td>
-                                <td>₹ 150.00</td>
-                                <td><span class="badge bg-success">Champion - 100 credited</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>#2</strong></td>
-                                <td>RAVI KUMAR</td>
-                                <td>Rajasthan</td>
-                                <td>1</td>
-                                <td>₹ 51.00</td>
-                                <td><span class="badge bg-info text-dark">2nd Place - 70 reward</span></td>
+                                <td>Raju (User)</td>
+                                <td>₹ 200.00</td>
+                                <td>987654321099</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" onclick="approveTxn(this)">Approve</button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectTxn(this)">Reject</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- 2. MOBILE DETAILS SERVICE (₹50) -->
-        <div id="mobile_details" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-mobile-screen-button me-2"></i>Mobile Number Full Info Service</h4>
-                <p class="text-muted">Mobile number dalke owner ki puri details nikalein.</p>
-                <hr>
-                <div class="alert alert-info fw-bold">Service Rate: ₹ 50.00 per search</div>
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Enter 10-Digit Mobile Number:</label>
-                    <input type="text" class="form-control" placeholder="9876543210" maxlength="10">
-                </div>
-                <button class="btn btn-primary" onclick="alert('₹50 will be deducted from your wallet to fetch Mobile Details.')">Fetch Mobile Info (₹50)</button>
-            </div>
-        </div>
-
-        <!-- 3. RATION CARD TO RATION PDF SERVICE -->
-        <div id="ration_pdf" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-file-pdf me-2"></i>Ration Card PDF Download Service</h4>
-                <p class="text-muted">Ration Card number se Ration PDF/Details prapt karein.</p>
-                <hr>
-                <div class="mb-3">
-                    <label class="form-label">Select State:</label>
-                    <select class="form-select mb-3">
-                        <option>Uttar Pradesh</option>
-                        <option>Bihar</option>
-                        <option>Jharkhand</option>
-                        <option>Madhya Pradesh</option>
-                        <option>Rajasthan</option>
-                    </select>
-                    <label class="form-label">Ration Card Number / Member ID:</label>
-                    <input type="text" class="form-control" placeholder="Enter Ration Card No.">
-                </div>
-                <button class="btn btn-success" onclick="alert('Generating Ration Card PDF...')">Download Ration PDF</button>
-            </div>
-        </div>
-
-        <!-- 4. TRANSACTIONS -->
-        <div id="transactions" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h4>
-                <table class="table table-striped mt-3">
-                    <thead>
-                        <tr><th>Txn ID</th><th>Date</th><th>Service</th><th>Amount</th><th>Status</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>TXN100293</td><td>05 Sep 2026</td><td>Aadhar Print</td><td>₹ 10.00</td><td><span class="badge bg-success">Success</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 5. RECHARGE -->
-        <div id="recharge" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-wallet me-2"></i>Add Balance</h4>
-                <div class="mb-3 mt-3">
-                    <label class="form-label">Enter Amount (₹)</label>
-                    <input type="number" class="form-control" placeholder="100">
-                </div>
-                <button class="btn btn-primary" onclick="alert('Redirecting to Payment Gateway...')">Proceed to Pay</button>
-            </div>
-        </div>
-
-        <!-- OTHER SERVICES -->
-        <div id="nsdl" class="page-section"><div class="table-container"><h4>NSDL PAN Service</h4></div></div>
-        <div id="uti" class="page-section"><div class="table-container"><h4>UTI PAN Service</h4></div></div>
-        <div id="aadhar" class="page-section"><div class="table-container"><h4>Aadhar Service</h4></div></div>
-        <div id="voter" class="page-section"><div class="table-container"><h4>Voter Service</h4></div></div>
-        <div id="dl" class="page-section"><div class="table-container"><h4>DL Service</h4></div></div>
-    </div>
-
-    <!-- MEMBERSHIP & DISCOUNT POPUP MODAL (FROM SCREENSHOT) -->
-    <div class="modal fade" id="membershipModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="membership-banner-modal">
-                    <h5 class="mb-1 text-warning"><i class="fa-solid fa-bullseye"></i> MEMBERSHIP PLANS</h5>
-                    <small>Starter • Premium • Gold • Business</small>
-                </div>
-                <div class="modal-body">
-                    <h5 class="text-center fw-bold mb-3">💸 Membership Kyun Lena Chahiye?</h5>
-                    
-                    <div class="alert alert-danger mb-3">
-                        <strong class="d-block mb-1">❌ Bina Membership:</strong>
-                        <small>Aadhar to PAN: ₹20 | RC: ₹30 | DL: ₹20 | Voter: ₹20 | PAN Detail: ₹10</small>
-                    </div>
-
-                    <div class="alert alert-success mb-3">
-                        <strong class="d-block mb-1">✅ Membership Lene Ke Baad:</strong>
-                        <small>Aadhar to PAN: ₹12-18 | RC: ₹10-25 | DL: ₹8-17 | Voter: ₹7-17 | PAN Detail: ₹3-8</small>
-                        <div class="mt-1 text-primary fw-bold">👉 Har service par 40% se 60% tak discount!</div>
-                    </div>
-
-                    <div class="bg-light p-3 rounded border mb-3 text-center">
-                        <strong class="text-danger">📌 Samajh lo ek example:</strong>
-                        <div class="small mt-1">Agar aap 10 baar Aadhar to PAN use karte ho to:</div>
-                        <div class="small text-muted">Bina membership: 10 × ₹20 = ₹200</div>
-                        <div class="small text-muted">Business plan ke saath: 10 × ₹12 = ₹120</div>
-                        <div class="fw-bold text-success mt-1">👉 Bachat: ₹80 sirf ek service mein!</div>
-                    </div>
-
-                    <div class="discount-card">
-                        ✅ Membership Discount Lagu Hai Mobile Recharge aur NSDL New PAN Apply chodkar<br>
-                        <span class="text-danger">📌 BAAKI SABHI SERVICES PAR!</span><br>
-                        <small class="text-dark">Aadhar • PAN • Voter • RC • DL • Ration • Mobile Info • Aur Bhi Bahut Kuch</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" onclick="alert('Buy Plan Redirect...')">Buy Membership Plan</button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
+    <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Page load hote hi screenshot wala popup dikhayega
-        window.onload = function() {
-            var myModal = new bootstrap.Modal(document.getElementById('membershipModal'));
-            myModal.show();
-        };
+        // Switch Authentication Forms
+        function showAuthTab(tab) {
+            document.getElementById('userLoginForm').classList.add('d-none');
+            document.getElementById('userRegisterForm').classList.add('d-none');
+            document.getElementById('adminLoginForm').classList.add('d-none');
 
+            const btns = document.querySelectorAll('#authTabs .nav-link');
+            btns.forEach(b => b.classList.remove('active'));
+
+            if(tab === 'userLogin') {
+                document.getElementById('userLoginForm').classList.remove('d-none');
+                btns[0].classList.add('active');
+            } else if(tab === 'userRegister') {
+                document.getElementById('userRegisterForm').classList.remove('d-none');
+                btns[1].classList.add('active');
+            } else if(tab === 'adminLogin') {
+                document.getElementById('adminLoginForm').classList.remove('d-none');
+                btns[2].classList.add('active');
+            }
+        }
+
+        // Login Handling
+        function loginUser(role) {
+            if (role === 'admin') {
+                const u = document.getElementById('adminUser').value;
+                const p = document.getElementById('adminPass').value;
+                if(u === 'admin' && p === 'admin123') {
+                    document.getElementById('adminMenuOpt').classList.remove('d-none');
+                    document.getElementById('userBrand').innerHTML = '<i class="fa-solid fa-user-shield text-danger me-2"></i> ADMIN PANEL';
+                    alert('Logged in as Admin!');
+                } else {
+                    alert('Invalid Admin Credentials!');
+                    return;
+                }
+            } else {
+                document.getElementById('adminMenuOpt').classList.add('d-none');
+                document.getElementById('userBrand').innerHTML = '<i class="fa-solid fa-user-circle me-2"></i> RAJU';
+            }
+
+            document.getElementById('authView').style.display = 'none';
+            document.getElementById('portalView').style.display = 'block';
+        }
+
+        // Logout
+        function logout() {
+            document.getElementById('portalView').style.display = 'none';
+            document.getElementById('authView').style.display = 'block';
+        }
+
+        // Page Switching
         function switchPage(pageId, element) {
             const pages = document.querySelectorAll('.page-section');
             pages.forEach(page => page.classList.remove('active'));
@@ -314,11 +375,47 @@
             }
         }
 
-        function copyReferral() {
-            navigator.clipboard.writeText("HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE=");
-            alert("Referral link copied!");
+        // Manual Payment Submission (Adds to Admin Table)
+        function submitManualPayment() {
+            const amt = document.getElementById('payAmount').value;
+            const utr = document.getElementById('payUtr').value;
+
+            // Add row to Admin Pending Table
+            const adminBody = document.getElementById('adminPendingBody');
+            const newRow = `
+                <tr>
+                    <td>Raju</td>
+                    <td>₹ ${amt}</td>
+                    <td>${utr}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="approveTxn(this)">Approve</button>
+                        <button class="btn btn-sm btn-danger" onclick="rejectTxn(this)">Reject</button>
+                    </td>
+                </tr>
+            `;
+            adminBody.innerHTML += newRow;
+
+            // Add Pending status to User Transaction Table
+            const txnBody = document.getElementById('txnTableBody');
+            txnBody.innerHTML += `<tr><td>TXN${Math.floor(Math.random()*100000)}</td><td>${utr}</td><td>₹ ${amt}</td><td><span class="badge bg-warning text-dark">Pending Admin Approval</span></td></tr>`;
+
+            alert("Payment request submitted! Admin approval is pending.");
+            document.getElementById('payAmount').value = '';
+            document.getElementById('payUtr').value = '';
         }
 
+        // Admin Approval Actions
+        function approveTxn(btn) {
+            btn.closest('tr').remove();
+            alert('Payment Approved & Balance Updated!');
+        }
+
+        function rejectTxn(btn) {
+            btn.closest('tr').remove();
+            alert('Payment Request Rejected!');
+        }
+
+        // Sidebar Search
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toLowerCase();
             const links = document.querySelectorAll('#sidebarMenu .nav-link');
