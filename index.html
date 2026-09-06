@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Earning Portal - Assets Dashboard</title>
+  <title>Earning Portal - Secured Dashboard</title>
   <style>
     :root {
       --primary-color: #d32f2f;
@@ -21,9 +21,10 @@
     .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
     .card h3 { color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; font-size: 16px; }
     label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-top: 10px; }
-    input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
     .btn { width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary-color); }
     .btn-secondary { background: #1976d2; margin-top: 8px; }
+    .btn-admin { background: #333; margin-top: 8px; }
 
     /* ASSETS / PROFILE TOP CARD */
     .assets-top-card {
@@ -96,10 +97,10 @@
       background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000;
     }
     .modal-box {
-      background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto;
     }
     .upi-option-btn {
-      width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between; font-size: 13px;
     }
     .upi-option-btn:hover { background: #f1f1f1; border-color: var(--primary-color); }
 
@@ -145,43 +146,82 @@
       <input type="password" id="reg-pass" placeholder="Minimum 8 characters">
       <label>Referral Code (Mandatory)</label>
       <input type="text" id="reg-ref" placeholder="Enter Uid / Referral Code">
-      <button class="btn btn-secondary" type="button" onclick="generateSampleReferral()">🔑 Auto-Generate Referral Code</button>
       <button class="btn" id="btn-register">Register Now</button>
+      <button class="btn btn-admin" type="button" onclick="openAdminLoginModal()">🔐 Admin Panel Login</button>
       <p style="margin-top: 15px; font-size: 13px; text-align: center;">
         Already Registered? <a href="#" id="link-show-login" style="color:var(--primary-color);">Login Here</a>
       </p>
     </div>
 
-    <div class="card" id="login-card" style="display:none; margin-top: 50px;">
+    <div class="card" id="login-card" style="display:none; margin-top: 30px;">
       <h3>🔐 User Login</h3>
       <label>Email ID / Phone</label>
       <input type="text" id="login-email" placeholder="Enter Email or Phone">
       <label>Password</label>
       <input type="password" id="login-pass" placeholder="Enter Password">
       <button class="btn" id="btn-login">Login Portal</button>
+      <button class="btn btn-admin" type="button" onclick="openAdminLoginModal()">🔐 Admin Panel Login</button>
       <p style="margin-top:15px; text-align: center;"><a href="#" id="link-back-reg" style="color:var(--primary-color);">Back to Register</a></p>
     </div>
   </div>
 
-  <!-- DEPOSIT MODAL POPUP WITH UPI OPTIONS -->
+  <!-- ADMIN LOGIN MODAL -->
+  <div id="admin-login-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="color:var(--primary-color); margin-bottom:10px;">🛡️ Admin Login Panel</h3>
+      <label>Admin Username</label>
+      <input type="text" id="admin-user-input" placeholder="Enter admin username">
+      <label>Admin Password</label>
+      <input type="password" id="admin-pass-input" placeholder="Enter password">
+      <button class="btn" style="margin-top:15px;" onclick="verifyAdminLogin()">Login as Admin</button>
+      <button class="btn" style="background:#6c757d; margin-top:8px;" onclick="closeAdminLoginModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD PANEL -->
+  <div id="admin-dashboard-container" class="main-container" style="display:none;">
+    <div class="card" style="margin-top: 15px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary-color); padding-bottom:8px; margin-bottom:12px;">
+        <h3 style="margin:0; border:none; padding:0;">🛡️ Admin Control Panel</h3>
+        <button onclick="logoutAdmin()" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-size:11px; cursor:pointer;">Logout Admin</button>
+      </div>
+
+      <p style="font-size:13px; color:#555; margin-bottom:10px;">Yahan se aap users ke deposit aur withdrawal requests ko Approve ya Reject kar sakte hain.</p>
+      
+      <h4 style="font-size:14px; color:#1976d2; margin-top:15px; margin-bottom:8px;">📥 Pending Deposit Requests</h4>
+      <div id="admin-deposits-list" style="font-size:12px; color:#444;">Koi pending deposit nahi hai.</div>
+
+      <h4 style="font-size:14px; color:#1976d2; margin-top:20px; margin-bottom:8px;">📤 Pending Withdrawal Requests</h4>
+      <div id="admin-withdrawals-list" style="font-size:12px; color:#444;">Koi pending withdrawal nahi hai.</div>
+    </div>
+  </div>
+
+  <!-- DEPOSIT MODAL POPUP WITH UTR & UPI OPTIONS -->
   <div id="deposit-modal" class="modal-overlay">
     <div class="modal-box">
       <h3 style="color:var(--primary-color); margin-bottom:10px;">📥 Deposit Funds via UPI</h3>
-      <label>Enter Amount (₹)</label>
-      <input type="number" id="deposit-amount-input" placeholder="e.g. 500" style="margin-bottom:15px;">
+      <div style="background:#fff3cd; padding:8px; border-radius:6px; font-size:12px; color:#856404; margin-bottom:10px;">
+        Merchant UPI ID: <b>laxmihi@ptyes</b><br>Pehle kisi bhi UPI app se payment karein aur UTR ID niche enter karein.
+      </div>
       
-      <label style="margin-bottom:5px;">Select Payment App:</label>
-      <div class="upi-option-btn" onclick="processUpiDeposit('Paytm')">
-        <span>📱 Paytm UPI</span> <span style="font-size:12px; color:#666;">Fast</span>
+      <label>Enter Amount (₹)</label>
+      <input type="number" id="deposit-amount-input" placeholder="e.g. 500" style="margin-bottom:8px;">
+      
+      <label>Enter 12-Digit UTR / Transaction ID</label>
+      <input type="text" id="deposit-utr-input" placeholder="e.g. 426512345678" style="margin-bottom:12px;">
+
+      <label style="margin-bottom:5px;">Select Payment App Used:</label>
+      <div class="upi-option-btn" onclick="submitUpiDeposit('Paytm')">
+        <span>📱 Paytm UPI</span> <span style="font-size:11px; color:#666;">Submit Request</span>
       </div>
-      <div class="upi-option-btn" onclick="processUpiDeposit('PhonePe')">
-        <span>🟣 PhonePe UPI</span> <span style="font-size:12px; color:#666;">Secure</span>
+      <div class="upi-option-btn" onclick="submitUpiDeposit('PhonePe')">
+        <span>🟣 PhonePe UPI</span> <span style="font-size:11px; color:#666;">Submit Request</span>
       </div>
-      <div class="upi-option-btn" onclick="processUpiDeposit('Google Pay')">
-        <span>🔵 Google Pay (GPay)</span> <span style="font-size:12px; color:#666;">Instant</span>
+      <div class="upi-option-btn" onclick="submitUpiDeposit('Google Pay')">
+        <span>🔵 Google Pay (GPay)</span> <span style="font-size:11px; color:#666;">Submit Request</span>
       </div>
 
-      <button class="btn" style="background:#6c757d; margin-top:15px;" onclick="closeDepositModal()">Cancel</button>
+      <button class="btn" style="background:#6c757d; margin-top:12px;" onclick="closeDepositModal()">Cancel</button>
     </div>
   </div>
 
@@ -241,7 +281,7 @@
       <div id="tab-products" class="section-view">
         <div class="card">
           <h3>📦 My Invested Products & History</h3>
-          <p style="font-size:12px; color:#666; margin-bottom:10px;">Yahan aapke sabhi investment aur profit ka pura record dikhega.</p>
+          <p style="font-size:12px; color:#666; margin-bottom:10px;">Yahan aapke sabhi investment aur profit/deposit requests ka record dikhega.</p>
           <div id="my-products-list" style="font-size:13px; color:#555;">Koi active product ya history nahi hai.</div>
         </div>
       </div>
@@ -268,7 +308,7 @@
           
           <button class="btn" style="margin-top:10px;" onclick="copyReferralLink()">📋 Copy Referral Link</button>
           
-          <h3 style="margin-top:20px;">📜 Direct Team Members</h3>
+          <h3 style="margin-top:20px;">📜 Direct Team Members (With Numbers)</h3>
           <div id="team-members-list" style="font-size:13px; color:#555; margin-top:10px;">Abhi koi team member nahi hai.</div>
         </div>
       </div>
@@ -316,7 +356,7 @@
         </div>
 
         <div class="menu-card" onclick="switchTab('team', document.querySelectorAll('.nav-item')[3])">
-          <div>Team Members List<br><span style="font-size:14px; color:#333;">View referrals</span></div>
+          <div>Team Members List<br><span style="font-size:14px; color:#333;">View referrals with numbers</span></div>
           <span>›</span>
         </div>
 
@@ -352,6 +392,7 @@
   <script>
     let usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
     let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+    let pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
     const MERCHANT_UPI = "laxmihi@ptyes";
 
     window.onload = function() {
@@ -361,16 +402,6 @@
         document.getElementById("reg-ref").value = refCode;
       }
     };
-
-    function generateSampleReferral() {
-      // Create a master admin or default referral code if database is empty, or pick a random existing UID
-      let sampleCode = "886232567";
-      if(usersDB.length > 0) {
-        sampleCode = usersDB[0].uniqueId;
-      }
-      document.getElementById("reg-ref").value = sampleCode;
-      alert(`Auto-filled valid referral code: ${sampleCode}`);
-    }
 
     function checkDailyProfits() {
       if(!currentUser) return;
@@ -441,14 +472,13 @@
         }
 
         if(!refCode) {
-          alert("Referral code dalna anivarya hai! 'Auto-Generate Referral Code' button ka upyog karein.");
+          alert("Referral code dalna anivarya hai!");
           return;
         }
 
-        // Check if referrer exists (if users exist, else allow initial master code)
         let referrerUser = usersDB.find(u => u.uniqueId === refCode);
         if(!referrerUser && usersDB.length > 0) {
-          alert("Galat Referral Code! Kripya 'Auto-Generate Referral Code' button dabayein.");
+          alert("Galat Referral Code! Kripya sahi referral code dalein.");
           return;
         }
 
@@ -520,6 +550,131 @@
       };
     });
 
+    // ADMIN LOGIN FUNCTIONS
+    window.openAdminLoginModal = function() {
+      document.getElementById("admin-login-modal").style.display = "flex";
+    };
+
+    window.closeAdminLoginModal = function() {
+      document.getElementById("admin-login-modal").style.display = "none";
+    };
+
+    window.verifyAdminLogin = function() {
+      let u = document.getElementById("admin-user-input").value.trim();
+      let p = document.getElementById("admin-pass-input").value;
+
+      if(u === "admin" && p === "admin123") {
+        closeAdminLoginModal();
+        document.getElementById("auth-section").style.display = "none";
+        document.getElementById("portal-container").style.display = "none";
+        document.getElementById("admin-dashboard-container").style.display = "block";
+        renderAdminDashboard();
+      } else {
+        alert("Galat Admin Username ya Password!");
+      }
+    };
+
+    window.logoutAdmin = function() {
+      document.getElementById("admin-dashboard-container").style.display = "none";
+      document.getElementById("auth-section").style.display = "block";
+    };
+
+    window.renderAdminDashboard = function() {
+      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+
+      let dList = document.getElementById("admin-deposits-list");
+      let wList = document.getElementById("admin-withdrawals-list");
+
+      let depReqs = pendingRequests.filter(r => r.type === "Deposit" && r.status === "Pending ⏳");
+      let witReqs = pendingRequests.filter(r => r.type === "Withdrawal" && r.status === "Pending ⏳");
+
+      dList.innerHTML = depReqs.length === 0 ? "Koi pending deposit request nahi hai." : "";
+      depReqs.forEach(req => {
+        dList.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:8px;">
+          <b>User:</b> ${req.userName} (${req.userPhone})<br>
+          <b>Amount:</b> ₹${req.amount} via ${req.appName}<br>
+          <b>UTR ID:</b> <span style="color:var(--primary-color); font-weight:bold;">${req.utrId}</span><br>
+          <b>Date:</b> ${req.date}<br>
+          <button onclick="approveRequest('${req.id}', 'approve')" style="background:#2e7d32; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; cursor:pointer; font-weight:bold; color:white;">Approve ✅</button>
+          <button onclick="approveRequest('${req.id}', 'reject')" style="background:#d32f2f; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; margin-left:6px; cursor:pointer; font-weight:bold; color:white;">Reject ❌</button>
+        </div>`;
+      });
+
+      wList.innerHTML = witReqs.length === 0 ? "Koi pending withdrawal request nahi hai." : "";
+      witReqs.forEach(req => {
+        wList.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:8px;">
+          <b>User:</b> ${req.userName} (${req.userPhone})<br>
+          <b>Withdrawal Amount:</b> ₹${req.amount}<br>
+          <b>Date:</b> ${req.date}<br>
+          <button onclick="approveRequest('${req.id}', 'approve')" style="background:#2e7d32; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; cursor:pointer; font-weight:bold; color:white;">Approve Payment ✅</button>
+          <button onclick="approveRequest('${req.id}', 'reject')" style="background:#d32f2f; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; margin-left:6px; cursor:pointer; font-weight:bold; color:white;">Reject ❌</button>
+        </div>`;
+      });
+    };
+
+    window.approveRequest = function(reqId, action) {
+      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+
+      let reqIdx = pendingRequests.findIndex(r => r.id === reqId);
+      if(reqIdx === -1) return;
+      let req = pendingRequests[reqIdx];
+
+      let targetUser = usersDB.find(u => u.email === req.userEmail);
+
+      if(action === 'approve') {
+        req.status = "Approved ✅";
+        if(targetUser) {
+          if(!targetUser.history) targetUser.history = [];
+          if(req.type === "Deposit") {
+            targetUser.balance += req.amount;
+            targetUser.history.push({
+              type: "Deposit",
+              details: `Deposit via ${req.appName} (UTR: ${req.utrId})`,
+              amount: req.amount,
+              date: req.date,
+              status: "Approved ✅"
+            });
+          } else if(req.type === "Withdrawal") {
+            targetUser.history.push({
+              type: "Withdrawal",
+              details: "Bank Transfer Payout",
+              amount: req.amount,
+              date: req.date,
+              status: "Approved & Paid 🚀"
+            });
+          }
+        }
+      } else {
+        req.status = "Rejected ❌";
+        if(targetUser) {
+          if(!targetUser.history) targetUser.history = [];
+          if(req.type === "Withdrawal") {
+            targetUser.balance += req.amount; // Refund back if rejected
+          }
+          targetUser.history.push({
+            type: req.type,
+            details: `${req.type} Rejected by Admin`,
+            amount: req.amount,
+            date: req.date,
+            status: "Rejected ❌"
+          });
+        }
+      }
+
+      localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
+      localStorage.setItem("usersDB", JSON.stringify(usersDB));
+      
+      if(currentUser && targetUser && currentUser.email === targetUser.email) {
+        currentUser = targetUser;
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      }
+
+      alert(`Request successfully ${action}d!`);
+      renderAdminDashboard();
+    };
+
     window.claimDailyBonus = function() {
       const todayStr = new Date().toDateString();
       if(currentUser.lastCheckIn === todayStr) {
@@ -552,8 +707,10 @@
       });
     };
 
-    // DEPOSIT MODAL FUNCTIONS
+    // DEPOSIT MODAL FUNCTIONS WITH UTR
     window.openDepositModal = function() {
+      document.getElementById("deposit-amount-input.value") ? "" : document.getElementById("deposit-amount-input").value = "";
+      document.getElementById("deposit-utr-input").value = "";
       document.getElementById("deposit-modal").style.display = "flex";
     };
 
@@ -561,8 +718,9 @@
       document.getElementById("deposit-modal").style.display = "none";
     };
 
-    window.processUpiDeposit = function(appName) {
+    window.submitUpiDeposit = function(appName) {
       let amtStr = document.getElementById("deposit-amount-input").value;
+      let utrId = document.getElementById("deposit-utr-input").value.trim();
       let amt = parseFloat(amtStr);
 
       if(!amt || isNaN(amt) || amt <= 0) {
@@ -570,25 +728,42 @@
         return;
       }
 
+      if(!utrId || utrId.length < 6) {
+        alert("Kripya 12-digit valid UTR / Transaction Reference ID enter karein!");
+        return;
+      }
+
       closeDepositModal();
 
-      // Open UPI payment intent or prompt confirmation via merchant UPI
-      let confirmPay = confirm(`Aapko ${appName} ke zariye ₹${amt} ka payment merchant UPI ID: (${MERCHANT_UPI}) par karna hai.\n\nKya aapne payment kar diya hai?`);
-      
-      if(confirmPay) {
-        currentUser.balance += amt;
-        if(!currentUser.history) currentUser.history = [];
-        currentUser.history.push({
-          type: "Deposit",
-          details: `Deposit via ${appName} (${MERCHANT_UPI})`,
-          amount: amt,
-          date: new Date().toDateString(),
-          status: "Successful ✅"
-        });
-        updateStorage();
-        alert(`Deposit of ₹${amt} verified & added successfully via ${appName}!`);
-        showPortal();
-      }
+      let reqObj = {
+        id: 'REQ_' + Math.floor(100000 + Math.random() * 900000),
+        type: "Deposit",
+        userEmail: currentUser.email,
+        userName: currentUser.name,
+        userPhone: currentUser.phone,
+        amount: amt,
+        appName: appName,
+        utrId: utrId,
+        date: new Date().toDateString(),
+        status: "Pending ⏳"
+      };
+
+      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
+      pendingRequests.push(reqObj);
+      localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
+
+      if(!currentUser.history) currentUser.history = [];
+      currentUser.history.push({
+        type: "Deposit Request",
+        details: `Deposit Request ₹${amt} via ${appName} (UTR: ${utrId})`,
+        amount: amt,
+        date: new Date().toDateString(),
+        status: "Pending Admin Approval ⏳"
+      });
+
+      updateStorage();
+      alert("Deposit request successfully submit ho gayi hai! Admin approval ke baad balance aapke account me add kar diya jayega.");
+      showPortal();
     };
 
     window.openWithdrawModal = function() {
@@ -596,17 +771,34 @@
       if(amt && !isNaN(amt) && amt > 0) {
         let withdrawVal = parseFloat(amt);
         if(currentUser.balance >= withdrawVal) {
-          currentUser.balance -= withdrawVal;
-          if(!currentUser.history) currentUser.history = [];
-          currentUser.history.push({
+          currentUser.balance -= withdrawVal; // Deduct temporarily pending admin approval
+
+          let reqObj = {
+            id: 'REQ_' + Math.floor(100000 + Math.random() * 900000),
             type: "Withdrawal",
-            details: "Bank Transfer Payout",
+            userEmail: currentUser.email,
+            userName: currentUser.name,
+            userPhone: currentUser.phone,
             amount: withdrawVal,
             date: new Date().toDateString(),
-            status: "Processed 🚀"
+            status: "Pending ⏳"
+          };
+
+          pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
+          pendingRequests.push(reqObj);
+          localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
+
+          if(!currentUser.history) currentUser.history = [];
+          currentUser.history.push({
+            type: "Withdrawal Request",
+            details: "Bank Transfer Payout Request",
+            amount: withdrawVal,
+            date: new Date().toDateString(),
+            status: "Pending Admin Approval ⏳"
           });
+
           updateStorage();
-          alert("Withdrawal Request Submitted Successfully!");
+          alert("Withdrawal Request submitted successfully! Waiting for admin approval.");
           showPortal();
         } else {
           alert("Insufficient Balance!");
@@ -661,6 +853,7 @@
 
     function showPortal() {
       document.getElementById("auth-section").style.display = "none";
+      document.getElementById("admin-dashboard-container").style.display = "none";
       document.getElementById("portal-container").style.display = "block";
       document.getElementById("user-balance").innerText = currentUser.balance.toFixed(2);
 
@@ -708,8 +901,8 @@
         currentUser.teamMembers.forEach((member, index) => {
           tList.innerHTML += `<div style="background:#ffffff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:6px;">
             <b>#${index+1} Name:</b> ${member.name}<br>
-            <b>• UID:</b> ${member.uniqueId} | <b>Phone:</b> ${member.phone}<br>
-            <b>• Joined Date:</b> ${member.date}
+            <b>• Mobile Number:</b> <span style="color:#1976d2; font-weight:bold;">${member.phone}</span><br>
+            <b>• UID:</b> ${member.uniqueId} | <b>Joined:</b> ${member.date}
           </div>`;
         });
       }
