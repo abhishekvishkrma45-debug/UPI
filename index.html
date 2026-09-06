@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>still - Gold Trading Dashboard</title>
+    <title>still - Gold Trading & Chart Dashboard</title>
+    <!-- Chart.js Library for Trading Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -25,10 +27,10 @@
         .container {
             background: #181a20;
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            max-width: 480px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             border: 1px solid #2b313a;
         }
 
@@ -41,14 +43,14 @@
         }
 
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .input-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: #848e9c;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .input-group input {
@@ -61,11 +63,6 @@
             font-size: 14px;
         }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #f0b90b;
-        }
-
         .btn-main {
             width: 100%;
             padding: 12px;
@@ -75,19 +72,17 @@
             color: #000;
             font-weight: 700;
             cursor: pointer;
-            font-size: 15px;
-            margin-top: 10px;
+            font-size: 14px;
+            margin-top: 8px;
         }
 
         .auth-toggle {
             text-align: center;
             font-size: 12px;
             color: #848e9c;
-            margin-top: 15px;
+            margin-top: 12px;
             cursor: pointer;
         }
-
-        .auth-toggle span { color: #f0b90b; }
 
         .dashboard, .admin-panel { display: none; }
 
@@ -96,52 +91,63 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #2b313a;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
         }
-
-        .user-info { font-size: 13px; color: #848e9c; }
 
         .wallet-box {
             background: #0b0e11;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #2b313a;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .add-funds-btn {
             background: #0ecb81;
             color: #000;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
         }
 
-        .symbol { font-size: 18px; font-weight: 700; color: #f0b90b; }
+        .symbol { font-size: 16px; font-weight: 700; color: #f0b90b; }
         .up { color: #0ecb81 !important; }
         .down { color: #f6465d !important; }
 
-        .price-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 15px;
+        /* Trading Chart Container */
+        .chart-container {
+            background: #0b0e11;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #2b313a;
+            margin-bottom: 14px;
+            position: relative;
         }
 
-        .main-price { font-size: 26px; font-weight: 700; }
+        .chart-overlay-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(14, 203, 129, 0.2);
+            color: #0ecb81;
+            padding: 2px 6px;
+            font-size: 10px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
 
         .grid-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
 
         .stat-box {
@@ -151,7 +157,7 @@
             border: 1px solid #2b313a;
         }
 
-        .stat-label { font-size: 11px; color: #848e9c; }
+        .stat-label { font-size: 10px; color: #848e9c; }
         .stat-value { font-size: 15px; font-weight: 700; }
 
         .modal {
@@ -179,7 +185,7 @@
 
     <div class="container">
         
-        <!-- Login / Register Screen -->
+        <!-- Auth Screen -->
         <div id="auth-box">
             <h2 id="auth-title" class="auth-title">STiLL Gold Trading</h2>
             
@@ -190,7 +196,7 @@
 
             <div class="input-group">
                 <label>Phone Number / Admin ID</label>
-                <input type="tel" id="user-phone" placeholder="10 Digit Phone ya Admin ID">
+                <input type="tel" id="user-phone" placeholder="Phone Number ya Admin ID">
             </div>
 
             <div class="input-group">
@@ -204,33 +210,28 @@
             </div>
         </div>
 
-        <!-- User Dashboard -->
+        <!-- Main User Dashboard -->
         <div id="dashboard" class="dashboard">
             <div class="header">
                 <div>
-                    <div class="symbol">GOLD / INR</div>
-                    <div class="user-info">User: <span id="display-username" style="color:#fff;">-</span></div>
+                    <div class="symbol">GOLD / INR <span style="font-size:10px; color:#848e9c;">(10G)</span></div>
+                    <div style="font-size: 12px; color: #848e9c;">User: <span id="display-username" style="color:#fff;">-</span></div>
                 </div>
                 <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
             </div>
 
             <div class="wallet-box">
                 <div>
-                    <div style="font-size: 11px; color: #848e9c;">WALLET BALANCE</div>
-                    <div id="wallet-balance" style="font-size: 20px; font-weight: 700; color:#fff;">₹0.00</div>
+                    <div style="font-size: 10px; color: #848e9c;">WALLET BALANCE</div>
+                    <div id="wallet-balance" style="font-size: 18px; font-weight: 700; color:#fff;">₹0.00</div>
                 </div>
                 <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD FUNDS</button>
             </div>
 
-            <div class="price-section">
-                <div>
-                    <div id="live-price" class="main-price up">₹14,850.00</div>
-                    <div style="font-size: 11px; color: #848e9c;">Live Price (10G)</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 11px; color:#0ecb81;">24H High: <span id="high-price">₹14,900</span></div>
-                    <div style="font-size: 11px; color:#f6465d;">24H Low: <span id="low-price">₹14,800</span></div>
-                </div>
+            <!-- Trading Chart Area (Like Image) -->
+            <div class="chart-container">
+                <span class="chart-overlay-badge">BUY SIGNAL ▲ ENTRY: 14,850</span>
+                <canvas id="tradingChart" height="180"></canvas>
             </div>
 
             <div class="grid-stats">
@@ -248,13 +249,9 @@
                 <button class="btn-main" style="background:#0ecb81;" onclick="alert('Insufficient Balance for Trade')">BUY GOLD</button>
                 <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="alert('No Gold available to Sell')">SELL GOLD</button>
             </div>
-            
-            <p style="font-size:10px; color:#848e9c; text-align:center; margin-top:15px;">
-                Auto Updating every 1.2 Hours (72 mins)
-            </p>
         </div>
 
-        <!-- Admin Control Panel Screen -->
+        <!-- Admin Control Panel -->
         <div id="admin-panel" class="admin-panel">
             <div class="header">
                 <div class="symbol">ADMIN CONTROL</div>
@@ -281,17 +278,17 @@
 
     </div>
 
-    <!-- UPI Redirect Payment Modal -->
+    <!-- Payment Modal -->
     <div id="pay-modal" class="modal">
         <div class="modal-content">
             <h3 style="color:#f0b90b; margin-bottom:10px;">Add Money via UPI</h3>
-            <p style="font-size:12px; color:#848e9c; margin-bottom:15px;">Paying to UPI ID: <b style="color:#fff;">laxmihi@ptyes</b></p>
+            <p style="font-size:12px; color:#848e9c; margin-bottom:12px;">UPI ID: <b style="color:#fff;">laxmihi@ptyes</b></p>
             
             <div class="input-group">
-                <input type="number" id="add-amount" placeholder="Enter Amount (₹) e.g. 500">
+                <input type="number" id="add-amount" placeholder="Enter Amount (₹)">
             </div>
 
-            <button class="btn-main" style="background:#0ecb81;" onclick="redirectToUPI()">Proceed to Pay (PhonePe/Paytm)</button>
+            <button class="btn-main" style="background:#0ecb81;" onclick="redirectToUPI()">Pay Now (PhonePe/Paytm)</button>
             <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
@@ -302,6 +299,7 @@
         const UPI_ID = "laxmihi@ptyes";
 
         let isLoginMode = false;
+        let chartInstance = null;
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
@@ -314,7 +312,6 @@
             const phone = document.getElementById('user-phone').value.trim();
             const pin = document.getElementById('user-pin').value.trim();
 
-            // Check Admin Login
             if (phone === ADMIN_ID && pin === ADMIN_PIN) {
                 localStorage.setItem('still_logged_in', 'admin');
                 loadAdminPanel();
@@ -322,16 +319,15 @@
             }
 
             if (pin.length !== 4 || isNaN(pin)) {
-                alert('4-Digit ka Ginti (Numeric PIN) enter karein!');
+                alert('4-Digit ka Numeric PIN Enter karein!');
                 return;
             }
 
             if (!isLoginMode) {
                 const name = document.getElementById('user-name').value.trim();
                 if (!name) { alert('Naam Enter Karein!'); return; }
-                
                 localStorage.setItem('still_user_' + phone, JSON.stringify({ name, phone, pin, balance: 0 }));
-                alert('Account ban gaya! Ab Login Karein.');
+                alert('Account Ban gaya! Login karein.');
                 toggleAuthMode();
             } else {
                 const userData = JSON.parse(localStorage.getItem('still_user_' + phone));
@@ -355,6 +351,7 @@
             document.getElementById('display-username').innerText = userData.name;
             document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
             
+            initTradingChart();
             fetchRates();
         }
 
@@ -369,15 +366,13 @@
             const highRate = parseFloat(document.getElementById('admin-high-rate').value);
             const lowRate = parseFloat(document.getElementById('admin-low-rate').value);
 
-            const customData = {
+            localStorage.setItem('still_custom_rates', JSON.stringify({
                 buy_price_10g: buyRate,
                 sell_price_10g: (buyRate * 0.97).toFixed(2),
                 high_rate: highRate,
                 low_rate: lowRate
-            };
-
-            localStorage.setItem('still_custom_rates', JSON.stringify(customData));
-            alert('Admin settings saved successfully!');
+            }));
+            alert('Settings Saved!');
         }
 
         function logout() {
@@ -388,54 +383,59 @@
         function openPaymentModal() { document.getElementById('pay-modal').style.display = 'flex'; }
         function closePaymentModal() { document.getElementById('pay-modal').style.display = 'none'; }
 
-        /* Direct PhonePe / Paytm Redirect Code */
         function redirectToUPI() {
             const amount = parseFloat(document.getElementById('add-amount').value);
-
-            if (isNaN(amount) || amount <= 0) {
-                alert('Kripya sahi amount enter karein!');
-                return;
-            }
-
-            // Standard UPI Deep Link Redirects to PhonePe / Paytm / GPay
-            const upiUrl = `upi://pay?pa=${UPI_ID}&pn=STiLL_Trading&am=${amount}&cu=INR`;
-            
-            // Trigger PhonePe / Paytm apps
-            window.location.href = upiUrl;
-
+            if (isNaN(amount) || amount <= 0) { alert('Valid amount enter karein!'); return; }
+            window.location.href = `upi://pay?pa=${UPI_ID}&pn=STiLL_Trading&am=${amount}&cu=INR`;
             closePaymentModal();
+        }
+
+        /* TradingView Style Graph Implementation */
+        function initTradingChart() {
+            const ctx = document.getElementById('tradingChart').getContext('2d');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '11:12', '12:24', '13:36', '14:48', '16:00'],
+                    datasets: [{
+                        label: 'Gold Price (INR)',
+                        data: [14800, 14820, 14790, 14830, 14810, 14850],
+                        borderColor: '#0ecb81',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(14, 203, 129, 0.08)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#0ecb81',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 9 } } },
+                        y: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 9 } } }
+                    }
+                }
+            });
         }
 
         async function fetchRates() {
             let buy10g = 14850;
-            let high = 14900;
-            let low = 14800;
-
             const savedAdminData = localStorage.getItem('still_custom_rates');
             if (savedAdminData) {
                 const parsed = JSON.parse(savedAdminData);
                 buy10g = parsed.buy_price_10g;
-                high = parsed.high_rate;
-                low = parsed.low_rate;
             }
 
-            document.getElementById('live-price').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
             document.getElementById('buy-10g').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
             document.getElementById('sell-10g').innerText = `₹${(buy10g * 0.97).toLocaleString('en-IN')}`;
-            document.getElementById('high-price').innerText = `₹${high.toLocaleString('en-IN')}`;
-            document.getElementById('low-price').innerText = `₹${low.toLocaleString('en-IN')}`;
         }
 
-        // Auto Load Session
         const loggedInUser = localStorage.getItem('still_logged_in');
-        if (loggedInUser === 'admin') {
-            loadAdminPanel();
-        } else if (loggedInUser) {
-            loadDashboard();
-        }
-
-        // Auto update rates every 1.2 Hours (4,320,000 miliseconds)
-        setInterval(fetchRates, 1.2 * 60 * 60 * 1000);
+        if (loggedInUser === 'admin') loadAdminPanel();
+        else if (loggedInUser) loadDashboard();
     </script>
 </body>
 </html>
