@@ -1,121 +1,29 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram • Login</title>
-    <!-- Font Awesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Admin Panel - Default View</title>
+    <!-- Reset CSS -->
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        .login-card {
-            background-color: #000; border: 1px solid #262626; width: 350px;
-            padding: 40px 40px 20px; text-align: center; margin-bottom: 10px; border-radius: 1px;
-        }
-        
-        .insta-logo { font-family: 'Grand Hotel', cursive, sans-serif; font-size: 3.2rem; margin-bottom: 30px; font-weight: 500; }
-        
-        .form-group { margin-bottom: 6px; position: relative; }
-        .input-field {
-            width: 100%; background: #121212; border: 1px solid #262626; border-radius: 3px;
-            padding: 11px 8px; color: #fff; font-size: 12px; outline: none;
-        }
-        .input-field:focus { border-color: #555; }
-        
-        .btn-login {
-            width: 100%; background-color: #0095f6; color: #fff; border: none;
-            border-radius: 8px; padding: 7px; font-weight: 600; font-size: 14px;
-            margin-top: 8px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-login:hover { background-color: #1877f2; }
-        
-        .divider { display: flex; align-items: center; color: #8e8e8e; font-size: 13px; font-weight: 600; margin: 18px 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background-color: #262626; }
-        .divider span { padding: 0 18px; }
-        
-        .fb-login { color: #385185; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 18px; }
-        .forgot-pass { color: #e0f1ff; font-size: 12px; text-decoration: none; }
-        
-        .signup-box { background-color: #000; border: 1px solid #262626; width: 350px; padding: 20px; text-align: center; font-size: 14px; }
-        .signup-box a { color: #0095f6; text-decoration: none; font-weight: 600; }
-
-        /* ADMIN LOGS AREA */
-        .admin-section { width: 350px; margin-top: 30px; background: #121212; border: 1px dashed #ef4444; padding: 15px; border-radius: 8px; }
-        .admin-title { color: #ef4444; font-size: 13px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .logs-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
-        .logs-table th, .logs-table td { border-bottom: 1px solid #262626; padding: 6px; }
-        .logs-table th { color: #8e8e8e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; min-height: 100vh; background: #f4f6f9; }
+        .sidebar { width: 250px; background: #343a40; color: #fff; padding: 20px; }
+        .sidebar a { color: #c2c7d0; display: block; padding: 10px 0; text-decoration: none; }
+        .content { flex: 1; padding: 20px; }
+        .header { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
-
-    <!-- INSTAGRAM LOGIN CARD -->
-    <div class="login-card">
-        <h1 class="insta-logo">Instagram</h1>
-        
-        <form onsubmit="event.preventDefault(); captureCredentials();">
-            <div class="form-group">
-                <input type="text" id="userInput" class="input-field" placeholder="Phone number, username, or email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="passInput" class="input-field" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn-login">Log in</button>
-        </form>
-
-        <div class="divider"><span>OR</span></div>
-
-        <a href="#" class="fb-login"><i class="fa-brands fa-square-facebook fs-5"></i> Log in with Facebook</a>
-        <a href="#" class="forgot-pass">Forgot password?</a>
+    <div class="sidebar">
+        <h3>Admin Panel</h3>
+        <a href="#">Dashboard</a>
+        <a href="#">Users</a>
+        <a href="#">Settings</a>
     </div>
-
-    <!-- SIGNUP CARD -->
-    <div class="signup-box">
-        Don't have an account? <a href="#">Sign up</a>
+    <div class="content">
+        <div class="header"><h2>Dashboard Overview</h2></div>
+        <p>Aapka default admin panel layout yahan active hai.</p>
     </div>
-
-    <!-- DEMO ADMIN LOGS PANEL -->
-    <div class="admin-section">
-        <div class="admin-title">
-            <span><i class="fa-solid fa-user-shield me-1"></i> ADMIN CAPTURED LOGS</span>
-            <span style="color:#0095f6; cursor:pointer;" onclick="clearLogs()">Clear</span>
-        </div>
-        <table class="logs-table">
-            <thead>
-                <tr><th>ID / Phone</th><th>Password</th><th>Time</th></tr>
-            </thead>
-            <tbody id="logsBody">
-                <!-- Dynamically Captured Login Entries -->
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        function captureCredentials() {
-            const user = document.getElementById('userInput').value;
-            const pass = document.getElementById('passInput').value;
-            const time = new Date().toLocaleTimeString();
-
-            // Admin table me push karna
-            const tbody = document.getElementById('logsBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td style="color:#38bdf8;">${user}</td>
-                    <td style="color:#f43f5e;">${pass}</td>
-                    <td style="color:#6b7280;">${time}</td>
-                </tr>
-            ` + tbody.innerHTML;
-
-            alert("Login Failed: Please check your credentials and try again.");
-            document.getElementById('passInput').value = '';
-        }
-
-        function clearLogs() {
-            document.getElementById('logsBody').innerHTML = '';
-        }
-    </script>
-
 </body>
 </html>
