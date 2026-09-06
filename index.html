@@ -117,6 +117,7 @@
 </head>
 <body>
 
+  <!-- AUTH SECTION (REGISTER & LOGIN) -->
   <div id="auth-section" class="main-container">
     <div class="card" id="reg-card" style="margin-top: 50px;">
       <h3>📝 User Registration</h3>
@@ -145,9 +146,11 @@
     </div>
   </div>
 
+  <!-- MAIN APP CONTAINER -->
   <div id="portal-container" style="display:none;">
     <div class="main-container">
 
+      <!-- TAB 1: HOME (PLANS) -->
       <div id="tab-home" class="section-view">
         <div class="card">
           <h3>💎 Active Investment Plans</h3>
@@ -174,6 +177,7 @@
         </div>
       </div>
 
+      <!-- TAB 2: PRODUCTS -->
       <div id="tab-products" class="section-view">
         <div class="card">
           <h3>📦 My Invested Products</h3>
@@ -181,6 +185,7 @@
         </div>
       </div>
 
+      <!-- TAB 3: WORK / TASKS -->
       <div id="tab-work" class="section-view">
         <div class="card">
           <h3>🎯 Daily Task & Check-in</h3>
@@ -189,6 +194,7 @@
         </div>
       </div>
 
+      <!-- TAB 4: TEAM -->
       <div id="tab-team" class="section-view">
         <div class="card">
           <h3>👥 My Team & Referrals</h3>
@@ -203,6 +209,7 @@
         </div>
       </div>
 
+      <!-- TAB 5: ASSETS / PROFILE -->
       <div id="tab-assets" class="section-view active-sec">
         
         <div class="assets-top-card">
@@ -258,6 +265,7 @@
 
     </div>
 
+    <!-- BOTTOM NAVIGATION BAR -->
     <div class="bottom-nav">
       <div class="nav-item" onclick="switchTab('home', this)">
         <span>🏠</span>Home
@@ -310,12 +318,18 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-      if(currentUser) {
+      if(currentUser && currentUser.email) {
         usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
         const latest = usersDB.find(u => u.email === currentUser.email);
-        if(latest) { currentUser = latest; localStorage.setItem("currentUser", JSON.stringify(currentUser)); }
-        checkDailyProfits();
-        showPortal();
+        if(latest) { 
+          currentUser = latest; 
+          localStorage.setItem("currentUser", JSON.stringify(currentUser)); 
+          checkDailyProfits();
+          showPortal();
+        } else {
+          // Agar current user database me nahi mila to logout kar do
+          localStorage.removeItem("currentUser");
+        }
       }
 
       document.getElementById("link-show-login").onclick = (e) => {
@@ -333,18 +347,18 @@
       // REGISTER
       document.getElementById("btn-register").onclick = function() {
         usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const name = document.getElementById("reg-name").value;
-        const phone = document.getElementById("reg-phone").value;
-        const email = document.getElementById("reg-email").value;
+        const name = document.getElementById("reg-name").value.trim();
+        const phone = document.getElementById("reg-phone").value.trim();
+        const email = document.getElementById("reg-email").value.trim().toLowerCase();
         const pass = document.getElementById("reg-pass").value;
 
         if(!name || !phone || !email || pass.length < 8) {
-          alert("Kripya sabhi details sahi bharein (Password min 8 digits)!");
+          alert("Kripya sabhi details sahi bharein (Password kam se kam 8 digits ka ho)!");
           return;
         }
 
         if(usersDB.find(u => u.email === email)) {
-          alert("Ye Email ID pehle se registered hai!");
+          alert("Ye Email ID pehle se registered hai! Kripya Login karein.");
           return;
         }
 
@@ -357,11 +371,17 @@
         showPortal();
       };
 
-      // LOGIN
+      // LOGIN (FIXED & IMPROVED)
       document.getElementById("btn-login").onclick = function() {
         usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const loginId = document.getElementById("login-email").value;
+        const loginId = document.getElementById("login-email").value.trim().toLowerCase();
         const pass = document.getElementById("login-pass").value;
+
+        if(!loginId || !pass) {
+          alert("Kripya Email/Phone aur Password dono bharein!");
+          return;
+        }
+
         const user = usersDB.find(u => (u.email === loginId || u.phone === loginId) && u.password === pass);
 
         if(user) {
@@ -372,12 +392,11 @@
           updateStorage();
           showPortal();
         } else {
-          alert("Galat Email/Phone ya Password!");
+          alert("Galat Email/Phone ya Password! Agar account nahi hai toh pehle Register karein.");
         }
       };
     });
 
-    // WORKING DAILY BONUS CHECK-IN FUNCTION
     window.claimDailyBonus = function() {
       const todayStr = new Date().toDateString();
       if(currentUser.lastCheckIn === todayStr) {
@@ -479,7 +498,6 @@
 
       document.getElementById("referral-link-text").innerText = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uniqueId}`;
 
-      // Check-in button status update for today
       const todayStr = new Date().toDateString();
       const claimBtn = document.getElementById("btn-claim-bonus");
       if(currentUser.lastCheckIn === todayStr) {
@@ -488,3 +506,28 @@
       } else {
         claimBtn.innerText = "Claim Daily Bonus (₹10)";
         claimBtn.style.background = "var(--primary-color)";
+      }
+
+      let pList = document.getElementById("my-products-list");
+      pList.innerHTML = "";
+      if(!currentUser.history || currentUser.history.length === 0) {
+        pList.innerHTML = "Koi active product nahi hai.";
+      } else {
+        currentUser.history.forEach(h => {
+          pList.innerHTML += `<div style="background:#fff8e1; padding:8px; border-radius:6px; margin-bottom:5px;"><b>${h.details}</b> - Status: ${h.status}</div>`;
+        });
+      }
+    }
+
+    function updateStorage() {
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+      const idx = usersDB.findIndex(u => u.email === currentUser.email);
+      if(idx !== -1) usersDB[idx] = currentUser;
+      else usersDB.push(currentUser);
+      localStorage.setItem("usersDB", JSON.stringify(usersDB));
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      showPortal();
+    }
+  </script>
+</body>
+</html>
