@@ -1,29 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Default View</title>
-    <!-- Reset CSS -->
+    <title>still - Live Gold Rate</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { display: flex; min-height: 100vh; background: #f4f6f9; }
-        .sidebar { width: 250px; background: #343a40; color: #fff; padding: 20px; }
-        .sidebar a { color: #c2c7d0; display: block; padding: 10px 0; text-decoration: none; }
-        .content { flex: 1; padding: 20px; }
-        .header { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        .rate-card {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .buy-card {
+            border-color: #22c55e;
+        }
+
+        .sell-card {
+            border-color: #ef4444;
+        }
+
+        .label {
+            font-size: 16px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .unit {
+            font-size: 12px;
+            color: #64748b;
+            display: block;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .buy-price {
+            color: #4ade80;
+        }
+
+        .sell-price {
+            color: #f87171;
+        }
+
+        .updated-time {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Admin Panel</h3>
-        <a href="#">Dashboard</a>
-        <a href="#">Users</a>
-        <a href="#">Settings</a>
+
+    <div class="container">
+        <h1 class="title">still</h1>
+        <p class="subtitle">Live Gold Rate (Per Gram)</p>
+
+        <div class="rate-card buy-card">
+            <div>
+                <span class="label">BUY RATE</span>
+                <span class="unit">Per 1 Gram</span>
+            </div>
+            <div id="buy-price" class="price buy-price">₹0.00</div>
+        </div>
+
+        <div class="rate-card sell-card">
+            <div>
+                <span class="label">SELL RATE</span>
+                <span class="unit">Per 1 Gram</span>
+            </div>
+            <div id="sell-price" class="price sell-price">₹0.00</div>
+        </div>
+
+        <p class="updated-time">Last Updated: <span id="last-updated">Loading...</span></p>
     </div>
-    <div class="content">
-        <div class="header"><h2>Dashboard Overview</h2></div>
-        <p>Aapka default admin panel layout yahan active hai.</p>
-    </div>
+
+    <script>
+        async function fetchGoldData() {
+            try {
+                // Fetch live json file from GitHub relative path
+                const response = await fetch('./gold_data.json?cache_bypass=' + new Date().getTime());
+                const data = await response.json();
+
+                document.getElementById('buy-price').innerText = `₹${data.buy_price_per_gram}`;
+                document.getElementById('sell-price').innerText = `₹${data.sell_price_per_gram}`;
+                document.getElementById('last-updated').innerText = data.last_updated;
+            } catch (error) {
+                console.error('Data fetch error:', error);
+                document.getElementById('last-updated').innerText = 'Unable to load data';
+            }
+        }
+
+        // Fetch immediately on page load
+        fetchGoldData();
+    </script>
 </body>
 </html>
