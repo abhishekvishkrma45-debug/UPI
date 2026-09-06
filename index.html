@@ -1,147 +1,32 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>still - Live Gold Rate</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+import json
+import random
+from datetime import datetime
 
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+def fetch_gold_rate():
+    # 10 Gram Buy Price = 14850 INR (1 Gram = 1485 INR)
+    # Thoda fluctuation add karne ke liye range rakhi hai
+    buy_10g = round(random.uniform(14800, 14900), 2)
+    sell_10g = round(buy_10g * 0.97, 2) # 3% margin
+    
+    buy_per_gram = round(buy_10g / 10, 2)
+    sell_per_gram = round(sell_10g / 10, 2)
+    
+    return buy_10g, sell_10g, buy_per_gram, sell_per_gram
 
-        .container {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 30px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            border: 1px solid #334155;
-            text-align: center;
-        }
+def update_json():
+    buy_10g, sell_10g, buy_1g, sell_1g = fetch_gold_rate()
+    data = {
+        "buy_price_10g": buy_10g,
+        "sell_price_10g": sell_10g,
+        "buy_price_per_gram": buy_1g,
+        "sell_price_per_gram": sell_1g,
+        "last_updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    }
+    
+    with open("gold_data.json", "w") as f:
+        json.dump(data, f, indent=4)
+        
+    print(f"Updated: 10g Buy: ₹{buy_10g}, 10g Sell: ₹{sell_10g}")
 
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #fbbf24;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #94a3b8;
-            margin-bottom: 25px;
-        }
-
-        .rate-card {
-            background: #0f172a;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 5px solid;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .buy-card {
-            border-color: #22c55e;
-        }
-
-        .sell-card {
-            border-color: #ef4444;
-        }
-
-        .label {
-            font-size: 16px;
-            color: #cbd5e1;
-            font-weight: 600;
-        }
-
-        .unit {
-            font-size: 12px;
-            color: #64748b;
-            display: block;
-        }
-
-        .price {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .buy-price {
-            color: #4ade80;
-        }
-
-        .sell-price {
-            color: #f87171;
-        }
-
-        .updated-time {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1 class="title">still</h1>
-        <p class="subtitle">Live Gold Rate (Per Gram)</p>
-
-        <div class="rate-card buy-card">
-            <div>
-                <span class="label">BUY RATE</span>
-                <span class="unit">Per 1 Gram</span>
-            </div>
-            <div id="buy-price" class="price buy-price">₹0.00</div>
-        </div>
-
-        <div class="rate-card sell-card">
-            <div>
-                <span class="label">SELL RATE</span>
-                <span class="unit">Per 1 Gram</span>
-            </div>
-            <div id="sell-price" class="price sell-price">₹0.00</div>
-        </div>
-
-        <p class="updated-time">Last Updated: <span id="last-updated">Loading...</span></p>
-    </div>
-
-    <script>
-        async function fetchGoldData() {
-            try {
-                // Fetch live json file from GitHub relative path
-                const response = await fetch('./gold_data.json?cache_bypass=' + new Date().getTime());
-                const data = await response.json();
-
-                document.getElementById('buy-price').innerText = `₹${data.buy_price_per_gram}`;
-                document.getElementById('sell-price').innerText = `₹${data.sell_price_per_gram}`;
-                document.getElementById('last-updated').innerText = data.last_updated;
-            } catch (error) {
-                console.error('Data fetch error:', error);
-                document.getElementById('last-updated').innerText = 'Unable to load data';
-            }
-        }
-
-        // Fetch immediately on page load
-        fetchGoldData();
-    </script>
-</body>
-</html>
+if __name__ == "__main__":
+    update_json()
