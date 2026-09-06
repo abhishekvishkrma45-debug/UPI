@@ -24,22 +24,20 @@
     input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
     .btn { width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary-color); }
 
-    /* ASSETS / PROFILE TOP CARD (Like Screenshot) */
+    /* ASSETS / PROFILE TOP CARD */
     .assets-top-card {
       background: #ffffff;
       padding: 15px;
       border-radius: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       margin-bottom: 15px;
-      position: relative;
     }
     .balance-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .balance-title { font-size: 12px; color: #777; }
     .balance-amount { font-size: 24px; font-weight: 900; color: #111; margin-top: 2px; }
     .user-phone-uid { font-size: 13px; color: #555; margin-top: 8px; font-weight: 600; }
-    .qr-box { width: 45px; height: 45px; border: 1px solid #ddd; border-radius: 8px; padding: 2px; }
 
-    /* QUICK ACTION BUTTONS (Deposit, Withdraw, etc.) */
+    /* QUICK ACTION BUTTONS */
     .quick-actions {
       display: flex;
       justify-content: space-between;
@@ -91,7 +89,7 @@
     .plan-details { font-size: 13px; color: #444; line-height: 1.6; }
     .calc-box { background: #e8f5e9; color: #2e7d32; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-top: 8px; }
 
-    /* BOTTOM NAVIGATION BAR (5 Icons like screenshot) */
+    /* BOTTOM NAVIGATION BAR */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; width: 100%;
@@ -119,7 +117,6 @@
 </head>
 <body>
 
-  <!-- AUTH SECTION (REGISTER & LOGIN) -->
   <div id="auth-section" class="main-container">
     <div class="card" id="reg-card" style="margin-top: 50px;">
       <h3>📝 User Registration</h3>
@@ -148,11 +145,9 @@
     </div>
   </div>
 
-  <!-- MAIN APP CONTAINER (AFTER LOGIN) -->
   <div id="portal-container" style="display:none;">
     <div class="main-container">
 
-      <!-- TAB 1: HOME (PLANS) -->
       <div id="tab-home" class="section-view">
         <div class="card">
           <h3>💎 Active Investment Plans</h3>
@@ -179,7 +174,6 @@
         </div>
       </div>
 
-      <!-- TAB 2: PRODUCTS -->
       <div id="tab-products" class="section-view">
         <div class="card">
           <h3>📦 My Invested Products</h3>
@@ -187,7 +181,6 @@
         </div>
       </div>
 
-      <!-- TAB 3: WORK / TASKS -->
       <div id="tab-work" class="section-view">
         <div class="card">
           <h3>🎯 Daily Task & Check-in</h3>
@@ -196,28 +189,28 @@
         </div>
       </div>
 
-      <!-- TAB 4: TEAM -->
       <div id="tab-team" class="section-view">
         <div class="card">
           <h3>👥 My Team & Referrals</h3>
-          <p style="font-size:13px; color:#555;">Invite friends and earn commission.</p>
-          <div style="background:#f8f9fa; padding:10px; border-radius:6px; margin-top:10px; font-size:13px;">
-            <b>Referral Link:</b> <code style="color:var(--primary-color);">https://abhishek-hub.com/ref=8862</code>
+          <p style="font-size:13px; color:#555; margin-bottom:10px;">Apna referral link dosto ko share karein aur team banayein.</p>
+          
+          <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-top:10px; font-size:12px; word-break: break-all;">
+            <b>Your Referral Link:</b><br>
+            <code id="referral-link-text" style="color:var(--primary-color); font-weight:bold;">https://abhishek-hub.com/register?ref=000000</code>
           </div>
+          
+          <button class="btn" style="margin-top:10px;" onclick="copyReferralLink()">📋 Copy Referral Link</button>
         </div>
       </div>
 
-      <!-- TAB 5: ASSETS / PROFILE (EXACTLY LIKE SCREENSHOT) -->
       <div id="tab-assets" class="section-view active-sec">
         
-        <!-- Top Balance Card -->
         <div class="assets-top-card">
           <div class="balance-header">
             <div>
               <div class="balance-title">Available Balance</div>
               <div class="balance-amount">₹<span id="user-balance">0.00</span></div>
             </div>
-            <!-- QR code image placeholder -->
             <div style="background:#eee; width:45px; height:45px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold;">QR</div>
           </div>
           <div class="user-phone-uid">
@@ -225,7 +218,6 @@
           </div>
         </div>
 
-        <!-- Quick Action Buttons -->
         <div class="quick-actions">
           <div class="action-btn" onclick="openDepositModal()">
             <div class="action-icon">📥</div>
@@ -245,7 +237,6 @@
           </div>
         </div>
 
-        <!-- User Center Menu List -->
         <div style="font-size: 13px; font-weight: bold; color: #555; margin-bottom: 8px;">User Center</div>
         
         <div class="menu-card" onclick="alert('Product Profit Details')">
@@ -267,7 +258,6 @@
 
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR (5 Tabs) -->
     <div class="bottom-nav">
       <div class="nav-item" onclick="switchTab('home', this)">
         <span>🏠</span>Home
@@ -291,204 +281,10 @@
     let usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
     let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
 
-    // Auto Daily Profit Checker
     function checkDailyProfits() {
       if(!currentUser) return;
       let updated = false;
       const todayStr = new Date().toDateString();
 
       if(currentUser.history) {
-        currentUser.history.forEach(item => {
-          if(item.type === "Investment Plan" && item.status === "Active Investment") {
-            if(!item.lastCreditedDate) item.lastCreditedDate = item.startDate;
-            let lastDate = new Date(item.lastCreditedDate);
-            let currentDate = new Date(todayStr);
-
-            if(currentDate > lastDate && item.daysCompleted < item.totalDays) {
-              currentUser.balance += item.dailyIncome;
-              item.daysCompleted += 1;
-              item.lastCreditedDate = todayStr;
-              updated = true;
-
-              if(item.daysCompleted >= item.totalDays) {
-                item.status = "Completed ✅";
-              }
-            }
-          }
-        });
-      }
-      if(updated) updateStorage();
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-      if(currentUser) {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const latest = usersDB.find(u => u.email === currentUser.email);
-        if(latest) { currentUser = latest; localStorage.setItem("currentUser", JSON.stringify(currentUser)); }
-        checkDailyProfits();
-        showPortal();
-      }
-
-      document.getElementById("link-show-login").onclick = (e) => {
-        e.preventDefault();
-        document.getElementById("reg-card").style.display = "none";
-        document.getElementById("login-card").style.display = "block";
-      };
-
-      document.getElementById("link-back-reg").onclick = (e) => {
-        e.preventDefault();
-        document.getElementById("login-card").style.display = "none";
-        document.getElementById("reg-card").style.display = "block";
-      };
-
-      // REGISTER
-      document.getElementById("btn-register").onclick = function() {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const name = document.getElementById("reg-name").value;
-        const phone = document.getElementById("reg-phone").value;
-        const email = document.getElementById("reg-email").value;
-        const pass = document.getElementById("reg-pass").value;
-
-        if(!name || !phone || !email || pass.length < 8) {
-          alert("Kripya sabhi details sahi bharein (Password min 8 digits)!");
-          return;
-        }
-
-        if(usersDB.find(u => u.email === email)) {
-          alert("Ye Email ID pehle se registered hai!");
-          return;
-        }
-
-        const uniqueId = Math.floor(100000000 + Math.random() * 900000000).toString();
-
-        const newUser = { uniqueId, name, phone, email, password: pass, balance: 54.92, history: [] };
-        usersDB.push(newUser);
-        currentUser = newUser;
-        updateStorage();
-        showPortal();
-      };
-
-      // LOGIN
-      document.getElementById("btn-login").onclick = function() {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const loginId = document.getElementById("login-email").value;
-        const pass = document.getElementById("login-pass").value;
-        const user = usersDB.find(u => (u.email === loginId || u.phone === loginId) && u.password === pass);
-
-        if(user) {
-          currentUser = user;
-          if(!currentUser.history) currentUser.history = [];
-          localStorage.setItem("currentUser", JSON.stringify(currentUser));
-          checkDailyProfits();
-          updateStorage();
-          showPortal();
-        } else {
-          alert("Galat Email/Phone ya Password!");
-        }
-      };
-    });
-
-    // DEPOSIT & WITHDRAW POPUPS
-    window.openDepositModal = function() {
-      let amt = prompt("Enter Deposit Amount (₹):");
-      if(amt && !isNaN(amt) && amt > 0) {
-        currentUser.balance += parseFloat(amt);
-        updateStorage();
-        alert("Deposit Successful! Balance updated.");
-        showPortal();
-      }
-    };
-
-    window.openWithdrawModal = function() {
-      let amt = prompt("Enter Withdrawal Amount (₹):");
-      if(amt && !isNaN(amt) && amt > 0) {
-        if(currentUser.balance >= parseFloat(amt)) {
-          currentUser.balance -= parseFloat(amt);
-          updateStorage();
-          alert("Withdrawal Request Submitted Successfully!");
-          showPortal();
-        } else {
-          alert("Insufficient Balance!");
-        }
-      }
-    };
-
-    // BUY PLAN FUNCTION
-    window.buyPlan = function(price, planName, dailyInc, totalDays, totalReturn) {
-      if(currentUser.balance < price) {
-        alert("Wallet balance kam hai! Pehle deposit karein.");
-        return;
-      }
-
-      currentUser.balance -= price;
-      if(!currentUser.history) currentUser.history = [];
-      const todayStr = new Date().toDateString();
-      
-      currentUser.history.push({
-        type: "Investment Plan",
-        details: `${planName}`,
-        dailyIncome: dailyInc,
-        totalDays: totalDays,
-        daysCompleted: 0,
-        startDate: todayStr,
-        lastCreditedDate: todayStr,
-        status: "Active Investment"
-      });
-
-      updateStorage();
-      alert("Plan successfully purchased!");
-      showPortal();
-    };
-
-    // TAB SWITCHING (5 Tabs)
-    window.switchTab = function(tabName, element) {
-      document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active-sec'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-      if(tabName === 'home') document.getElementById('tab-home').classList.add('active-sec');
-      if(tabName === 'products') document.getElementById('tab-products').classList.add('active-sec');
-      if(tabName === 'work') document.getElementById('tab-work').classList.add('active-sec');
-      if(tabName === 'team') document.getElementById('tab-team').classList.add('active-sec');
-      if(tabName === 'assets') document.getElementById('tab-assets').classList.add('active-sec');
-
-      element.classList.add('active');
-    };
-
-    window.logoutUser = function() {
-      localStorage.removeItem("currentUser");
-      location.reload();
-    };
-
-    function showPortal() {
-      document.getElementById("auth-section").style.display = "none";
-      document.getElementById("portal-container").style.display = "block";
-      document.getElementById("user-balance").innerText = currentUser.balance.toFixed(2);
-
-      // Profile & Assets Info
-      document.getElementById("profile-phone").innerText = currentUser.phone || "919598064805";
-      document.getElementById("profile-uid").innerText = currentUser.uniqueId || "886232567";
-
-      // Products list update
-      let pList = document.getElementById("my-products-list");
-      pList.innerHTML = "";
-      if(!currentUser.history || currentUser.history.length === 0) {
-        pList.innerHTML = "Koi active product nahi hai.";
-      } else {
-        currentUser.history.forEach(h => {
-          pList.innerHTML += `<div style="background:#fff8e1; padding:8px; border-radius:6px; margin-bottom:5px;"><b>${h.details}</b> - Status: ${h.status}</div>`;
-        });
-      }
-    }
-
-    function updateStorage() {
-      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-      const idx = usersDB.findIndex(u => u.email === currentUser.email);
-      if(idx !== -1) usersDB[idx] = currentUser;
-      else usersDB.push(currentUser);
-      localStorage.setItem("usersDB", JSON.stringify(usersDB));
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      showPortal();
-    }
-  </script>
-</body>
-</html>
+        currentUser.history.forEach(item
