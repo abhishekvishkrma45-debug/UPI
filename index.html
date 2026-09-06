@@ -48,7 +48,6 @@
     .btn-info { background: #17a2b8; }
     .btn-small { padding: 5px 10px; font-size: 12px; width: auto; margin: 2px; }
 
-    /* Plan Card Design */
     .plan-card { background: #fff8e1; border: 2px dashed var(--primary-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
     .plan-title { font-size: 16px; font-weight: bold; color: #d35400; margin-bottom: 8px; }
     .plan-details { font-size: 13px; color: #444; line-height: 1.6; }
@@ -70,7 +69,7 @@
     </div>
   </header>
 
-  <!-- AUTH SECTION (REGISTER / LOGIN / ADMIN) -->
+  <!-- AUTH SECTION -->
   <div id="auth-section" class="main-container">
     <div class="card" id="reg-card">
       <h3>📝 User Registration</h3>
@@ -108,109 +107,123 @@
     </div>
   </div>
 
-  <!-- MAIN USER PORTAL (INVESTMENT PLANS & DEPOSIT) -->
+  <!-- MAIN USER PORTAL -->
   <div id="portal-section" class="main-container">
     
-    <!-- 1. DEPOSIT / ADD FUNDS VIA UPI -->
+    <!-- 1. DEPOSIT MONEY VIA UPI -->
     <div class="card">
       <h3>💳 Add Money via UPI</h3>
       <div style="background:#f8f9fa; padding:10px; border-radius:6px; margin-bottom:10px; font-size:13px;">
         <b>Company UPI ID:</b> <code style="color:red; font-weight:bold;">yourname@upi</code><br>
-        (QR code scan karke payment karein aur screenshot upload karein)
+        (Payment karke screenshot upload karein)
       </div>
       <label>Deposit Amount (₹)</label>
-      <input type="number" id="deposit-amount" placeholder="Enter Amount (e.g. 380)">
-      <label>Upload Payment Screenshot / UTR Proof</label>
+      <input type="number" id="deposit-amount" placeholder="Enter Amount">
+      <label>Payment Screenshot / UTR Proof</label>
       <input type="file" id="deposit-screenshot" accept="image/*">
       <button class="btn btn-info" id="btn-deposit">Submit Deposit Request</button>
     </div>
 
-    <!-- 2. INVESTMENT PLANS (5 PLANS WITH DETAILED CALCULATION) -->
+    <!-- 2. WITHDRAWAL REQUEST (BANK DETAILS) -->
+    <div class="card">
+      <h3>🏦 Bank Withdrawal Request</h3>
+      <label>Bank Name</label>
+      <input type="text" id="wd-bank" placeholder="e.g. SBI / PNB / Paytm Payments Bank">
+      <label>Account Number</label>
+      <input type="text" id="wd-acc" placeholder="Enter Bank Account Number">
+      <label>IFSC Code</label>
+      <input type="text" id="wd-ifsc" placeholder="Enter IFSC Code">
+      <label>Withdrawal Amount (₹)</label>
+      <input type="number" id="wd-amount" placeholder="Enter Amount to Withdraw">
+      <button class="btn btn-success" id="btn-withdraw">Withdraw to Bank</button>
+    </div>
+
+    <!-- 3. INVESTMENT PLANS -->
     <div class="card" style="grid-column: span 1 / -1;">
-      <h3>💎 Active Investment Plans (High Return)</h3>
+      <h3>💎 Active Investment Plans (Auto Daily Income)</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
         
-        <!-- Plan 1 -->
+        <!-- Plan 1 (₹380) -->
         <div class="plan-card">
           <div class="plan-title">📦 Starter Plan (₹380)</div>
           <div class="plan-details">
             • Investment: <b>₹380</b><br>
             • Duration: <b>2 Days</b><br>
-            • Daily Income: <b>₹76 / Day</b><br>
+            • Daily Income: <b>₹76 / Day (Auto Credit)</b><br>
           </div>
           <div class="calc-box">
             Calculation: (₹76 × 2 Days = ₹152 Profit) + ₹380 Principal = <b>Total Return: ₹532</b>
           </div>
-          <button class="btn btn-primary" onclick="buyPlan(380, 'Starter Plan (₹380)', 532, 2)">Invest ₹380 Now</button>
+          <button class="btn btn-primary" onclick="buyPlan(380, 'Starter Plan (₹380)', 76, 2, 532)">Invest ₹380 Now</button>
         </div>
 
-        <!-- Plan 2 -->
+        <!-- Plan 2 (₹750) -->
         <div class="plan-card">
           <div class="plan-title">🚀 Bronze Plan (₹750)</div>
           <div class="plan-details">
             • Investment: <b>₹750</b><br>
             • Duration: <b>3 Days</b><br>
-            • Daily Income: <b>₹180 / Day</b><br>
+            • Daily Income: <b>₹180 / Day (Auto Credit)</b><br>
           </div>
           <div class="calc-box">
             Calculation: (₹180 × 3 Days = ₹540 Profit) + ₹750 Principal = <b>Total Return: ₹1,290</b>
           </div>
-          <button class="btn btn-primary" onclick="buyPlan(750, 'Bronze Plan (₹750)', 1290, 3)">Invest ₹750 Now</button>
+          <button class="btn btn-primary" onclick="buyPlan(750, 'Bronze Plan (₹750)', 180, 3, 1290)">Invest ₹750 Now</button>
         </div>
 
-        <!-- Plan 3 -->
+        <!-- Plan 3 (₹1,500) -->
         <div class="plan-card">
           <div class="plan-title">⭐ Silver Plan (₹1,500)</div>
           <div class="plan-details">
             • Investment: <b>₹1,500</b><br>
             • Duration: <b>5 Days</b><br>
-            • Daily Income: <b>₹350 / Day</b><br>
+            • Daily Income: <b>₹350 / Day (Auto Credit)</b><br>
           </div>
           <div class="calc-box">
             Calculation: (₹350 × 5 Days = ₹1,750 Profit) + ₹1,500 Principal = <b>Total Return: ₹3,250</b>
           </div>
-          <button class="btn btn-primary" onclick="buyPlan(1500, 'Silver Plan (₹1,500)', 3250, 5)">Invest ₹1,500 Now</button>
+          <button class="btn btn-primary" onclick="buyPlan(1500, 'Silver Plan (₹1,500)', 350, 5, 3250)">Invest ₹1,500 Now</button>
         </div>
 
-        <!-- Plan 4 -->
+        <!-- Plan 4 (₹3,000) -->
         <div class="plan-card">
           <div class="plan-title">🔥 Gold Plan (₹3,000)</div>
           <div class="plan-details">
             • Investment: <b>₹3,000</b><br>
             • Duration: <b>7 Days</b><br>
-            • Daily Income: <b>₹600 / Day</b><br>
+            • Daily Income: <b>₹600 / Day (Auto Credit)</b><br>
           </div>
           <div class="calc-box">
             Calculation: (₹600 × 7 Days = ₹4,200 Profit) + ₹3,000 Principal = <b>Total Return: ₹7,200</b>
           </div>
-          <button class="btn btn-primary" onclick="buyPlan(3000, 'Gold Plan (₹3,000)', 7200, 7)">Invest ₹3,000 Now</button>
+          <button class="btn btn-primary" onclick="buyPlan(3000, 'Gold Plan (₹3,000)', 600, 7, 7200)">Invest ₹3,000 Now</button>
         </div>
 
-        <!-- Plan 5 -->
+        <!-- Plan 5 (₹5,000) -->
         <div class="plan-card">
           <div class="plan-title">👑 Platinum VIP Plan (₹5,000)</div>
           <div class="plan-details">
             • Investment: <b>₹5,000</b><br>
             • Duration: <b>10 Days</b><br>
-            • Daily Income: <b>₹1,100 / Day</b><br>
+            • Daily Income: <b>₹1,100 / Day (Auto Credit)</b><br>
           </div>
           <div class="calc-box">
             Calculation: (₹1,100 × 10 Days = ₹11,000 Profit) + ₹5,000 Principal = <b>Total Return: ₹16,000</b>
           </div>
-          <button class="btn btn-primary" onclick="buyPlan(5000, 'Platinum VIP Plan (₹5,000)', 16000, 10)">Invest ₹5,000 Now</button>
+          <button class="btn btn-primary" onclick="buyPlan(5000, 'Platinum VIP Plan (₹5,000)', 1100, 10, 16000)">Invest ₹5,000 Now</button>
         </div>
 
       </div>
     </div>
 
-    <!-- 3. USER TRANSACTION & INVESTMENT HISTORY -->
+    <!-- 4. USER HISTORY -->
     <div class="card" style="grid-column: span 1 / -1;">
-      <h3>📜 Aapka Investment & Deposit History</h3>
+      <h3>📜 Aapka Transaction & Plan History</h3>
       <table class="admin-table">
         <thead>
           <tr>
             <th>Type</th>
-            <th>Details / Plan Name</th>
+            <th>Details / Bank Info</th>
             <th>Amount</th>
             <th>Proof</th>
             <th>Status</th>
@@ -225,7 +238,7 @@
   <!-- ADMIN DASHBOARD -->
   <div id="admin-dashboard" class="main-container">
     
-    <!-- REGISTERED USERS LIST (ID, PASSWORD, IP) -->
+    <!-- REGISTERED USERS LIST -->
     <div class="card" style="grid-column: span 1 / -1;">
       <h3>👥 All Registered Users List (ID, Password, IP)</h3>
       <table class="admin-table">
@@ -244,15 +257,15 @@
       </table>
     </div>
 
-    <!-- ADMIN REQUESTS APPROVAL (DEPOSITS & PLANS) -->
+    <!-- ADMIN REQUESTS APPROVAL (DEPOSITS & WITHDRAWALS) -->
     <div class="card" style="grid-column: span 1 / -1;">
-      <h3>👑 Admin Panel: Deposit & Investment Approvals</h3>
+      <h3>👑 Admin Panel: Deposit & Bank Withdrawal Approvals</h3>
       <table class="admin-table">
         <thead>
           <tr>
             <th>User Email</th>
             <th>Request Type</th>
-            <th>Amount</th>
+            <th>Amount & Details</th>
             <th>Screenshot</th>
             <th>Status</th>
             <th>Action</th>
@@ -290,11 +303,55 @@
       });
     }
 
+    // AUTO DAILY PROFIT CHECKER (CRON LOGIC)
+    function checkDailyProfits() {
+      if(!currentUser) return;
+      let updated = false;
+      const todayStr = new Date().toDateString();
+
+      if(currentUser.history) {
+        currentUser.history.forEach(item => {
+          if(item.type === "Investment Plan" && item.status === "Active Investment") {
+            if(!item.lastCreditedDate) item.lastCreditedDate = item.startDate;
+
+            let lastDate = new Date(item.lastCreditedDate);
+            let currentDate = new Date(todayStr);
+
+            // Agar din badal gaya hai aur days bache hain
+            if(currentDate > lastDate && item.daysCompleted < item.totalDays) {
+              currentUser.balance += item.dailyIncome;
+              item.daysCompleted += 1;
+              item.lastCreditedDate = todayStr;
+              updated = true;
+
+              currentUser.history.push({
+                id: "PR_".concat(Date.now()),
+                type: "Daily Profit Auto-Credit",
+                details: item.details,
+                amount: `+₹${item.dailyIncome}`,
+                screenshot: "",
+                status: `Credited (Day ${item.daysCompleted}/${item.totalDays})`
+              });
+
+              if(item.daysCompleted >= item.totalDays) {
+                item.status = "Completed ✅";
+              }
+            }
+          }
+        });
+      }
+
+      if(updated) {
+        updateStorage();
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
       if(currentUser) {
         usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
         const latest = usersDB.find(u => u.email === currentUser.email);
         if(latest) { currentUser = latest; localStorage.setItem("currentUser", JSON.stringify(currentUser)); }
+        checkDailyProfits();
         showPortal();
       }
 
@@ -352,6 +409,7 @@
           currentUser = user;
           if(!currentUser.history) currentUser.history = [];
           localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          checkDailyProfits();
           updateStorage();
           showPortal();
         } else {
@@ -395,12 +453,52 @@
           });
           updateStorage();
           sendTelegramAlert(`💰 *NEW DEPOSIT REQUEST*\nUser: ${currentUser.name}\nAmount: ₹${amt}`);
-          alert("Deposit request submit ho gayi hai! Admin approval ke baad balance add hoga.");
+          alert("Deposit request submit ho gayi hai!");
           document.getElementById("deposit-amount").value = "";
           document.getElementById("deposit-screenshot").value = "";
           showPortal();
         };
         reader.readAsDataURL(file);
+      };
+
+      // WITHDRAWAL REQUEST SUBMIT
+      document.getElementById("btn-withdraw").onclick = function() {
+        const bank = document.getElementById("wd-bank").value;
+        const acc = document.getElementById("wd-acc").value;
+        const ifsc = document.getElementById("wd-ifsc").value;
+        const amt = parseFloat(document.getElementById("wd-amount").value);
+
+        if(!bank || !acc || !ifsc || !amt || amt <= 0) {
+          alert("Kripya sabhi Bank details aur amount sahi bharein!");
+          return;
+        }
+
+        if(currentUser.balance < amt) {
+          alert("Wallet balance kam hai!");
+          return;
+        }
+
+        currentUser.balance -= amt;
+        if(!currentUser.history) currentUser.history = [];
+        const reqId = "WD_" + Date.now();
+
+        currentUser.history.push({
+          id: reqId,
+          type: "Bank Withdrawal",
+          details: `Bank: ${bank} | A/C: ${acc} | IFSC: ${ifsc}`,
+          amount: `₹${amt}`,
+          screenshot: "",
+          status: "Pending Admin Withdrawal"
+        });
+
+        updateStorage();
+        sendTelegramAlert(`🏦 *NEW WITHDRAWAL REQUEST*\nUser: ${currentUser.name}\nAmount: ₹${amt}\nBank: ${bank}`);
+        alert("Withdrawal request submit ho gayi hai!");
+        document.getElementById("wd-bank").value = "";
+        document.getElementById("wd-acc").value = "";
+        document.getElementById("wd-ifsc").value = "";
+        document.getElementById("wd-amount").value = "";
+        showPortal();
       };
 
       document.getElementById("btn-logout").onclick = document.getElementById("btn-admin-logout").onclick = function() {
@@ -410,7 +508,7 @@
     });
 
     // BUY PLAN FUNCTION
-    window.buyPlan = function(price, planName, totalReturn, days) {
+    window.buyPlan = function(price, planName, dailyInc, totalDays, totalReturn) {
       if(currentUser.balance < price) {
         alert("Wallet balance kam hai! Pehle UPI se amount deposit karein.");
         return;
@@ -419,19 +517,25 @@
       currentUser.balance -= price;
       if(!currentUser.history) currentUser.history = [];
       const reqId = "PLN_" + Date.now();
+      const todayStr = new Date().toDateString();
       
       currentUser.history.push({
         id: reqId,
         type: "Investment Plan",
-        details: `${planName} (${days} Days)`,
-        amount: `₹${price} (Return: ₹${totalReturn})`,
+        details: `${planName} (Daily: ₹${dailyInc})`,
+        amount: `₹${price} (Total: ₹${totalReturn})`,
         screenshot: "",
-        status: "Active Investment"
+        status: "Active Investment",
+        dailyIncome: dailyInc,
+        totalDays: totalDays,
+        daysCompleted: 0,
+        startDate: todayStr,
+        lastCreditedDate: todayStr
       });
 
       updateStorage();
       sendTelegramAlert(`📈 *NEW INVESTMENT*\nUser: ${currentUser.name}\nPlan: ${planName}\nInvested: ₹${price}`);
-      alert("Aapne successfully plan purchase kar liya hai!");
+      alert("Aapne successfully plan purchase kar liya hai! Roz auto profit aapke wallet me add hoga.");
       showPortal();
     };
 
@@ -447,11 +551,17 @@
       const item = usersDB[uIdx].history[hIdx];
 
       if(actionType === 'approve') {
-        item.status = "Approved ✅ (Balance Credited)";
-        const amtNum = parseFloat(item.amount.replace("₹", ""));
-        usersDB[uIdx].balance += amtNum;
+        item.status = "Approved ✅";
+        if(item.type === "UPI Deposit") {
+          const amtNum = parseFloat(item.amount.replace("₹", ""));
+          usersDB[uIdx].balance += amtNum;
+        }
       } else if(actionType === 'reject') {
         item.status = "Rejected ❌";
+        if(item.type === "Bank Withdrawal") {
+          const amtNum = parseFloat(item.amount.replace("₹", ""));
+          usersDB[uIdx].balance += amtNum; // Refund on rejection
+        }
       }
 
       localStorage.setItem("usersDB", JSON.stringify(usersDB));
@@ -493,14 +603,14 @@
       usersDB.forEach(u => {
         if(u.history) {
           u.history.forEach(h => {
-            if(h.type === "UPI Deposit") {
+            if(h.type === "UPI Deposit" || h.type === "Bank Withdrawal") {
               hasReq = true;
-              const ss = h.screenshot ? `<a href="${h.screenshot}" target="_blank"><img src="${h.screenshot}" style="width:35px;height:35px;object-fit:cover;"></a>` : 'No Proof';
+              const ss = h.screenshot ? `<a href="${h.screenshot}" target="_blank"><img src="${h.screenshot}" style="width:35px;height:35px;object-fit:cover;"></a>` : 'Bank Transfer';
               rBody.innerHTML += `
                 <tr>
                   <td><b>${u.name}</b><br><small>${u.email}</small></td>
                   <td>${h.type}</td>
-                  <td>${h.amount}</td>
+                  <td><b>${h.amount}</b><br><small>${h.details}</small></td>
                   <td>${ss}</td>
                   <td><b>${h.status}</b></td>
                   <td>
@@ -514,7 +624,7 @@
       });
 
       if(!hasReq) {
-        rBody.innerHTML = `<tr><td colspan="6">Koi deposit request pending nahi hai.</td></tr>`;
+        rBody.innerHTML = `<tr><td colspan="6">Koi pending request nahi hai.</td></tr>`;
       }
     }
 
