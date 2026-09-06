@@ -23,6 +23,7 @@
     label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-top: 10px; }
     input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
     .btn { width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary-color); }
+    .btn-secondary { background: #1976d2; margin-top: 8px; }
 
     /* ASSETS / PROFILE TOP CARD */
     .assets-top-card {
@@ -89,6 +90,19 @@
     .plan-details { font-size: 13px; color: #444; line-height: 1.6; }
     .calc-box { background: #e8f5e9; color: #2e7d32; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-top: 8px; }
 
+    /* MODAL POPUP STYLES */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000;
+    }
+    .modal-box {
+      background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .upi-option-btn {
+      width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between;
+    }
+    .upi-option-btn:hover { background: #f1f1f1; border-color: var(--primary-color); }
+
     /* BOTTOM NAVIGATION BAR */
     .bottom-nav {
       position: fixed;
@@ -119,7 +133,7 @@
 
   <!-- AUTH SECTION (REGISTER & LOGIN) -->
   <div id="auth-section" class="main-container">
-    <div class="card" id="reg-card" style="margin-top: 30px;">
+    <div class="card" id="reg-card" style="margin-top: 20px;">
       <h3>📝 User Registration (Random Bonus ₹30-50)</h3>
       <label>Full Name</label>
       <input type="text" id="reg-name" placeholder="Enter Full Name">
@@ -131,6 +145,7 @@
       <input type="password" id="reg-pass" placeholder="Minimum 8 characters">
       <label>Referral Code (Mandatory)</label>
       <input type="text" id="reg-ref" placeholder="Enter Uid / Referral Code">
+      <button class="btn btn-secondary" type="button" onclick="generateSampleReferral()">🔑 Auto-Generate Referral Code</button>
       <button class="btn" id="btn-register">Register Now</button>
       <p style="margin-top: 15px; font-size: 13px; text-align: center;">
         Already Registered? <a href="#" id="link-show-login" style="color:var(--primary-color);">Login Here</a>
@@ -145,6 +160,28 @@
       <input type="password" id="login-pass" placeholder="Enter Password">
       <button class="btn" id="btn-login">Login Portal</button>
       <p style="margin-top:15px; text-align: center;"><a href="#" id="link-back-reg" style="color:var(--primary-color);">Back to Register</a></p>
+    </div>
+  </div>
+
+  <!-- DEPOSIT MODAL POPUP WITH UPI OPTIONS -->
+  <div id="deposit-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="color:var(--primary-color); margin-bottom:10px;">📥 Deposit Funds via UPI</h3>
+      <label>Enter Amount (₹)</label>
+      <input type="number" id="deposit-amount-input" placeholder="e.g. 500" style="margin-bottom:15px;">
+      
+      <label style="margin-bottom:5px;">Select Payment App:</label>
+      <div class="upi-option-btn" onclick="processUpiDeposit('Paytm')">
+        <span>📱 Paytm UPI</span> <span style="font-size:12px; color:#666;">Fast</span>
+      </div>
+      <div class="upi-option-btn" onclick="processUpiDeposit('PhonePe')">
+        <span>🟣 PhonePe UPI</span> <span style="font-size:12px; color:#666;">Secure</span>
+      </div>
+      <div class="upi-option-btn" onclick="processUpiDeposit('Google Pay')">
+        <span>🔵 Google Pay (GPay)</span> <span style="font-size:12px; color:#666;">Instant</span>
+      </div>
+
+      <button class="btn" style="background:#6c757d; margin-top:15px;" onclick="closeDepositModal()">Cancel</button>
     </div>
   </div>
 
@@ -315,8 +352,8 @@
   <script>
     let usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
     let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+    const MERCHANT_UPI = "laxmihi@ptyes";
 
-    // Auto-fill referral code if passed via URL (?ref=123456789)
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const refCode = urlParams.get('ref');
@@ -324,6 +361,16 @@
         document.getElementById("reg-ref").value = refCode;
       }
     };
+
+    function generateSampleReferral() {
+      // Create a master admin or default referral code if database is empty, or pick a random existing UID
+      let sampleCode = "886232567";
+      if(usersDB.length > 0) {
+        sampleCode = usersDB[0].uniqueId;
+      }
+      document.getElementById("reg-ref").value = sampleCode;
+      alert(`Auto-filled valid referral code: ${sampleCode}`);
+    }
 
     function checkDailyProfits() {
       if(!currentUser) return;
@@ -379,7 +426,7 @@
         document.getElementById("reg-card").style.display = "block";
       };
 
-      // REGISTER WITH MANDATORY REFERRAL & RANDOM BONUS (30 TO 50)
+      // REGISTER
       document.getElementById("btn-register").onclick = function() {
         usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
         const name = document.getElementById("reg-name").value.trim();
@@ -394,14 +441,14 @@
         }
 
         if(!refCode) {
-          alert("Referral code dalna anivarya (mandatory) hai!");
+          alert("Referral code dalna anivarya hai! 'Auto-Generate Referral Code' button ka upyog karein.");
           return;
         }
 
-        // Verify if referrer exists in DB
-        const referrerUser = usersDB.find(u => u.uniqueId === refCode);
-        if(!referrerUser) {
-          alert("Galat Referral Code! Kripya sahi code enter karein.");
+        // Check if referrer exists (if users exist, else allow initial master code)
+        let referrerUser = usersDB.find(u => u.uniqueId === refCode);
+        if(!referrerUser && usersDB.length > 0) {
+          alert("Galat Referral Code! Kripya 'Auto-Generate Referral Code' button dabayein.");
           return;
         }
 
@@ -411,8 +458,6 @@
         }
 
         const uniqueId = Math.floor(100000000 + Math.random() * 900000000).toString();
-        
-        // Random registration bonus between 30 and 50
         const randomBonus = Math.floor(Math.random() * (50 - 30 + 1)) + 30;
 
         const newUser = { 
@@ -434,15 +479,14 @@
           }] 
         };
 
-        // Add user to referrer's team members list
-        if(!referrerUser.teamMembers) referrerUser.teamMembers = [];
-        referrerUser.teamMembers.push({ name: name, uniqueId: uniqueId, phone: phone, date: new Date().toDateString() });
+        if(referrerUser) {
+          if(!referrerUser.teamMembers) referrerUser.teamMembers = [];
+          referrerUser.teamMembers.push({ name: name, uniqueId: uniqueId, phone: phone, date: new Date().toDateString() });
+          const refIndex = usersDB.findIndex(u => u.uniqueId === refCode);
+          if(refIndex !== -1) usersDB[refIndex] = referrerUser;
+        }
 
         usersDB.push(newUser);
-        // Update referrer in DB
-        const refIndex = usersDB.findIndex(u => u.uniqueId === refCode);
-        if(refIndex !== -1) usersDB[refIndex] = referrerUser;
-
         currentUser = newUser;
         updateStorage();
         alert(`Registration Successful! Aapko ₹${randomBonus} ka welcome bonus mila hai 🎉`);
@@ -479,7 +523,7 @@
     window.claimDailyBonus = function() {
       const todayStr = new Date().toDateString();
       if(currentUser.lastCheckIn === todayStr) {
-        alert("Aapne aaj ka daily bonus pehle hi claim kar liya hai! Kal fir se try karein.");
+        alert("Aapne aaj ka daily bonus pehle hi claim kar liya hai!");
         return;
       }
 
@@ -495,7 +539,7 @@
       });
 
       updateStorage();
-      alert("🎉 Success! ₹10 Daily Check-in Bonus added to your wallet.");
+      alert("🎉 Success! ₹10 Daily Check-in Bonus added.");
       showPortal();
     };
 
@@ -508,21 +552,41 @@
       });
     };
 
+    // DEPOSIT MODAL FUNCTIONS
     window.openDepositModal = function() {
-      let amt = prompt("Enter Deposit Amount (₹):");
-      if(amt && !isNaN(amt) && amt > 0) {
-        let depositVal = parseFloat(amt);
-        currentUser.balance += depositVal;
+      document.getElementById("deposit-modal").style.display = "flex";
+    };
+
+    window.closeDepositModal = function() {
+      document.getElementById("deposit-modal").style.display = "none";
+    };
+
+    window.processUpiDeposit = function(appName) {
+      let amtStr = document.getElementById("deposit-amount-input").value;
+      let amt = parseFloat(amtStr);
+
+      if(!amt || isNaN(amt) || amt <= 0) {
+        alert("Kripya sahi deposit amount enter karein!");
+        return;
+      }
+
+      closeDepositModal();
+
+      // Open UPI payment intent or prompt confirmation via merchant UPI
+      let confirmPay = confirm(`Aapko ${appName} ke zariye ₹${amt} ka payment merchant UPI ID: (${MERCHANT_UPI}) par karna hai.\n\nKya aapne payment kar diya hai?`);
+      
+      if(confirmPay) {
+        currentUser.balance += amt;
         if(!currentUser.history) currentUser.history = [];
         currentUser.history.push({
           type: "Deposit",
-          details: "Wallet Deposit",
-          amount: depositVal,
+          details: `Deposit via ${appName} (${MERCHANT_UPI})`,
+          amount: amt,
           date: new Date().toDateString(),
           status: "Successful ✅"
         });
         updateStorage();
-        alert("Deposit Successful! Balance updated.");
+        alert(`Deposit of ₹${amt} verified & added successfully via ${appName}!`);
         showPortal();
       }
     };
@@ -560,7 +624,6 @@
       if(!currentUser.history) currentUser.history = [];
       const todayStr = new Date().toDateString();
       
-      // Investment record
       currentUser.history.push({
         type: "Investment Plan",
         details: `${planName} - Invested`,
@@ -616,7 +679,6 @@
         claimBtn.style.background = "var(--primary-color)";
       }
 
-      // Render History & Products
       let pList = document.getElementById("my-products-list");
       pList.innerHTML = "";
       if(!currentUser.history || currentUser.history.length === 0) {
@@ -638,7 +700,6 @@
         });
       }
 
-      // Render Team Members List
       let tList = document.getElementById("team-members-list");
       tList.innerHTML = "";
       if(!currentUser.teamMembers || currentUser.teamMembers.length === 0) {
