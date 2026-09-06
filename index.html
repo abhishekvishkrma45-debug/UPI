@@ -184,8 +184,8 @@
       <div id="tab-work" class="section-view">
         <div class="card">
           <h3>🎯 Daily Task & Check-in</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:15px;">Daily check-in karke extra reward paayein.</p>
-          <button class="btn" onclick="alert('Check-in successful! Bonus added.')">Claim Daily Bonus (₹10)</button>
+          <p style="font-size:13px; color:#555; margin-bottom:15px;">Roz check-in karein aur ₹10 ka daily reward paayein.</p>
+          <button class="btn" id="btn-claim-bonus" onclick="claimDailyBonus()">Claim Daily Bonus (₹10)</button>
         </div>
       </div>
 
@@ -287,4 +287,204 @@
       const todayStr = new Date().toDateString();
 
       if(currentUser.history) {
-        currentUser.history.forEach(item
+        currentUser.history.forEach(item => {
+          if(item.type === "Investment Plan" && item.status === "Active Investment") {
+            if(!item.lastCreditedDate) item.lastCreditedDate = item.startDate;
+            let lastDate = new Date(item.lastCreditedDate);
+            let currentDate = new Date(todayStr);
+
+            if(currentDate > lastDate && item.daysCompleted < item.totalDays) {
+              currentUser.balance += item.dailyIncome;
+              item.daysCompleted += 1;
+              item.lastCreditedDate = todayStr;
+              updated = true;
+
+              if(item.daysCompleted >= item.totalDays) {
+                item.status = "Completed ✅";
+              }
+            }
+          }
+        });
+      }
+      if(updated) updateStorage();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      if(currentUser) {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const latest = usersDB.find(u => u.email === currentUser.email);
+        if(latest) { currentUser = latest; localStorage.setItem("currentUser", JSON.stringify(currentUser)); }
+        checkDailyProfits();
+        showPortal();
+      }
+
+      document.getElementById("link-show-login").onclick = (e) => {
+        e.preventDefault();
+        document.getElementById("reg-card").style.display = "none";
+        document.getElementById("login-card").style.display = "block";
+      };
+
+      document.getElementById("link-back-reg").onclick = (e) => {
+        e.preventDefault();
+        document.getElementById("login-card").style.display = "none";
+        document.getElementById("reg-card").style.display = "block";
+      };
+
+      // REGISTER
+      document.getElementById("btn-register").onclick = function() {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const name = document.getElementById("reg-name").value;
+        const phone = document.getElementById("reg-phone").value;
+        const email = document.getElementById("reg-email").value;
+        const pass = document.getElementById("reg-pass").value;
+
+        if(!name || !phone || !email || pass.length < 8) {
+          alert("Kripya sabhi details sahi bharein (Password min 8 digits)!");
+          return;
+        }
+
+        if(usersDB.find(u => u.email === email)) {
+          alert("Ye Email ID pehle se registered hai!");
+          return;
+        }
+
+        const uniqueId = Math.floor(100000000 + Math.random() * 900000000).toString();
+
+        const newUser = { uniqueId, name, phone, email, password: pass, balance: 54.92, lastCheckIn: "", history: [] };
+        usersDB.push(newUser);
+        currentUser = newUser;
+        updateStorage();
+        showPortal();
+      };
+
+      // LOGIN
+      document.getElementById("btn-login").onclick = function() {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const loginId = document.getElementById("login-email").value;
+        const pass = document.getElementById("login-pass").value;
+        const user = usersDB.find(u => (u.email === loginId || u.phone === loginId) && u.password === pass);
+
+        if(user) {
+          currentUser = user;
+          if(!currentUser.history) currentUser.history = [];
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          checkDailyProfits();
+          updateStorage();
+          showPortal();
+        } else {
+          alert("Galat Email/Phone ya Password!");
+        }
+      };
+    });
+
+    // WORKING DAILY BONUS CHECK-IN FUNCTION
+    window.claimDailyBonus = function() {
+      const todayStr = new Date().toDateString();
+      if(currentUser.lastCheckIn === todayStr) {
+        alert("Aapne aaj ka daily bonus pehle hi claim kar liya hai! Kal fir se try karein.");
+        return;
+      }
+
+      currentUser.balance += 10;
+      currentUser.lastCheckIn = todayStr;
+      updateStorage();
+      alert("🎉 Success! ₹10 Daily Check-in Bonus added to your wallet.");
+      showPortal();
+    };
+
+    window.copyReferralLink = function() {
+      const linkText = document.getElementById("referral-link-text").innerText;
+      navigator.clipboard.writeText(linkText).then(() => {
+        alert("Referral Link Copied Successfully! 🎉");
+      }).catch(err => {
+        alert("Copy nahi ho paya, manually copy karein.");
+      });
+    };
+
+    window.openDepositModal = function() {
+      let amt = prompt("Enter Deposit Amount (₹):");
+      if(amt && !isNaN(amt) && amt > 0) {
+        currentUser.balance += parseFloat(amt);
+        updateStorage();
+        alert("Deposit Successful! Balance updated.");
+        showPortal();
+      }
+    };
+
+    window.openWithdrawModal = function() {
+      let amt = prompt("Enter Withdrawal Amount (₹):");
+      if(amt && !isNaN(amt) && amt > 0) {
+        if(currentUser.balance >= parseFloat(amt)) {
+          currentUser.balance -= parseFloat(amt);
+          updateStorage();
+          alert("Withdrawal Request Submitted Successfully!");
+          showPortal();
+        } else {
+          alert("Insufficient Balance!");
+        }
+      }
+    };
+
+    window.buyPlan = function(price, planName, dailyInc, totalDays, totalReturn) {
+      if(currentUser.balance < price) {
+        alert("Wallet balance kam hai! Pehle deposit karein.");
+        return;
+      }
+
+      currentUser.balance -= price;
+      if(!currentUser.history) currentUser.history = [];
+      const todayStr = new Date().toDateString();
+      
+      currentUser.history.push({
+        type: "Investment Plan",
+        details: `${planName}`,
+        dailyIncome: dailyInc,
+        totalDays: totalDays,
+        daysCompleted: 0,
+        startDate: todayStr,
+        lastCreditedDate: todayStr,
+        status: "Active Investment"
+      });
+
+      updateStorage();
+      alert("Plan successfully purchased!");
+      showPortal();
+    };
+
+    window.switchTab = function(tabName, element) {
+      document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active-sec'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      if(tabName === 'home') document.getElementById('tab-home').classList.add('active-sec');
+      if(tabName === 'products') document.getElementById('tab-products').classList.add('active-sec');
+      if(tabName === 'work') document.getElementById('tab-work').classList.add('active-sec');
+      if(tabName === 'team') document.getElementById('tab-team').classList.add('active-sec');
+      if(tabName === 'assets') document.getElementById('tab-assets').classList.add('active-sec');
+
+      element.classList.add('active');
+    };
+
+    window.logoutUser = function() {
+      localStorage.removeItem("currentUser");
+      location.reload();
+    };
+
+    function showPortal() {
+      document.getElementById("auth-section").style.display = "none";
+      document.getElementById("portal-container").style.display = "block";
+      document.getElementById("user-balance").innerText = currentUser.balance.toFixed(2);
+
+      document.getElementById("profile-phone").innerText = currentUser.phone || "919598064805";
+      document.getElementById("profile-uid").innerText = currentUser.uniqueId || "886232567";
+
+      document.getElementById("referral-link-text").innerText = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uniqueId}`;
+
+      // Check-in button status update for today
+      const todayStr = new Date().toDateString();
+      const claimBtn = document.getElementById("btn-claim-bonus");
+      if(currentUser.lastCheckIn === todayStr) {
+        claimBtn.innerText = "Claimed Today ✅";
+        claimBtn.style.background = "#6c757d";
+      } else {
+        claimBtn.innerText = "Claim Daily Bonus (₹10)";
+        claimBtn.style.background = "var(--primary-color)";
