@@ -3,58 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Cards - Full Portal with Admin</title>
+    <title>SMM Panel - Modern Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; font-family: Arial, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         /* Auth Screen */
-        .auth-container { max-width: 450px; margin: 60px auto; }
+        .auth-container { max-width: 420px; margin: 80px auto; }
+        .card-dark { background-color: #1e293b; border: 1px solid #334155; color: #fff; }
         
-        /* Portal Layout */
-        #portalView { display: none; }
+        /* Dashboard Layout */
+        #mainApp { display: none; }
         .sidebar {
-            width: 260px; height: 100vh; position: fixed; top: 0; left: 0;
-            background-color: #ffffff; border-right: 1px solid #de2e2e;
-            overflow-y: auto; z-index: 1000;
+            width: 250px; height: 100vh; position: fixed; top: 0; left: 0;
+            background-color: #1e293b; border-right: 1px solid #334155; overflow-y: auto; z-index: 1000;
         }
-        .sidebar .brand { padding: 15px 20px; font-size: 1.2rem; font-weight: bold; border-bottom: 1px solid #eee; color: #333; }
-        .sidebar .nav-link { color: #444; padding: 10px 20px; font-size: 0.88rem; border-bottom: 1px solid #f8f9fa; cursor: pointer; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #e9f0fe; color: #0d6efd; font-weight: bold; }
-        .sidebar .nav-link i { margin-right: 10px; width: 20px; text-align: center; }
-        
-        .badge-new { background-color: #dc3545; color: white; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; float: right; }
+        .sidebar .brand { padding: 20px; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; }
+        .sidebar .nav-link { color: #94a3b8; padding: 12px 20px; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid #1e293b; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #0f172a; color: #38bdf8; font-weight: bold; }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; }
 
-        .main-content { margin-left: 260px; padding: 20px; }
-        
+        .main-content { margin-left: 250px; padding: 25px; }
         .top-header {
-            background-color: #ffffff; padding: 12px 20px; border-radius: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;
+            background-color: #1e293b; padding: 15px 20px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; margin-bottom: 25px;
         }
 
-        .referral-banner {
-            background-color: #0088ff; color: white; padding: 12px 20px;
-            border-radius: 8px; text-align: center; font-weight: bold;
-            margin-bottom: 20px; cursor: pointer;
-        }
-
-        .balance-card {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white;
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155;
             border-radius: 12px; padding: 20px; margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
         }
 
         .page-section { display: none; }
         .page-section.active { display: block; }
-
-        .table-container {
-            background: #ffffff; border-radius: 12px; padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        
+        .form-control, .form-select { background-color: #0f172a; border: 1px solid #334155; color: #fff; }
+        .form-control:focus, .form-select:focus { background-color: #0f172a; color: #fff; border-color: #38bdf8; box-shadow: none; }
 
         @media (max-width: 768px) {
             .sidebar { position: relative; width: 100%; height: auto; }
@@ -64,11 +51,11 @@
 </head>
 <body>
 
-    <!-- ================= LOGIN / REGISTER / ADMIN LOGIN SCREEN ================= -->
+    <!-- ================= AUTHENTICATION SCREEN ================= -->
     <div id="authView" class="container auth-container">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white text-center">
-                <h4 class="mb-0">PRINT CARDS PORTAL</h4>
+        <div class="card card-dark shadow-lg">
+            <div class="card-header text-center border-secondary py-3">
+                <h4 class="mb-0 text-info"><i class="fa-solid fa-rocket me-2"></i>SMM PANEL</h4>
             </div>
             <div class="card-body p-4">
                 <ul class="nav nav-pills nav-justified mb-3" id="authTabs">
@@ -76,226 +63,187 @@
                         <button class="nav-link active" onclick="showAuthTab('userLogin')">User Login</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" onclick="showAuthTab('userRegister')">Register</button>
-                    </li>
-                    <li class="nav-item">
                         <button class="nav-link text-danger fw-bold" onclick="showAuthTab('adminLogin')">Admin Login</button>
                     </li>
                 </ul>
 
-                <!-- User Login Form -->
-                <form id="userLoginForm" onsubmit="event.preventDefault(); loginUser('user');">
+                <!-- User Login -->
+                <form id="userLoginForm" onsubmit="event.preventDefault(); login('user');">
                     <div class="mb-3">
-                        <label class="form-label">Mobile / Username</label>
-                        <input type="text" class="form-control" required placeholder="Enter mobile number">
+                        <label class="form-label">Username / Email</label>
+                        <input type="text" class="form-control" placeholder="user" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-control" required placeholder="Enter password">
+                        <input type="password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login as User</button>
+                    <button type="submit" class="btn btn-info w-100 fw-bold">Login to Panel</button>
                 </form>
 
-                <!-- Registration Form -->
-                <form id="userRegisterForm" class="d-none" onsubmit="event.preventDefault(); alert('Registration Successful! Please Login.'); showAuthTab('userLogin');">
-                    <div class="mb-2">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" required placeholder="Enter full name">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Mobile Number</label>
-                        <input type="text" class="form-control" required placeholder="Enter mobile number">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" class="form-control" required placeholder="Enter email">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Set Password</label>
-                        <input type="password" class="form-control" required placeholder="Set password">
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Create Account</button>
-                </form>
-
-                <!-- Admin Login Form -->
-                <form id="adminLoginForm" class="d-none" onsubmit="event.preventDefault(); loginUser('admin');">
-                    <div class="alert alert-warning py-1 small">Admin Login: username = <strong>admin</strong>, password = <strong>admin123</strong></div>
+                <!-- Admin Login -->
+                <form id="adminLoginForm" class="d-none" onsubmit="event.preventDefault(); login('admin');">
+                    <div class="alert alert-danger py-1 small mb-3">Admin: user = <strong>admin</strong>, pass = <strong>admin123</strong></div>
                     <div class="mb-3">
                         <label class="form-label">Admin Username</label>
-                        <input type="text" id="adminUser" class="form-control" required placeholder="admin">
+                        <input type="text" id="adminUser" class="form-control" placeholder="admin" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Admin Password</label>
-                        <input type="password" id="adminPass" class="form-control" required placeholder="admin123">
+                        <input type="password" id="adminPass" class="form-control" placeholder="admin123" required>
                     </div>
-                    <button type="submit" class="btn btn-danger w-100">Admin Login</button>
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">Login as Admin</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- ================= MAIN PORTAL SYSTEM ================= -->
-    <div id="portalView">
-        <!-- Sidebar Menu -->
+    <!-- ================= MAIN PANEL SYSTEM ================= -->
+    <div id="mainApp">
+        <!-- Sidebar -->
         <div class="sidebar">
-            <div class="brand" id="userBrand">
-                <i class="fa-solid fa-user-circle me-2"></i> RAJU
+            <div class="brand" id="panelBrand">
+                <i class="fa-solid fa-bolt me-2"></i>SMM PANEL
             </div>
-            <div class="p-2">
-                <input type="text" id="menuSearch" class="form-control form-control-sm" placeholder="Search menu..." onkeyup="filterMenu()">
-            </div>
-            <nav class="nav flex-column" id="sidebarMenu">
-                <a class="nav-link active" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a>
-                <a class="nav-link" onclick="switchPage('recharge', this)"><i class="fa-solid fa-wallet"></i> Add Balance (UPI Manual)</a>
-                <a class="nav-link" onclick="switchPage('mobile_details', this)"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Info Details <span class="badge-new">₹50</span></a>
-                <a class="nav-link" onclick="switchPage('ration_pdf', this)"><i class="fa-solid fa-file-pdf"></i> Ration PDF Service <span class="badge-new">NEW</span></a>
-                <a class="nav-link" onclick="switchPage('transactions', this)"><i class="fa-solid fa-clock-rotate-left"></i> Transaction List</a>
-                
-                <!-- Admin Only Option -->
-                <a class="nav-link text-danger d-none" id="adminMenuOpt" onclick="switchPage('admin_panel', this)"><i class="fa-solid fa-user-shield"></i> Admin Panel</a>
-                
-                <a class="nav-link text-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <nav class="nav flex-column">
+                <!-- User Menu -->
+                <div id="userMenu">
+                    <a class="nav-link active" onclick="switchPage('new_order', this)"><i class="fa-solid fa-cart-plus"></i> New Order</a>
+                    <a class="nav-link" onclick="switchPage('order_history', this)"><i class="fa-solid fa-list-check"></i> Order History</a>
+                    <a class="nav-link" onclick="switchPage('add_funds', this)"><i class="fa-solid fa-wallet"></i> Add Funds (UPI)</a>
+                    <a class="nav-link" onclick="switchPage('services_list', this)"><i class="fa-solid fa-tags"></i> Services & Rates</a>
+                </div>
+
+                <!-- Admin Menu -->
+                <div id="adminMenu" class="d-none">
+                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_orders', this)"><i class="fa-solid fa-tasks"></i> Manage Orders</a>
+                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_funds', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Approve Payments</a>
+                    <a class="nav-link text-danger fw-bold" onclick="switchPage('admin_services', this)"><i class="fa-solid fa-plus-circle"></i> Add/Edit Service</a>
+                </div>
+
+                <a class="nav-link text-warning mt-4" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
             </nav>
         </div>
 
-        <!-- Main Content Body -->
+        <!-- Content Area -->
         <div class="main-content">
-            <!-- Header -->
+            <!-- Header Bar -->
             <div class="top-header">
                 <div>
-                    <i class="fa-solid fa-bars me-2"></i>
-                    <small class="text-muted">Sunday, 6 September 2026</small>
+                    <span class="badge bg-secondary me-2" id="roleBadge">User Mode</span>
+                    <span class="text-muted" id="userGreeting">Welcome back!</span>
                 </div>
                 <div>
-                    <button class="btn btn-danger btn-sm me-1" onclick="alert('Support Desk Active')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
-                    <button class="btn btn-success btn-sm" onclick="alert('Wallet Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Balance</button>
+                    <span class="badge bg-success fs-6"><i class="fa-solid fa-wallet me-1"></i> Balance: ₹<span id="userBalance">150.00</span></span>
                 </div>
             </div>
 
-            <!-- 1. DASHBOARD -->
-            <div id="dashboard" class="page-section active">
-                <div class="referral-banner" onclick="alert('Link Copied!')">
-                    YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
-                </div>
-
-                <div class="balance-card">
-                    <div>
-                        <h6 class="mb-1">CURRENT BALANCE</h6>
-                        <h2 class="mb-0">₹ 24.00</h2>
-                    </div>
-                    <div>
-                        <i class="fa-solid fa-wallet fa-3x opacity-75"></i>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <h5 class="mb-3 text-center text-primary">Weekly Top Performers</h5>
-                    <p class="text-center text-muted small">Live System Data</p>
-                </div>
-            </div>
-
-            <!-- 2. MANUAL ADD BALANCE SECTION -->
-            <div id="recharge" class="page-section">
-                <div class="table-container">
-                    <h4><i class="fa-solid fa-qrcode me-2"></i>Manual Wallet Recharge (UPI QR)</h4>
-                    <p class="text-muted">Niche diye gaye UPI ID par payment karein aur UTR/Transaction Number submit karein.</p>
-                    <hr>
-                    
-                    <div class="row">
-                        <div class="col-md-6 text-center border-end">
-                            <h6 class="text-primary fw-bold mb-3">Scan QR or Pay to UPI ID</h6>
-                            
-                            <!-- Dynamic QR Code generated using Google Chart API -->
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=laxmihi@ptyes&pn=PrintCards" alt="UPI QR Code" class="img-fluid border p-2 rounded mb-3">
-                            
-                            <div class="bg-light p-2 rounded border">
-                                <small class="text-muted d-block">UPI ID:</small>
-                                <strong class="text-danger fs-5">laxmihi@ptyes</strong>
-                            </div>
+            <!-- 1. USER: NEW ORDER -->
+            <div id="new_order" class="page-section active">
+                <div class="stat-card">
+                    <h4 class="text-info mb-3"><i class="fa-solid fa-cart-plus me-2"></i>Place New Order</h4>
+                    <form onsubmit="event.preventDefault(); placeOrder();">
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="orderCategory" onchange="updateServices()">
+                                <option value="instagram">Instagram Services</option>
+                                <option value="youtube">YouTube Services</option>
+                            </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Service</label>
+                            <select class="form-select" id="orderService" onchange="calculatePrice()">
+                                <option value="1" data-rate="40">Instagram Followers [Non-Drop] - ₹40 / 1000</option>
+                                <option value="2" data-rate="15">Instagram Likes [Instant] - ₹15 / 1000</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Target Link / URL</label>
+                            <input type="url" class="form-control" placeholder="https://instagram.com/username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" id="orderQty" class="form-control" placeholder="1000" min="100" value="1000" oninput="calculatePrice()" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Charge (₹)</label>
+                            <input type="text" id="orderCharge" class="form-control text-warning fw-bold" value="₹ 40.00" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-info fw-bold w-100">Submit Order</button>
+                    </form>
+                </div>
+            </div>
 
-                        <div class="col-md-6 mt-3 mt-md-0">
-                            <h6 class="fw-bold mb-3">Payment Detail Submit Karein</h6>
-                            <form onsubmit="event.preventDefault(); submitManualPayment();">
+            <!-- 2. USER: ORDER HISTORY -->
+            <div id="order_history" class="page-section">
+                <div class="stat-card">
+                    <h4 class="mb-3"><i class="fa-solid fa-list-check me-2"></i>Your Orders</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped text-center align-middle">
+                            <thead>
+                                <tr><th>ID</th><th>Service</th><th>Link</th><th>Qty</th><th>Charge</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="userOrderBody">
+                                <tr><td>#1001</td><td>IG Followers</td><td>instagram.com/demo</td><td>1000</td><td>₹40.00</td><td><span class="badge bg-success">Completed</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. USER: ADD FUNDS (MANUAL UPI) -->
+            <div id="add_funds" class="page-section">
+                <div class="stat-card">
+                    <h4 class="text-success mb-3"><i class="fa-solid fa-qrcode me-2"></i>Add Funds via UPI QR</h4>
+                    <div class="row align-items-center">
+                        <div class="col-md-5 text-center border-end border-secondary">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=laxmihi@ptyes&pn=SMM%20Panel" alt="UPI QR" class="img-fluid border rounded p-2 bg-white mb-2">
+                            <p class="mb-0 text-muted">UPI ID: <strong class="text-info">laxmihi@ptyes</strong></p>
+                        </div>
+                        <div class="col-md-7 mt-3 mt-md-0">
+                            <form onsubmit="event.preventDefault(); submitFundRequest();">
                                 <div class="mb-3">
-                                    <label class="form-label">Recharge Amount (₹)</label>
-                                    <input type="number" id="payAmount" class="form-control" required placeholder="e.g. 100">
+                                    <label class="form-label">Amount Paid (₹)</label>
+                                    <input type="number" id="fundAmount" class="form-control" placeholder="100" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">UTR / Transaction Ref No. (12 Digits)</label>
-                                    <input type="text" id="payUtr" class="form-control" maxlength="12" minlength="12" required placeholder="Enter 12 Digit UTR No.">
+                                    <label class="form-label">Transaction UTR / Ref No. (12 Digits)</label>
+                                    <input type="text" id="fundUtr" class="form-control" maxlength="12" minlength="12" placeholder="12 Digit UTR Number" required>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100">Submit Payment Request</button>
+                                <button type="submit" class="btn btn-success w-100 fw-bold">Submit Payment Ref</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. MOBILE INFO DETAILS -->
-            <div id="mobile_details" class="page-section">
-                <div class="table-container">
-                    <h4><i class="fa-solid fa-mobile-screen-button me-2"></i>Mobile Number Full Details</h4>
-                    <div class="alert alert-info fw-bold mt-2">Rate: ₹ 50.00 per search</div>
-                    <div class="mb-3">
-                        <label class="form-label">Enter 10-Digit Mobile Number:</label>
-                        <input type="text" class="form-control" placeholder="9876543210" maxlength="10">
-                    </div>
-                    <button class="btn btn-primary" onclick="alert('₹50 will be deducted for processing.')">Search Info</button>
-                </div>
-            </div>
-
-            <!-- 4. RATION PDF SERVICE -->
-            <div id="ration_pdf" class="page-section">
-                <div class="table-container">
-                    <h4><i class="fa-solid fa-file-pdf me-2"></i>Ration PDF Service</h4>
-                    <div class="mb-3 mt-3">
-                        <label class="form-label">Ration Card Number:</label>
-                        <input type="text" class="form-control" placeholder="Enter Card No.">
-                    </div>
-                    <button class="btn btn-success" onclick="alert('Generating Ration PDF...')">Download PDF</button>
-                </div>
-            </div>
-
-            <!-- 5. TRANSACTIONS LIST -->
-            <div id="transactions" class="page-section">
-                <div class="table-container">
-                    <h4><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h4>
-                    <table class="table table-striped mt-3">
-                        <thead>
-                            <tr><th>Txn ID</th><th>UTR No</th><th>Amount</th><th>Status</th></tr>
-                        </thead>
-                        <tbody id="txnTableBody">
-                            <tr><td>TXN100293</td><td>123456789012</td><td>₹ 100.00</td><td><span class="badge bg-success">Success</span></td></tr>
+            <!-- 4. USER: SERVICES LIST -->
+            <div id="services_list" class="page-section">
+                <div class="stat-card">
+                    <h4 class="mb-3"><i class="fa-solid fa-tags me-2"></i>Services & Rates</h4>
+                    <table class="table table-dark table-hover">
+                        <thead><tr><th>ID</th><th>Service Name</th><th>Rate / 1000</th><th>Min / Max</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>Instagram Followers [Non-Drop]</td><td>₹ 40.00</td><td>100 / 100,000</td></tr>
+                            <tr><td>2</td><td>Instagram Likes [Instant]</td><td>₹ 15.00</td><td>100 / 50,000</td></tr>
+                            <tr><td>3</td><td>YouTube Subscribers</td><td>₹ 350.00</td><td>50 / 10,000</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 6. ADMIN PANEL (Only visible to Admin) -->
-            <div id="admin_panel" class="page-section">
-                <div class="table-container">
-                    <h4 class="text-danger"><i class="fa-solid fa-user-shield me-2"></i>Admin Management Control</h4>
-                    <p class="text-muted">Users dwaara bheji gayi pending UTR Payment Requests ko approve karein.</p>
-                    
-                    <h5 class="mt-4">Pending Manual Recharge Requests</h5>
-                    <table class="table table-bordered text-center">
-                        <thead class="table-dark">
+            <!-- 5. ADMIN: MANAGE ORDERS -->
+            <div id="admin_orders" class="page-section">
+                <div class="stat-card border-danger">
+                    <h4 class="text-danger mb-3"><i class="fa-solid fa-tasks me-2"></i>Admin: Manage Orders</h4>
+                    <table class="table table-dark text-center align-middle">
+                        <thead><tr><th>Order ID</th><th>User</th><th>Service</th><th>Link</th><th>Qty</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="adminOrdersBody">
                             <tr>
-                                <th>User</th>
-                                <th>Amount</th>
-                                <th>UTR Number</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminPendingBody">
-                            <tr>
-                                <td>Raju (User)</td>
-                                <td>₹ 200.00</td>
-                                <td>987654321099</td>
+                                <td>#1002</td><td>user1</td><td>IG Likes</td><td>instagram.com/p/123</td><td>2000</td>
+                                <td><span class="badge bg-warning text-dark">Pending</span></td>
                                 <td>
-                                    <button class="btn btn-sm btn-success" onclick="approveTxn(this)">Approve</button>
-                                    <button class="btn btn-sm btn-danger" onclick="rejectTxn(this)">Reject</button>
+                                    <button class="btn btn-sm btn-success" onclick="updateOrderStatus(this, 'Completed')">Complete</button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateOrderStatus(this, 'Canceled')">Cancel</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -303,126 +251,154 @@
                 </div>
             </div>
 
+            <!-- 6. ADMIN: APPROVE PAYMENTS -->
+            <div id="admin_funds" class="page-section">
+                <div class="stat-card border-danger">
+                    <h4 class="text-danger mb-3"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Admin: Pending Fund Requests</h4>
+                    <table class="table table-dark text-center align-middle">
+                        <thead><tr><th>User</th><th>Amount</th><th>UTR Number</th><th>Action</th></tr></thead>
+                        <tbody id="adminFundsBody">
+                            <!-- Populated dynamically when user submits payment -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 7. ADMIN: ADD SERVICE -->
+            <div id="admin_services" class="page-section">
+                <div class="stat-card border-danger">
+                    <h4 class="text-danger mb-3"><i class="fa-solid fa-plus-circle me-2"></i>Admin: Add New Service</h4>
+                    <form onsubmit="event.preventDefault(); alert('New Service Added Successfully!');">
+                        <div class="mb-3">
+                            <label class="form-label">Service Title</label>
+                            <input type="text" class="form-control" placeholder="e.g. YouTube Views" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rate per 1000 (₹)</label>
+                            <input type="number" class="form-control" placeholder="100" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger fw-bold">Save Service</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Switch Authentication Forms
+        let currentBalance = 150.00;
+
         function showAuthTab(tab) {
             document.getElementById('userLoginForm').classList.add('d-none');
-            document.getElementById('userRegisterForm').classList.add('d-none');
             document.getElementById('adminLoginForm').classList.add('d-none');
-
             const btns = document.querySelectorAll('#authTabs .nav-link');
             btns.forEach(b => b.classList.remove('active'));
 
-            if(tab === 'userLogin') {
+            if (tab === 'userLogin') {
                 document.getElementById('userLoginForm').classList.remove('d-none');
                 btns[0].classList.add('active');
-            } else if(tab === 'userRegister') {
-                document.getElementById('userRegisterForm').classList.remove('d-none');
-                btns[1].classList.add('active');
-            } else if(tab === 'adminLogin') {
+            } else {
                 document.getElementById('adminLoginForm').classList.remove('d-none');
-                btns[2].classList.add('active');
+                btns[1].classList.add('active');
             }
         }
 
-        // Login Handling
-        function loginUser(role) {
+        function login(role) {
             if (role === 'admin') {
                 const u = document.getElementById('adminUser').value;
                 const p = document.getElementById('adminPass').value;
-                if(u === 'admin' && p === 'admin123') {
-                    document.getElementById('adminMenuOpt').classList.remove('d-none');
-                    document.getElementById('userBrand').innerHTML = '<i class="fa-solid fa-user-shield text-danger me-2"></i> ADMIN PANEL';
-                    alert('Logged in as Admin!');
+                if (u === 'admin' && p === 'admin123') {
+                    document.getElementById('userMenu').classList.add('d-none');
+                    document.getElementById('adminMenu').classList.remove('d-none');
+                    document.getElementById('roleBadge').className = 'badge bg-danger me-2';
+                    document.getElementById('roleBadge').innerText = 'Admin Mode';
+                    document.getElementById('panelBrand').innerHTML = '<i class="fa-solid fa-shield-halved me-2"></i>ADMIN PANEL';
+                    switchPage('admin_orders', document.querySelectorAll('#adminMenu .nav-link')[0]);
                 } else {
                     alert('Invalid Admin Credentials!');
                     return;
                 }
             } else {
-                document.getElementById('adminMenuOpt').classList.add('d-none');
-                document.getElementById('userBrand').innerHTML = '<i class="fa-solid fa-user-circle me-2"></i> RAJU';
+                document.getElementById('adminMenu').classList.add('d-none');
+                document.getElementById('userMenu').classList.remove('d-none');
+                document.getElementById('roleBadge').className = 'badge bg-info me-2';
+                document.getElementById('roleBadge').innerText = 'User Mode';
+                switchPage('new_order', document.querySelectorAll('#userMenu .nav-link')[0]);
             }
 
             document.getElementById('authView').style.display = 'none';
-            document.getElementById('portalView').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'block';
         }
 
-        // Logout
         function logout() {
-            document.getElementById('portalView').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'none';
             document.getElementById('authView').style.display = 'block';
         }
 
-        // Page Switching
         function switchPage(pageId, element) {
             const pages = document.querySelectorAll('.page-section');
-            pages.forEach(page => page.classList.remove('active'));
-
-            const selectedPage = document.getElementById(pageId);
-            if (selectedPage) {
-                selectedPage.classList.add('active');
-            }
+            pages.forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
 
             if (element) {
                 const links = document.querySelectorAll('.sidebar .nav-link');
-                links.forEach(link => link.classList.remove('active'));
+                links.forEach(l => l.classList.remove('active'));
                 element.classList.add('active');
             }
         }
 
-        // Manual Payment Submission (Adds to Admin Table)
-        function submitManualPayment() {
-            const amt = document.getElementById('payAmount').value;
-            const utr = document.getElementById('payUtr').value;
+        function calculatePrice() {
+            const select = document.getElementById('orderService');
+            const rate = parseFloat(select.options[select.selectedIndex].getAttribute('data-rate'));
+            const qty = parseInt(document.getElementById('orderQty').value) || 0;
+            const total = (rate / 1000) * qty;
+            document.getElementById('orderCharge').value = `₹ ${total.toFixed(2)}`;
+        }
 
-            // Add row to Admin Pending Table
-            const adminBody = document.getElementById('adminPendingBody');
-            const newRow = `
+        function placeOrder() {
+            const chargeStr = document.getElementById('orderCharge').value.replace('₹ ', '');
+            const charge = parseFloat(chargeStr);
+            if (currentBalance >= charge) {
+                currentBalance -= charge;
+                document.getElementById('userBalance').innerText = currentBalance.toFixed(2);
+                alert('Order Placed Successfully!');
+            } else {
+                alert('Insufficient Balance! Please add funds.');
+            }
+        }
+
+        function submitFundRequest() {
+            const amt = document.getElementById('fundAmount').value;
+            const utr = document.getElementById('fundUtr').value;
+            
+            const adminBody = document.getElementById('adminFundsBody');
+            adminBody.innerHTML += `
                 <tr>
-                    <td>Raju</td>
+                    <td>User</td>
                     <td>₹ ${amt}</td>
                     <td>${utr}</td>
                     <td>
-                        <button class="btn btn-sm btn-success" onclick="approveTxn(this)">Approve</button>
-                        <button class="btn btn-sm btn-danger" onclick="rejectTxn(this)">Reject</button>
+                        <button class="btn btn-sm btn-success" onclick="approveFund(this, ${amt})">Approve</button>
+                        <button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">Reject</button>
                     </td>
                 </tr>
             `;
-            adminBody.innerHTML += newRow;
-
-            // Add Pending status to User Transaction Table
-            const txnBody = document.getElementById('txnTableBody');
-            txnBody.innerHTML += `<tr><td>TXN${Math.floor(Math.random()*100000)}</td><td>${utr}</td><td>₹ ${amt}</td><td><span class="badge bg-warning text-dark">Pending Admin Approval</span></td></tr>`;
-
-            alert("Payment request submitted! Admin approval is pending.");
-            document.getElementById('payAmount').value = '';
-            document.getElementById('payUtr').value = '';
+            alert('Fund request submitted to Admin!');
+            document.getElementById('fundAmount').value = '';
+            document.getElementById('fundUtr').value = '';
         }
 
-        // Admin Approval Actions
-        function approveTxn(btn) {
+        function approveFund(btn, amt) {
+            currentBalance += parseFloat(amt);
+            document.getElementById('userBalance').innerText = currentBalance.toFixed(2);
             btn.closest('tr').remove();
-            alert('Payment Approved & Balance Updated!');
+            alert('Fund Approved and Balance Added!');
         }
 
-        function rejectTxn(btn) {
-            btn.closest('tr').remove();
-            alert('Payment Request Rejected!');
-        }
-
-        // Sidebar Search
-        function filterMenu() {
-            const input = document.getElementById('menuSearch').value.toLowerCase();
-            const links = document.querySelectorAll('#sidebarMenu .nav-link');
-            links.forEach(link => {
-                const text = link.innerText.toLowerCase();
-                link.style.display = text.includes(input) ? "block" : "none";
-            });
+        function updateOrderStatus(btn, status) {
+            const tr = btn.closest('tr');
+            tr.children[5].innerHTML = `<span class="badge bg-${status === 'Completed' ? 'success' : 'danger'}">${status}</span>`;
         }
     </script>
 </body>
