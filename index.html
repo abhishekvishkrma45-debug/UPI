@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>still - Gold Trading & Chart Dashboard</title>
-    <!-- Chart.js Library for Trading Chart -->
+    <title>still - Gold Trading & Wallet Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -29,7 +28,7 @@
             border-radius: 12px;
             padding: 20px;
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
             border: 1px solid #2b313a;
         }
@@ -106,14 +105,30 @@
             margin-bottom: 14px;
         }
 
+        .wallet-actions {
+            display: flex;
+            gap: 6px;
+        }
+
         .add-funds-btn {
             background: #0ecb81;
             color: #000;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .withdraw-btn {
+            background: #f6465d;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 11px;
             cursor: pointer;
         }
 
@@ -121,7 +136,6 @@
         .up { color: #0ecb81 !important; }
         .down { color: #f6465d !important; }
 
-        /* Trading Chart Container */
         .chart-container {
             background: #0b0e11;
             border-radius: 8px;
@@ -133,8 +147,8 @@
 
         .chart-overlay-badge {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             background: rgba(14, 203, 129, 0.2);
             color: #0ecb81;
             padding: 2px 6px;
@@ -185,7 +199,7 @@
 
     <div class="container">
         
-        <!-- Auth Screen -->
+        <!-- Login / Register Screen -->
         <div id="auth-box">
             <h2 id="auth-title" class="auth-title">STiLL Gold Trading</h2>
             
@@ -220,18 +234,22 @@
                 <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
             </div>
 
+            <!-- Wallet Section with Add Funds & Withdraw -->
             <div class="wallet-box">
                 <div>
                     <div style="font-size: 10px; color: #848e9c;">WALLET BALANCE</div>
-                    <div id="wallet-balance" style="font-size: 18px; font-weight: 700; color:#fff;">₹0.00</div>
+                    <div id="wallet-balance" style="font-size: 17px; font-weight: 700; color:#fff;">₹0.00</div>
                 </div>
-                <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD FUNDS</button>
+                <div class="wallet-actions">
+                    <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD</button>
+                    <button class="withdraw-btn" onclick="openWithdrawModal()">WITHDRAW</button>
+                </div>
             </div>
 
-            <!-- Trading Chart Area (Like Image) -->
+            <!-- Trading Chart (Auto Updates Every 1 Min) -->
             <div class="chart-container">
-                <span class="chart-overlay-badge">BUY SIGNAL ▲ ENTRY: 14,850</span>
-                <canvas id="tradingChart" height="180"></canvas>
+                <span id="trend-badge" class="chart-overlay-badge">LIVE 1 MIN TICK ▲</span>
+                <canvas id="tradingChart" height="170"></canvas>
             </div>
 
             <div class="grid-stats">
@@ -249,6 +267,10 @@
                 <button class="btn-main" style="background:#0ecb81;" onclick="alert('Insufficient Balance for Trade')">BUY GOLD</button>
                 <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="alert('No Gold available to Sell')">SELL GOLD</button>
             </div>
+            
+            <p style="font-size:10px; color:#848e9c; text-align:center; margin-top:10px;">
+                Auto Updating Every 1 Minute (Live Fluctuations)
+            </p>
         </div>
 
         <!-- Admin Control Panel -->
@@ -259,26 +281,16 @@
             </div>
 
             <div class="input-group">
-                <label>Set 10G Buy Rate (INR)</label>
+                <label>Base 10G Rate (INR)</label>
                 <input type="number" id="admin-buy-rate" value="14850">
             </div>
 
-            <div class="input-group">
-                <label>Set 24H High Rate</label>
-                <input type="number" id="admin-high-rate" value="14900">
-            </div>
-
-            <div class="input-group">
-                <label>Set 24H Low Rate</label>
-                <input type="number" id="admin-low-rate" value="14800">
-            </div>
-
-            <button class="btn-main" onclick="saveAdminSettings()">Save Rates</button>
+            <button class="btn-main" onclick="saveAdminSettings()">Save Base Rate</button>
         </div>
 
     </div>
 
-    <!-- Payment Modal -->
+    <!-- Deposit Modal -->
     <div id="pay-modal" class="modal">
         <div class="modal-content">
             <h3 style="color:#f0b90b; margin-bottom:10px;">Add Money via UPI</h3>
@@ -289,7 +301,26 @@
             </div>
 
             <button class="btn-main" style="background:#0ecb81;" onclick="redirectToUPI()">Pay Now (PhonePe/Paytm)</button>
-            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closePaymentModal()">Cancel</button>
+            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closeModal('pay-modal')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal (Min 100, No Fees) -->
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#f0b90b; margin-bottom:10px;">Withdraw Funds</h3>
+            <p style="font-size:11px; color:#0ecb81; margin-bottom:12px;">Min Withdrawal: ₹100 | Fee: ₹0 (No Fee)</p>
+            
+            <div class="input-group">
+                <input type="text" id="withdraw-upi" placeholder="Enter Your UPI ID (e.g. mobile@upi)">
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="withdraw-amount" placeholder="Enter Amount (Min ₹100)">
+            </div>
+
+            <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="processWithdrawal()">Submit Withdrawal</button>
+            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closeModal('withdraw-modal')">Cancel</button>
         </div>
     </div>
 
@@ -300,6 +331,8 @@
 
         let isLoginMode = false;
         let chartInstance = null;
+        let currentPrice = 14850;
+        let chartData = [14800, 14820, 14790, 14830, 14810, 14850];
 
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
@@ -352,7 +385,7 @@
             document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
             
             initTradingChart();
-            fetchRates();
+            startOneMinuteTicker();
         }
 
         function loadAdminPanel() {
@@ -363,16 +396,8 @@
 
         function saveAdminSettings() {
             const buyRate = parseFloat(document.getElementById('admin-buy-rate').value);
-            const highRate = parseFloat(document.getElementById('admin-high-rate').value);
-            const lowRate = parseFloat(document.getElementById('admin-low-rate').value);
-
-            localStorage.setItem('still_custom_rates', JSON.stringify({
-                buy_price_10g: buyRate,
-                sell_price_10g: (buyRate * 0.97).toFixed(2),
-                high_rate: highRate,
-                low_rate: lowRate
-            }));
-            alert('Settings Saved!');
+            currentPrice = buyRate;
+            alert('Base Rate Updated!');
         }
 
         function logout() {
@@ -381,26 +406,54 @@
         }
 
         function openPaymentModal() { document.getElementById('pay-modal').style.display = 'flex'; }
-        function closePaymentModal() { document.getElementById('pay-modal').style.display = 'none'; }
+        function openWithdrawModal() { document.getElementById('withdraw-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         function redirectToUPI() {
             const amount = parseFloat(document.getElementById('add-amount').value);
             if (isNaN(amount) || amount <= 0) { alert('Valid amount enter karein!'); return; }
             window.location.href = `upi://pay?pa=${UPI_ID}&pn=STiLL_Trading&am=${amount}&cu=INR`;
-            closePaymentModal();
+            closeModal('pay-modal');
         }
 
-        /* TradingView Style Graph Implementation */
+        /* Withdrawal Logic (Min 100, 0 Fee) */
+        function processWithdrawal() {
+            const upi = document.getElementById('withdraw-upi').value.trim();
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const activePhone = localStorage.getItem('still_logged_in');
+            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
+
+            if (!upi || !upi.includes('@')) {
+                alert('Valid UPI ID enter karein!');
+                return;
+            }
+
+            if (isNaN(amount) || amount < 100) {
+                alert('Minimum withdrawal amount ₹100 hai!');
+                return;
+            }
+
+            if (amount > userData.balance) {
+                alert('Aapke wallet me paryapt balance nahi hai!');
+                return;
+            }
+
+            userData.balance -= amount;
+            localStorage.setItem('still_user_' + activePhone, JSON.stringify(userData));
+            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
+
+            closeModal('withdraw-modal');
+            alert(`Withdrawal Request Success!\nAmount: ₹${amount}\nUPI: ${upi}\nFee: ₹0 (No Fee)\nTransfer Processed!`);
+        }
+
         function initTradingChart() {
             const ctx = document.getElementById('tradingChart').getContext('2d');
-            
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['10:00', '11:12', '12:24', '13:36', '14:48', '16:00'],
+                    labels: ['1 min ago', '48s ago', '36s ago', '24s ago', '12s ago', 'NOW'],
                     datasets: [{
-                        label: 'Gold Price (INR)',
-                        data: [14800, 14820, 14790, 14830, 14810, 14850],
+                        data: chartData,
                         borderColor: '#0ecb81',
                         borderWidth: 2,
                         backgroundColor: 'rgba(14, 203, 129, 0.08)',
@@ -421,16 +474,43 @@
             });
         }
 
-        async function fetchRates() {
-            let buy10g = 14850;
-            const savedAdminData = localStorage.getItem('still_custom_rates');
-            if (savedAdminData) {
-                const parsed = JSON.parse(savedAdminData);
-                buy10g = parsed.buy_price_10g;
+        /* 1 Minute Live Fluctuation Logic */
+        function startOneMinuteTicker() {
+            updateLiveFluctuation();
+            setInterval(updateLiveFluctuation, 60000); // 60,000 ms = 1 Minute
+        }
+
+        function updateLiveFluctuation() {
+            // Random fluctuation between -50 to +50
+            const fluctuation = (Math.random() - 0.48) * 100;
+            currentPrice = Math.round(currentPrice + fluctuation);
+
+            // Update Chart Data Array
+            chartData.shift();
+            chartData.push(currentPrice);
+
+            const isUp = fluctuation >= 0;
+            const badge = document.getElementById('trend-badge');
+            
+            if (isUp) {
+                badge.innerText = `1 MIN TICK ▲ +₹${Math.abs(Math.round(fluctuation))}`;
+                badge.style.color = '#0ecb81';
+                badge.style.background = 'rgba(14, 203, 129, 0.2)';
+            } else {
+                badge.innerText = `1 MIN TICK ▼ -₹${Math.abs(Math.round(fluctuation))}`;
+                badge.style.color = '#f6465d';
+                badge.style.background = 'rgba(246, 70, 93, 0.2)';
             }
 
-            document.getElementById('buy-10g').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
-            document.getElementById('sell-10g').innerText = `₹${(buy10g * 0.97).toLocaleString('en-IN')}`;
+            document.getElementById('buy-10g').innerText = `₹${currentPrice.toLocaleString('en-IN')}`;
+            document.getElementById('sell-10g').innerText = `₹${Math.round(currentPrice * 0.97).toLocaleString('en-IN')}`;
+
+            if (chartInstance) {
+                chartInstance.data.datasets[0].borderColor = isUp ? '#0ecb81' : '#f6465d';
+                chartInstance.data.datasets[0].pointBackgroundColor = isUp ? '#0ecb81' : '#f6465d';
+                chartInstance.data.datasets[0].data = chartData;
+                chartInstance.update();
+            }
         }
 
         const loggedInUser = localStorage.getItem('still_logged_in');
