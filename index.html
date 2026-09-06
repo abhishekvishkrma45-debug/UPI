@@ -22,7 +22,7 @@
             padding: 15px;
         }
 
-        .trade-card {
+        .container {
             background: #181a20;
             border-radius: 12px;
             padding: 24px;
@@ -31,6 +31,67 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             border: 1px solid #2b313a;
         }
+
+        /* Auth Screen Styling */
+        .auth-title {
+            font-size: 22px;
+            color: #f0b90b;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #848e9c;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: #0b0e11;
+            border: 1px solid #2b313a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 12px;
+            background: #f0b90b;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            font-size: 12px;
+            color: #848e9c;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .auth-toggle span { color: #f0b90b; }
+
+        /* Dashboard Styling */
+        .dashboard { display: none; }
 
         .header {
             display: flex;
@@ -41,190 +102,289 @@
             margin-bottom: 16px;
         }
 
-        .symbol {
-            font-size: 20px;
-            font-weight: 700;
-            color: #f0b90b;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .user-info {
+            font-size: 13px;
+            color: #848e9c;
         }
 
-        .badge {
-            background: rgba(240, 185, 11, 0.15);
-            color: #f0b90b;
-            font-size: 11px;
-            padding: 2px 6px;
+        .wallet-box {
+            background: #0b0e11;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #2b313a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .add-funds-btn {
+            background: #0ecb81;
+            color: #000;
+            border: none;
+            padding: 6px 12px;
             border-radius: 4px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .symbol {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f0b90b;
         }
 
         .up { color: #0ecb81 !important; }
         .down { color: #f6465d !important; }
-        .bg-up { background: rgba(14, 203, 129, 0.12); }
-        .bg-down { background: rgba(246, 70, 93, 0.12); }
 
         .price-section {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .main-price {
-            font-size: 30px;
-            font-weight: 700;
-        }
-
-        .change-badge {
-            font-size: 13px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
+        .main-price { font-size: 26px; font-weight: 700; }
 
         .grid-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .stat-box {
             background: #0b0e11;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             border: 1px solid #2b313a;
         }
 
-        .stat-label {
-            font-size: 11px;
-            color: #848e9c;
-            margin-bottom: 4px;
+        .stat-label { font-size: 11px; color: #848e9c; }
+        .stat-value { font-size: 15px; font-weight: 700; }
+
+        /* Modal Popup for Payment */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
         }
 
-        .stat-value {
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .trading-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .trade-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .buy-btn {
-            background-color: #0ecb81;
-            color: #000;
-        }
-
-        .sell-btn {
-            background-color: #f6465d;
-            color: #fff;
-        }
-
-        .footer-time {
-            font-size: 11px;
-            color: #848e9c;
+        .modal-content {
+            background: #181a20;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid #2b313a;
             text-align: center;
-            margin-top: 16px;
         }
     </style>
 </head>
 <body>
 
-    <div class="trade-card">
-        <div class="header">
-            <div class="symbol">
-                GOLD / INR <span class="badge">STILL</span>
+    <div class="container">
+        
+        <!-- Registration & Login Screen -->
+        <div id="auth-box">
+            <h2 id="auth-title" class="auth-title">Create STiLL Account</h2>
+            
+            <div id="name-field" class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="user-name" placeholder="Apna Naame Likhein">
             </div>
-            <div style="font-size: 12px; color: #848e9c;">10 Grams</div>
-        </div>
 
-        <!-- 10 Gram Live Main Rate -->
-        <div class="price-section">
-            <div id="live-price" class="main-price up">₹14,850.00</div>
-            <div id="price-change" class="change-badge bg-up up">+0.00% ▲</div>
-        </div>
-
-        <!-- BUY / SELL Rates for 10G & 1G -->
-        <div class="grid-stats">
-            <div class="stat-box">
-                <div class="stat-label">BUY RATE (10G)</div>
-                <div id="buy-10g" class="stat-value up">₹14,850</div>
-                <div id="buy-1g" class="stat-label" style="margin-top:4px;">₹1,485 / 1g</div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="user-phone" maxlength="10" placeholder="10 Digits Mobile Number">
             </div>
-            <div class="stat-box">
-                <div class="stat-label">SELL RATE (10G)</div>
-                <div id="sell-10g" class="stat-value down">₹14,404.50</div>
-                <div id="sell-1g" class="stat-label" style="margin-top:4px;">₹1,440.45 / 1g</div>
+
+            <div class="input-group">
+                <label>4-Digit Security PIN (Only Numbers)</label>
+                <input type="password" id="user-pin" maxlength="4" pattern="\d{4}" placeholder="e.g. 1234">
+            </div>
+
+            <button class="btn-main" onclick="handleAuth()">Submit</button>
+            <div class="auth-toggle" onclick="toggleAuthMode()">
+                <span id="toggle-text">Pehle se Account hai? Login Karein</span>
             </div>
         </div>
 
-        <div class="trading-buttons">
-            <button class="trade-btn buy-btn">BUY</button>
-            <button class="trade-btn sell-btn">SELL</button>
+        <!-- Main Dashboard (After Login) -->
+        <div id="dashboard" class="dashboard">
+            <div class="header">
+                <div>
+                    <div class="symbol">GOLD / INR</div>
+                    <div class="user-info">User: <span id="display-username" style="color:#fff;">-</span></div>
+                </div>
+                <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
+            </div>
+
+            <!-- Wallet Balance Section -->
+            <div class="wallet-box">
+                <div>
+                    <div style="font-size: 11px; color: #848e9c;">WALLET BALANCE</div>
+                    <div id="wallet-balance" style="font-size: 20px; font-weight: 700; color:#fff;">₹0.00</div>
+                </div>
+                <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD FUNDS</button>
+            </div>
+
+            <!-- Live Rates -->
+            <div class="price-section">
+                <div id="live-price" class="main-price up">₹14,850.00</div>
+                <div style="font-size: 12px; color: #848e9c;">10 Grams</div>
+            </div>
+
+            <div class="grid-stats">
+                <div class="stat-box">
+                    <div class="stat-label">BUY RATE (10G)</div>
+                    <div id="buy-10g" class="stat-value up">₹14,850</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">SELL RATE (10G)</div>
+                    <div id="sell-10g" class="stat-value down">₹14,404.50</div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn-main" style="background:#0ecb81;" onclick="alert('Insufficient Balance for Trade')">BUY GOLD</button>
+                <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="alert('No Gold available to Sell')">SELL GOLD</button>
+            </div>
         </div>
 
-        <div class="footer-time">
-            Auto Updating (1.2h) | Last: <span id="updated-time">Loading...</span>
+    </div>
+
+    <!-- UPI Deposit Modal -->
+    <div id="pay-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#f0b90b; margin-bottom:10px;">Add Money via UPI</h3>
+            <p style="font-size:12px; color:#848e9c; margin-bottom:15px;">Apni UPI ID Enter Karein:</p>
+            
+            <div class="input-group">
+                <input type="text" id="upi-id-input" placeholder="example@upi">
+            </div>
+            
+            <div class="input-group">
+                <input type="number" id="add-amount" placeholder="Enter Amount (₹)">
+            </div>
+
+            <button class="btn-main" onclick="processUPIDeposit()">Pay Now</button>
+            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
 
     <script>
-        let previousPrice = 14850;
+        let isLoginMode = false;
 
-        async function updateTradeData() {
-            try {
-                const response = await fetch('./gold_data.json?cache_bypass=' + new Date().getTime());
-                const data = await response.json();
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? 'Login to STiLL' : 'Create STiLL Account';
+            document.getElementById('name-field').style.display = isLoginMode ? 'none' : 'block';
+            document.getElementById('toggle-text').innerText = isLoginMode ? 'Naya Account Banana hai? Register Karein' : 'Pehle se Account hai? Login Karein';
+        }
 
-                const buy10g = data.buy_price_10g || 14850;
-                const sell10g = data.sell_price_10g || (buy10g * 0.97);
-                const buy1g = data.buy_price_per_gram || (buy10g / 10);
-                const sell1g = data.sell_price_per_gram || (sell10g / 10);
+        function handleAuth() {
+            const phone = document.getElementById('user-phone').value.trim();
+            const pin = document.getElementById('user-pin').value.trim();
 
-                const livePriceEl = document.getElementById('live-price');
-                const priceChangeEl = document.getElementById('price-change');
+            if (phone.length !== 10 || isNaN(phone)) {
+                alert('Kripya 10 Digit ka valid Mobile Number dalein!');
+                return;
+            }
 
-                // Up / Down Logic
-                const diff = buy10g - previousPrice;
-                const percentChange = ((diff / previousPrice) * 100).toFixed(2);
+            if (pin.length !== 4 || isNaN(pin)) {
+                alert('Kripya 4 Digit ka Numeric PIN (Ginti) dalein!');
+                return;
+            }
 
-                if (diff >= 0) {
-                    livePriceEl.className = 'main-price up';
-                    priceChangeEl.className = 'change-badge bg-up up';
-                    priceChangeEl.innerText = `+${percentChange}% ▲`;
+            if (!isLoginMode) {
+                const name = document.getElementById('user-name').value.trim();
+                if (!name) { alert('Apna Naam dalein!'); return; }
+                
+                // Save User Data
+                localStorage.setItem('still_user_' + phone, JSON.stringify({ name, phone, pin, balance: 0 }));
+                alert('Account Succesfully Ban gaya hai! Ab Login Karein.');
+                toggleAuthMode();
+            } else {
+                const userData = JSON.parse(localStorage.getItem('still_user_' + phone));
+                if (userData && userData.pin === pin) {
+                    localStorage.setItem('still_logged_in', phone);
+                    loadDashboard();
                 } else {
-                    livePriceEl.className = 'main-price down';
-                    priceChangeEl.className = 'change-badge bg-down down';
-                    priceChangeEl.innerText = `${percentChange}% ▼`;
+                    alert('Galat Phone Number ya 4-Digit PIN!');
                 }
-
-                livePriceEl.innerText = `₹${buy10g.toLocaleString('en-IN')}`;
-                document.getElementById('buy-10g').innerText = `₹${buy10g.toLocaleString('en-IN')}`;
-                document.getElementById('sell-10g').innerText = `₹${sell10g.toLocaleString('en-IN')}`;
-                document.getElementById('buy-1g').innerText = `₹${buy1g} / 1g`;
-                document.getElementById('sell-1g').innerText = `₹${sell1g} / 1g`;
-                document.getElementById('updated-time').innerText = data.last_updated;
-
-                previousPrice = buy10g;
-
-            } catch (error) {
-                console.error("Data error:", error);
             }
         }
 
-        updateTradeData();
+        function loadDashboard() {
+            const activePhone = localStorage.getItem('still_logged_in');
+            if (!activePhone) return;
+
+            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('display-username').innerText = userData.name;
+            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
+            
+            fetchRates();
+        }
+
+        function logout() {
+            localStorage.removeItem('still_logged_in');
+            location.reload();
+        }
+
+        /* UPI Payment System */
+        function openPaymentModal() { document.getElementById('pay-modal').style.display = 'flex'; }
+        function closePaymentModal() { document.getElementById('pay-modal').style.display = 'none'; }
+
+        function processUPIDeposit() {
+            const upiId = document.getElementById('upi-id-input').value.trim();
+            const amount = parseFloat(document.getElementById('add-amount').value);
+
+            if (!upiId || !upiId.includes('@')) {
+                alert('Valid UPI ID (e.g. mobile@upi) Enter Karein!');
+                return;
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Sahi Amount enter karein!');
+                return;
+            }
+
+            // Direct UPI Payment Redirection Prompt
+            const upiString = `upi://pay?pa=${upiId}&pn=STiLL_Trading&am=${amount}&cu=INR`;
+            window.location.href = upiString;
+
+            // Updating Local Balance
+            const activePhone = localStorage.getItem('still_logged_in');
+            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
+            userData.balance += amount;
+            localStorage.setItem('still_user_' + activePhone, JSON.stringify(userData));
+
+            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
+            closePaymentModal();
+            alert(`₹${amount} add karne ke liye Request bhej di gayi hai.`);
+        }
+
+        async function fetchRates() {
+            try {
+                const response = await fetch('./gold_data.json?cache_bypass=' + new Date().getTime());
+                const data = await response.json();
+                document.getElementById('buy-10g').innerText = `₹${data.buy_price_10g || 14850}`;
+                document.getElementById('sell-10g').innerText = `₹${data.sell_price_10g || 14404.5}`;
+            } catch (e) { console.log('Data fetch error'); }
+        }
+
+        // Auto Load if session exists
+        if (localStorage.getItem('still_logged_in')) {
+            loadDashboard();
+        }
     </script>
 </body>
 </html>
