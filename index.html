@@ -1,521 +1,557 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>still - Gold Trading & Wallet Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abhishek Investment & Earning Portal</title>
+  <style>
+    :root {
+      --primary-color: #ff9800;
+      --secondary-color: #2c3e50;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+    }
 
-        body {
-            background-color: #0b0e11;
-            color: #eaecef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background: var(--bg-color); color: var(--text-color); padding: 15px; }
 
-        .container {
-            background: #181a20;
-            border-radius: 12px;
-            padding: 20px;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            border: 1px solid #2b313a;
-        }
+    header { 
+      background: var(--secondary-color); 
+      color: white; 
+      padding: 15px 20px; 
+      border-radius: 10px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 20px; 
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-        .auth-title {
-            font-size: 22px;
-            color: #f0b90b;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
+    .brand-title { font-size: 22px; font-weight: 900; color: var(--primary-color); letter-spacing: 1px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .user-badge { background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+    .wallet-box { background: var(--primary-color); color: #fff; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
 
-        .input-group {
-            margin-bottom: 12px;
-        }
+    .main-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: left; }
+    .card h3 { color: var(--secondary-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; font-size: 16px; }
 
-        .input-group label {
-            display: block;
-            font-size: 11px;
-            color: #848e9c;
-            margin-bottom: 4px;
-        }
+    label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-top: 10px; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
 
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            background: #0b0e11;
-            border: 1px solid #2b313a;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 14px;
-        }
+    .btn { width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+    .btn-primary { background: var(--primary-color); }
+    .btn-success { background: #28a745; }
+    .btn-danger { background: #dc3545; }
+    .btn-info { background: #17a2b8; }
+    .btn-small { padding: 5px 10px; font-size: 12px; width: auto; margin: 2px; }
 
-        .btn-main {
-            width: 100%;
-            padding: 12px;
-            background: #f0b90b;
-            border: none;
-            border-radius: 6px;
-            color: #000;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 8px;
-        }
+    /* Plan Card Design */
+    .plan-card { background: #fff8e1; border: 2px dashed var(--primary-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    .plan-title { font-size: 16px; font-weight: bold; color: #d35400; margin-bottom: 8px; }
+    .plan-details { font-size: 13px; color: #444; line-height: 1.6; }
+    .calc-box { background: #e8f5e9; color: #2e7d32; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-top: 8px; }
 
-        .auth-toggle {
-            text-align: center;
-            font-size: 12px;
-            color: #848e9c;
-            margin-top: 12px;
-            cursor: pointer;
-        }
-
-        .dashboard, .admin-panel { display: none; }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2b313a;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-
-        .wallet-box {
-            background: #0b0e11;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #2b313a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .wallet-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .add-funds-btn {
-            background: #0ecb81;
-            color: #000;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .withdraw-btn {
-            background: #f6465d;
-            color: #fff;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .symbol { font-size: 16px; font-weight: 700; color: #f0b90b; }
-        .up { color: #0ecb81 !important; }
-        .down { color: #f6465d !important; }
-
-        .chart-container {
-            background: #0b0e11;
-            border-radius: 8px;
-            padding: 10px;
-            border: 1px solid #2b313a;
-            margin-bottom: 14px;
-            position: relative;
-        }
-
-        .chart-overlay-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(14, 203, 129, 0.2);
-            color: #0ecb81;
-            padding: 2px 6px;
-            font-size: 10px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-
-        .grid-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .stat-box {
-            background: #0b0e11;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #2b313a;
-        }
-
-        .stat-label { font-size: 10px; color: #848e9c; }
-        .stat-value { font-size: 15px; font-weight: 700; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #181a20;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 350px;
-            border: 1px solid #2b313a;
-            text-align: center;
-        }
-    </style>
+    #portal-section, #admin-dashboard { display: none; }
+    .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; overflow-x: auto; display: block; }
+    .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; text-align: center; white-space: nowrap; }
+    .admin-table th { background: var(--secondary-color); color: white; }
+  </style>
 </head>
 <body>
 
-    <div class="container">
+  <header>
+    <div class="brand-title">🚀 Abhishek Earning Hub</div>
+    <div class="header-right">
+      <div class="user-badge" id="top-user-info">👤 Guest</div>
+      <div class="wallet-box">Wallet: ₹<span id="user-balance">0.00</span></div>
+    </div>
+  </header>
+
+  <!-- AUTH SECTION (REGISTER / LOGIN / ADMIN) -->
+  <div id="auth-section" class="main-container">
+    <div class="card" id="reg-card">
+      <h3>📝 User Registration</h3>
+      <label>Full Name</label>
+      <input type="text" id="reg-name" placeholder="Enter Full Name">
+      <label>Gmail Address (ID)</label>
+      <input type="email" id="reg-email" placeholder="example@gmail.com">
+      <label>Password (Min 8 Digits)</label>
+      <input type="password" id="reg-pass" placeholder="Minimum 8 characters">
+      <button class="btn btn-primary" id="btn-register">Register Now</button>
+      <p style="margin-top: 15px; font-size: 13px;">
+        Already Registered? <a href="#" id="link-show-login">Login Here</a> | 
+        <a href="#" id="link-show-admin" style="color:#dc3545;">Admin Login</a>
+      </p>
+    </div>
+
+    <div class="card" id="login-card" style="display:none;">
+      <h3>🔐 User Login</h3>
+      <label>Email ID</label>
+      <input type="email" id="login-email" placeholder="Enter Email ID">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Enter Password">
+      <button class="btn btn-success" id="btn-login">Login Portal</button>
+      <p style="margin-top:10px;"><a href="#" id="link-back-reg">Back to Register</a></p>
+    </div>
+
+    <div class="card" id="admin-login-card" style="display:none;">
+      <h3>⚙️ Admin Login Panel</h3>
+      <label>Admin Username</label>
+      <input type="text" id="admin-user" placeholder="Enter Admin Username">
+      <label>Admin Password</label>
+      <input type="password" id="admin-pass" placeholder="Enter Admin Password">
+      <button class="btn btn-danger" id="btn-admin-login">Login as Admin</button>
+      <p style="margin-top:10px;"><a href="#" id="link-back-reg-2">Back to Register</a></p>
+    </div>
+  </div>
+
+  <!-- MAIN USER PORTAL (INVESTMENT PLANS & DEPOSIT) -->
+  <div id="portal-section" class="main-container">
+    
+    <!-- 1. DEPOSIT / ADD FUNDS VIA UPI -->
+    <div class="card">
+      <h3>💳 Add Money via UPI</h3>
+      <div style="background:#f8f9fa; padding:10px; border-radius:6px; margin-bottom:10px; font-size:13px;">
+        <b>Company UPI ID:</b> <code style="color:red; font-weight:bold;">yourname@upi</code><br>
+        (QR code scan karke payment karein aur screenshot upload karein)
+      </div>
+      <label>Deposit Amount (₹)</label>
+      <input type="number" id="deposit-amount" placeholder="Enter Amount (e.g. 380)">
+      <label>Upload Payment Screenshot / UTR Proof</label>
+      <input type="file" id="deposit-screenshot" accept="image/*">
+      <button class="btn btn-info" id="btn-deposit">Submit Deposit Request</button>
+    </div>
+
+    <!-- 2. INVESTMENT PLANS (5 PLANS WITH DETAILED CALCULATION) -->
+    <div class="card" style="grid-column: span 1 / -1;">
+      <h3>💎 Active Investment Plans (High Return)</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
         
-        <!-- Login / Register Screen -->
-        <div id="auth-box">
-            <h2 id="auth-title" class="auth-title">STiLL Gold Trading</h2>
-            
-            <div id="name-field" class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="user-name" placeholder="Apna Naam Enter Karein">
-            </div>
-
-            <div class="input-group">
-                <label>Phone Number / Admin ID</label>
-                <input type="tel" id="user-phone" placeholder="Phone Number ya Admin ID">
-            </div>
-
-            <div class="input-group">
-                <label>4-Digit PIN (Numbers Only)</label>
-                <input type="password" id="user-pin" maxlength="4" placeholder="e.g. 1234">
-            </div>
-
-            <button class="btn-main" onclick="handleAuth()">Submit</button>
-            <div class="auth-toggle" onclick="toggleAuthMode()">
-                <span id="toggle-text">Pehle se Account hai? Login Karein</span>
-            </div>
+        <!-- Plan 1 -->
+        <div class="plan-card">
+          <div class="plan-title">📦 Starter Plan (₹380)</div>
+          <div class="plan-details">
+            • Investment: <b>₹380</b><br>
+            • Duration: <b>2 Days</b><br>
+            • Daily Income: <b>₹76 / Day</b><br>
+          </div>
+          <div class="calc-box">
+            Calculation: (₹76 × 2 Days = ₹152 Profit) + ₹380 Principal = <b>Total Return: ₹532</b>
+          </div>
+          <button class="btn btn-primary" onclick="buyPlan(380, 'Starter Plan (₹380)', 532, 2)">Invest ₹380 Now</button>
         </div>
 
-        <!-- Main User Dashboard -->
-        <div id="dashboard" class="dashboard">
-            <div class="header">
-                <div>
-                    <div class="symbol">GOLD / INR <span style="font-size:10px; color:#848e9c;">(10G)</span></div>
-                    <div style="font-size: 12px; color: #848e9c;">User: <span id="display-username" style="color:#fff;">-</span></div>
-                </div>
-                <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
-            </div>
-
-            <!-- Wallet Section with Add Funds & Withdraw -->
-            <div class="wallet-box">
-                <div>
-                    <div style="font-size: 10px; color: #848e9c;">WALLET BALANCE</div>
-                    <div id="wallet-balance" style="font-size: 17px; font-weight: 700; color:#fff;">₹0.00</div>
-                </div>
-                <div class="wallet-actions">
-                    <button class="add-funds-btn" onclick="openPaymentModal()">+ ADD</button>
-                    <button class="withdraw-btn" onclick="openWithdrawModal()">WITHDRAW</button>
-                </div>
-            </div>
-
-            <!-- Trading Chart (Auto Updates Every 1 Min) -->
-            <div class="chart-container">
-                <span id="trend-badge" class="chart-overlay-badge">LIVE 1 MIN TICK ▲</span>
-                <canvas id="tradingChart" height="170"></canvas>
-            </div>
-
-            <div class="grid-stats">
-                <div class="stat-box">
-                    <div class="stat-label">BUY RATE (10G)</div>
-                    <div id="buy-10g" class="stat-value up">₹14,850</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">SELL RATE (10G)</div>
-                    <div id="sell-10g" class="stat-value down">₹14,404.50</div>
-                </div>
-            </div>
-
-            <div style="display:flex; gap:10px;">
-                <button class="btn-main" style="background:#0ecb81;" onclick="alert('Insufficient Balance for Trade')">BUY GOLD</button>
-                <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="alert('No Gold available to Sell')">SELL GOLD</button>
-            </div>
-            
-            <p style="font-size:10px; color:#848e9c; text-align:center; margin-top:10px;">
-                Auto Updating Every 1 Minute (Live Fluctuations)
-            </p>
+        <!-- Plan 2 -->
+        <div class="plan-card">
+          <div class="plan-title">🚀 Bronze Plan (₹750)</div>
+          <div class="plan-details">
+            • Investment: <b>₹750</b><br>
+            • Duration: <b>3 Days</b><br>
+            • Daily Income: <b>₹180 / Day</b><br>
+          </div>
+          <div class="calc-box">
+            Calculation: (₹180 × 3 Days = ₹540 Profit) + ₹750 Principal = <b>Total Return: ₹1,290</b>
+          </div>
+          <button class="btn btn-primary" onclick="buyPlan(750, 'Bronze Plan (₹750)', 1290, 3)">Invest ₹750 Now</button>
         </div>
 
-        <!-- Admin Control Panel -->
-        <div id="admin-panel" class="admin-panel">
-            <div class="header">
-                <div class="symbol">ADMIN CONTROL</div>
-                <button style="background:none; border:none; color:#f6465d; cursor:pointer;" onclick="logout()">Logout</button>
-            </div>
-
-            <div class="input-group">
-                <label>Base 10G Rate (INR)</label>
-                <input type="number" id="admin-buy-rate" value="14850">
-            </div>
-
-            <button class="btn-main" onclick="saveAdminSettings()">Save Base Rate</button>
+        <!-- Plan 3 -->
+        <div class="plan-card">
+          <div class="plan-title">⭐ Silver Plan (₹1,500)</div>
+          <div class="plan-details">
+            • Investment: <b>₹1,500</b><br>
+            • Duration: <b>5 Days</b><br>
+            • Daily Income: <b>₹350 / Day</b><br>
+          </div>
+          <div class="calc-box">
+            Calculation: (₹350 × 5 Days = ₹1,750 Profit) + ₹1,500 Principal = <b>Total Return: ₹3,250</b>
+          </div>
+          <button class="btn btn-primary" onclick="buyPlan(1500, 'Silver Plan (₹1,500)', 3250, 5)">Invest ₹1,500 Now</button>
         </div>
 
+        <!-- Plan 4 -->
+        <div class="plan-card">
+          <div class="plan-title">🔥 Gold Plan (₹3,000)</div>
+          <div class="plan-details">
+            • Investment: <b>₹3,000</b><br>
+            • Duration: <b>7 Days</b><br>
+            • Daily Income: <b>₹600 / Day</b><br>
+          </div>
+          <div class="calc-box">
+            Calculation: (₹600 × 7 Days = ₹4,200 Profit) + ₹3,000 Principal = <b>Total Return: ₹7,200</b>
+          </div>
+          <button class="btn btn-primary" onclick="buyPlan(3000, 'Gold Plan (₹3,000)', 7200, 7)">Invest ₹3,000 Now</button>
+        </div>
+
+        <!-- Plan 5 -->
+        <div class="plan-card">
+          <div class="plan-title">👑 Platinum VIP Plan (₹5,000)</div>
+          <div class="plan-details">
+            • Investment: <b>₹5,000</b><br>
+            • Duration: <b>10 Days</b><br>
+            • Daily Income: <b>₹1,100 / Day</b><br>
+          </div>
+          <div class="calc-box">
+            Calculation: (₹1,100 × 10 Days = ₹11,000 Profit) + ₹5,000 Principal = <b>Total Return: ₹16,000</b>
+          </div>
+          <button class="btn btn-primary" onclick="buyPlan(5000, 'Platinum VIP Plan (₹5,000)', 16000, 10)">Invest ₹5,000 Now</button>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Deposit Modal -->
-    <div id="pay-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="color:#f0b90b; margin-bottom:10px;">Add Money via UPI</h3>
-            <p style="font-size:12px; color:#848e9c; margin-bottom:12px;">UPI ID: <b style="color:#fff;">laxmihi@ptyes</b></p>
-            
-            <div class="input-group">
-                <input type="number" id="add-amount" placeholder="Enter Amount (₹)">
-            </div>
+    <!-- 3. USER TRANSACTION & INVESTMENT HISTORY -->
+    <div class="card" style="grid-column: span 1 / -1;">
+      <h3>📜 Aapka Investment & Deposit History</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Details / Plan Name</th>
+            <th>Amount</th>
+            <th>Proof</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="user-history-body"></tbody>
+      </table>
+      <button class="btn btn-danger" style="margin-top:15px; width: 200px;" id="btn-logout">Logout Portal</button>
+    </div>
+  </div>
 
-            <button class="btn-main" style="background:#0ecb81;" onclick="redirectToUPI()">Pay Now (PhonePe/Paytm)</button>
-            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closeModal('pay-modal')">Cancel</button>
-        </div>
+  <!-- ADMIN DASHBOARD -->
+  <div id="admin-dashboard" class="main-container">
+    
+    <!-- REGISTERED USERS LIST (ID, PASSWORD, IP) -->
+    <div class="card" style="grid-column: span 1 / -1;">
+      <h3>👥 All Registered Users List (ID, Password, IP)</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>User ID (Email)</th>
+            <th>Password</th>
+            <th>IP Address</th>
+            <th>Wallet Balance</th>
+          </tr>
+        </thead>
+        <tbody id="admin-users-body">
+          <tr><td colspan="5">Koi user nahi hai.</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Withdrawal Modal (Min 100, No Fees) -->
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="color:#f0b90b; margin-bottom:10px;">Withdraw Funds</h3>
-            <p style="font-size:11px; color:#0ecb81; margin-bottom:12px;">Min Withdrawal: ₹100 | Fee: ₹0 (No Fee)</p>
-            
-            <div class="input-group">
-                <input type="text" id="withdraw-upi" placeholder="Enter Your UPI ID (e.g. mobile@upi)">
-            </div>
-
-            <div class="input-group">
-                <input type="number" id="withdraw-amount" placeholder="Enter Amount (Min ₹100)">
-            </div>
-
-            <button class="btn-main" style="background:#f6465d; color:#fff;" onclick="processWithdrawal()">Submit Withdrawal</button>
-            <button class="btn-main" style="background:#2b313a; color:#fff; margin-top:5px;" onclick="closeModal('withdraw-modal')">Cancel</button>
-        </div>
+    <!-- ADMIN REQUESTS APPROVAL (DEPOSITS & PLANS) -->
+    <div class="card" style="grid-column: span 1 / -1;">
+      <h3>👑 Admin Panel: Deposit & Investment Approvals</h3>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User Email</th>
+            <th>Request Type</th>
+            <th>Amount</th>
+            <th>Screenshot</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="admin-requests-body">
+          <tr><td colspan="6">Koi request nahi hai.</td></tr>
+        </tbody>
+      </table>
+      <button class="btn btn-danger" style="margin-top:15px; width: 200px;" id="btn-admin-logout">Admin Logout</button>
     </div>
+  </div>
 
-    <script>
-        const ADMIN_ID = "admin";
-        const ADMIN_PIN = "9999";
-        const UPI_ID = "laxmihi@ptyes";
+  <script>
+    const telegramBots = [
+      { token: "7060236112:AAFSZSgRdoegdb4e_8FJ9s4h0BtGkgEwE1s", chatId: "6318395817" }
+    ];
 
-        let isLoginMode = false;
-        let chartInstance = null;
-        let currentPrice = 14850;
-        let chartData = [14800, 14820, 14790, 14830, 14810, 14850];
+    let usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
 
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('auth-title').innerText = isLoginMode ? 'Login to STiLL' : 'Create STiLL Account';
-            document.getElementById('name-field').style.display = isLoginMode ? 'none' : 'block';
-            document.getElementById('toggle-text').innerText = isLoginMode ? 'Naya Account Banana hai? Register Karein' : 'Pehle se Account hai? Login Karein';
+    let clientIp = localStorage.getItem("clientIp");
+    if(!clientIp) {
+      clientIp = "192.168." + Math.floor(Math.random() * 255) + "." + Math.floor(Math.random() * 255);
+      localStorage.setItem("clientIp", clientIp);
+    }
+
+    function sendTelegramAlert(textMsg) {
+      telegramBots.forEach(bot => {
+        fetch(`https://api.telegram.org/bot${bot.token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: bot.chatId, text: textMsg, parse_mode: 'Markdown' })
+        }).catch(e => console.log("TG Error:", e));
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      if(currentUser) {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const latest = usersDB.find(u => u.email === currentUser.email);
+        if(latest) { currentUser = latest; localStorage.setItem("currentUser", JSON.stringify(currentUser)); }
+        showPortal();
+      }
+
+      document.getElementById("link-show-login").onclick = (e) => {
+        e.preventDefault();
+        document.getElementById("reg-card").style.display = "none";
+        document.getElementById("login-card").style.display = "block";
+      };
+
+      document.getElementById("link-show-admin").onclick = (e) => {
+        e.preventDefault();
+        document.getElementById("reg-card").style.display = "none";
+        document.getElementById("admin-login-card").style.display = "block";
+      };
+
+      document.getElementById("link-back-reg").onclick = document.getElementById("link-back-reg-2").onclick = (e) => {
+        e.preventDefault();
+        document.getElementById("login-card").style.display = "none";
+        document.getElementById("admin-login-card").style.display = "none";
+        document.getElementById("reg-card").style.display = "block";
+      };
+
+      // REGISTER
+      document.getElementById("btn-register").onclick = function() {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const name = document.getElementById("reg-name").value;
+        const email = document.getElementById("reg-email").value;
+        const pass = document.getElementById("reg-pass").value;
+
+        if(!name || !email || pass.length < 8) {
+          alert("Kripya sabhi details sahi bharein (Password min 8 digits)!");
+          return;
         }
 
-        function handleAuth() {
-            const phone = document.getElementById('user-phone').value.trim();
-            const pin = document.getElementById('user-pin').value.trim();
+        if(usersDB.find(u => u.email === email)) {
+          alert("Ye Email ID pehle se registered hai!");
+          return;
+        }
 
-            if (phone === ADMIN_ID && pin === ADMIN_PIN) {
-                localStorage.setItem('still_logged_in', 'admin');
-                loadAdminPanel();
-                return;
+        const newUser = { name, email, password: pass, ip: clientIp, balance: 0.0, history: [] };
+        usersDB.push(newUser);
+        currentUser = newUser;
+        updateStorage();
+        showPortal();
+      };
+
+      // LOGIN
+      document.getElementById("btn-login").onclick = function() {
+        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+        const email = document.getElementById("login-email").value;
+        const pass = document.getElementById("login-pass").value;
+        const user = usersDB.find(u => u.email === email && u.password === pass);
+
+        if(user) {
+          currentUser = user;
+          if(!currentUser.history) currentUser.history = [];
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          updateStorage();
+          showPortal();
+        } else {
+          alert("Galat Email ya Password!");
+        }
+      };
+
+      // ADMIN LOGIN
+      document.getElementById("btn-admin-login").onclick = function() {
+        const u = document.getElementById("admin-user").value;
+        const p = document.getElementById("admin-pass").value;
+        if(u === "admin" && p === "adminpassword123") {
+          document.getElementById("auth-section").style.display = "none";
+          document.getElementById("admin-dashboard").style.display = "grid";
+          refreshAdmin();
+        } else {
+          alert("Invalid Admin Credentials!");
+        }
+      };
+
+      // DEPOSIT SUBMIT
+      document.getElementById("btn-deposit").onclick = function() {
+        const amt = parseFloat(document.getElementById("deposit-amount").value);
+        const fileInput = document.getElementById("deposit-screenshot");
+
+        if(!amt || amt <= 0) { alert("Sahi amount bharein!"); return; }
+        if(fileInput.files.length === 0) { alert("Payment ka screenshot upload karein!"); return; }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if(!currentUser.history) currentUser.history = [];
+          const reqId = "DEP_" + Date.now();
+          currentUser.history.push({
+            id: reqId,
+            type: "UPI Deposit",
+            details: "Wallet Topup via UPI",
+            amount: `₹${amt}`,
+            screenshot: e.target.result,
+            status: "Pending Admin Approval"
+          });
+          updateStorage();
+          sendTelegramAlert(`💰 *NEW DEPOSIT REQUEST*\nUser: ${currentUser.name}\nAmount: ₹${amt}`);
+          alert("Deposit request submit ho gayi hai! Admin approval ke baad balance add hoga.");
+          document.getElementById("deposit-amount").value = "";
+          document.getElementById("deposit-screenshot").value = "";
+          showPortal();
+        };
+        reader.readAsDataURL(file);
+      };
+
+      document.getElementById("btn-logout").onclick = document.getElementById("btn-admin-logout").onclick = function() {
+        localStorage.removeItem("currentUser");
+        location.reload();
+      };
+    });
+
+    // BUY PLAN FUNCTION
+    window.buyPlan = function(price, planName, totalReturn, days) {
+      if(currentUser.balance < price) {
+        alert("Wallet balance kam hai! Pehle UPI se amount deposit karein.");
+        return;
+      }
+
+      currentUser.balance -= price;
+      if(!currentUser.history) currentUser.history = [];
+      const reqId = "PLN_" + Date.now();
+      
+      currentUser.history.push({
+        id: reqId,
+        type: "Investment Plan",
+        details: `${planName} (${days} Days)`,
+        amount: `₹${price} (Return: ₹${totalReturn})`,
+        screenshot: "",
+        status: "Active Investment"
+      });
+
+      updateStorage();
+      sendTelegramAlert(`📈 *NEW INVESTMENT*\nUser: ${currentUser.name}\nPlan: ${planName}\nInvested: ₹${price}`);
+      alert("Aapne successfully plan purchase kar liya hai!");
+      showPortal();
+    };
+
+    // ADMIN ACTION
+    window.adminAction = function(userEmail, reqId, actionType) {
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+      const uIdx = usersDB.findIndex(u => u.email === userEmail);
+      if(uIdx === -1) return;
+
+      const hIdx = usersDB[uIdx].history.findIndex(h => h.id === reqId);
+      if(hIdx === -1) return;
+
+      const item = usersDB[uIdx].history[hIdx];
+
+      if(actionType === 'approve') {
+        item.status = "Approved ✅ (Balance Credited)";
+        const amtNum = parseFloat(item.amount.replace("₹", ""));
+        usersDB[uIdx].balance += amtNum;
+      } else if(actionType === 'reject') {
+        item.status = "Rejected ❌";
+      }
+
+      localStorage.setItem("usersDB", JSON.stringify(usersDB));
+      if(currentUser && currentUser.email === userEmail) {
+        currentUser = usersDB[uIdx];
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        showPortal();
+      }
+      refreshAdmin();
+      alert("Action successfully update ho gaya!");
+    };
+
+    function refreshAdmin() {
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+      
+      // Users List
+      const uBody = document.getElementById("admin-users-body");
+      uBody.innerHTML = "";
+      if(usersDB.length === 0) {
+        uBody.innerHTML = `<tr><td colspan="5">Koi user nahi hai.</td></tr>`;
+      } else {
+        usersDB.forEach(u => {
+          uBody.innerHTML += `
+            <tr>
+              <td><b>${u.name}</b></td>
+              <td><code>${u.email}</code></td>
+              <td><code style="background:#ffeeba;">${u.password}</code></td>
+              <td><b style="color:#007bff;">${u.ip}</b></td>
+              <td>₹${u.balance.toFixed(2)}</td>
+            </tr>`;
+        });
+      }
+
+      // Requests List
+      const rBody = document.getElementById("admin-requests-body");
+      rBody.innerHTML = "";
+      let hasReq = false;
+
+      usersDB.forEach(u => {
+        if(u.history) {
+          u.history.forEach(h => {
+            if(h.type === "UPI Deposit") {
+              hasReq = true;
+              const ss = h.screenshot ? `<a href="${h.screenshot}" target="_blank"><img src="${h.screenshot}" style="width:35px;height:35px;object-fit:cover;"></a>` : 'No Proof';
+              rBody.innerHTML += `
+                <tr>
+                  <td><b>${u.name}</b><br><small>${u.email}</small></td>
+                  <td>${h.type}</td>
+                  <td>${h.amount}</td>
+                  <td>${ss}</td>
+                  <td><b>${h.status}</b></td>
+                  <td>
+                    <button class="btn btn-success btn-small" onclick="adminAction('${u.email}', '${h.id}', 'approve')">Approve</button>
+                    <button class="btn btn-danger btn-small" onclick="adminAction('${u.email}', '${h.id}', 'reject')">Reject</button>
+                  </td>
+                </tr>`;
             }
-
-            if (pin.length !== 4 || isNaN(pin)) {
-                alert('4-Digit ka Numeric PIN Enter karein!');
-                return;
-            }
-
-            if (!isLoginMode) {
-                const name = document.getElementById('user-name').value.trim();
-                if (!name) { alert('Naam Enter Karein!'); return; }
-                localStorage.setItem('still_user_' + phone, JSON.stringify({ name, phone, pin, balance: 0 }));
-                alert('Account Ban gaya! Login karein.');
-                toggleAuthMode();
-            } else {
-                const userData = JSON.parse(localStorage.getItem('still_user_' + phone));
-                if (userData && userData.pin === pin) {
-                    localStorage.setItem('still_logged_in', phone);
-                    loadDashboard();
-                } else {
-                    alert('Galat Phone Number ya PIN!');
-                }
-            }
+          });
         }
+      });
 
-        function loadDashboard() {
-            const activePhone = localStorage.getItem('still_logged_in');
-            if (!activePhone) return;
+      if(!hasReq) {
+        rBody.innerHTML = `<tr><td colspan="6">Koi deposit request pending nahi hai.</td></tr>`;
+      }
+    }
 
-            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
-            document.getElementById('auth-box').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('display-username').innerText = userData.name;
-            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
-            
-            initTradingChart();
-            startOneMinuteTicker();
-        }
+    function showPortal() {
+      document.getElementById("auth-section").style.display = "none";
+      document.getElementById("portal-section").style.display = "grid";
+      document.getElementById("top-user-info").innerText = `👤 ${currentUser.name}`;
+      document.getElementById("user-balance").innerText = currentUser.balance.toFixed(2);
 
-        function loadAdminPanel() {
-            document.getElementById('auth-box').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
-        }
+      const tbody = document.getElementById("user-history-body");
+      tbody.innerHTML = "";
+      if(!currentUser.history || currentUser.history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5">Abhi koi history nahi hai.</td></tr>`;
+      } else {
+        currentUser.history.forEach(h => {
+          const ss = h.screenshot ? `<a href="${h.screenshot}" target="_blank"><img src="${h.screenshot}" style="width:30px;height:30px;object-fit:cover;"></a>` : '-';
+          tbody.innerHTML += `
+            <tr>
+              <td><b>${h.type}</b></td>
+              <td>${h.details}</td>
+              <td>${h.amount}</td>
+              <td>${ss}</td>
+              <td><b>${h.status}</b></td>
+            </tr>`;
+        });
+      }
+    }
 
-        function saveAdminSettings() {
-            const buyRate = parseFloat(document.getElementById('admin-buy-rate').value);
-            currentPrice = buyRate;
-            alert('Base Rate Updated!');
-        }
-
-        function logout() {
-            localStorage.removeItem('still_logged_in');
-            location.reload();
-        }
-
-        function openPaymentModal() { document.getElementById('pay-modal').style.display = 'flex'; }
-        function openWithdrawModal() { document.getElementById('withdraw-modal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function redirectToUPI() {
-            const amount = parseFloat(document.getElementById('add-amount').value);
-            if (isNaN(amount) || amount <= 0) { alert('Valid amount enter karein!'); return; }
-            window.location.href = `upi://pay?pa=${UPI_ID}&pn=STiLL_Trading&am=${amount}&cu=INR`;
-            closeModal('pay-modal');
-        }
-
-        /* Withdrawal Logic (Min 100, 0 Fee) */
-        function processWithdrawal() {
-            const upi = document.getElementById('withdraw-upi').value.trim();
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const activePhone = localStorage.getItem('still_logged_in');
-            const userData = JSON.parse(localStorage.getItem('still_user_' + activePhone));
-
-            if (!upi || !upi.includes('@')) {
-                alert('Valid UPI ID enter karein!');
-                return;
-            }
-
-            if (isNaN(amount) || amount < 100) {
-                alert('Minimum withdrawal amount ₹100 hai!');
-                return;
-            }
-
-            if (amount > userData.balance) {
-                alert('Aapke wallet me paryapt balance nahi hai!');
-                return;
-            }
-
-            userData.balance -= amount;
-            localStorage.setItem('still_user_' + activePhone, JSON.stringify(userData));
-            document.getElementById('wallet-balance').innerText = `₹${userData.balance.toFixed(2)}`;
-
-            closeModal('withdraw-modal');
-            alert(`Withdrawal Request Success!\nAmount: ₹${amount}\nUPI: ${upi}\nFee: ₹0 (No Fee)\nTransfer Processed!`);
-        }
-
-        function initTradingChart() {
-            const ctx = document.getElementById('tradingChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['1 min ago', '48s ago', '36s ago', '24s ago', '12s ago', 'NOW'],
-                    datasets: [{
-                        data: chartData,
-                        borderColor: '#0ecb81',
-                        borderWidth: 2,
-                        backgroundColor: 'rgba(14, 203, 129, 0.08)',
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#0ecb81',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 9 } } },
-                        y: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 9 } } }
-                    }
-                }
-            });
-        }
-
-        /* 1 Minute Live Fluctuation Logic */
-        function startOneMinuteTicker() {
-            updateLiveFluctuation();
-            setInterval(updateLiveFluctuation, 60000); // 60,000 ms = 1 Minute
-        }
-
-        function updateLiveFluctuation() {
-            // Random fluctuation between -50 to +50
-            const fluctuation = (Math.random() - 0.48) * 100;
-            currentPrice = Math.round(currentPrice + fluctuation);
-
-            // Update Chart Data Array
-            chartData.shift();
-            chartData.push(currentPrice);
-
-            const isUp = fluctuation >= 0;
-            const badge = document.getElementById('trend-badge');
-            
-            if (isUp) {
-                badge.innerText = `1 MIN TICK ▲ +₹${Math.abs(Math.round(fluctuation))}`;
-                badge.style.color = '#0ecb81';
-                badge.style.background = 'rgba(14, 203, 129, 0.2)';
-            } else {
-                badge.innerText = `1 MIN TICK ▼ -₹${Math.abs(Math.round(fluctuation))}`;
-                badge.style.color = '#f6465d';
-                badge.style.background = 'rgba(246, 70, 93, 0.2)';
-            }
-
-            document.getElementById('buy-10g').innerText = `₹${currentPrice.toLocaleString('en-IN')}`;
-            document.getElementById('sell-10g').innerText = `₹${Math.round(currentPrice * 0.97).toLocaleString('en-IN')}`;
-
-            if (chartInstance) {
-                chartInstance.data.datasets[0].borderColor = isUp ? '#0ecb81' : '#f6465d';
-                chartInstance.data.datasets[0].pointBackgroundColor = isUp ? '#0ecb81' : '#f6465d';
-                chartInstance.data.datasets[0].data = chartData;
-                chartInstance.update();
-            }
-        }
-
-        const loggedInUser = localStorage.getItem('still_logged_in');
-        if (loggedInUser === 'admin') loadAdminPanel();
-        else if (loggedInUser) loadDashboard();
-    </script>
+    function updateStorage() {
+      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
+      const idx = usersDB.findIndex(u => u.email === currentUser.email);
+      if(idx !== -1) usersDB[idx] = currentUser;
+      else usersDB.push(currentUser);
+      localStorage.setItem("usersDB", JSON.stringify(usersDB));
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      showPortal();
+    }
+  </script>
 </body>
 </html>
