@@ -3,134 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Cards - Interactive Dashboard</title>
+    <title>Print Cards - Full Portal</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f6f9;
-            font-family: Arial, sans-serif;
-        }
+        body { background-color: #f4f6f9; font-family: Arial, sans-serif; }
+        
         /* Sidebar Styling */
         .sidebar {
-            width: 260px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #ffffff;
-            border-right: 1px solid #de2e2e;
-            overflow-y: auto;
-            z-index: 1000;
+            width: 260px; height: 100vh; position: fixed; top: 0; left: 0;
+            background-color: #ffffff; border-right: 1px solid #de2e2e;
+            overflow-y: auto; z-index: 1000;
         }
-        .sidebar .brand {
-            padding: 15px 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        .sidebar .nav-link {
-            color: #444;
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #f8f9fa;
-            cursor: pointer;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #e9f0fe;
-            color: #0d6efd;
-            font-weight: bold;
-        }
-        .sidebar .nav-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-        .badge-new {
-            background-color: #dc3545;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            float: right;
-        }
+        .sidebar .brand { padding: 15px 20px; font-size: 1.2rem; font-weight: bold; border-bottom: 1px solid #eee; color: #333; }
+        .sidebar .nav-link { color: #444; padding: 10px 20px; font-size: 0.88rem; border-bottom: 1px solid #f8f9fa; cursor: pointer; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #e9f0fe; color: #0d6efd; font-weight: bold; }
+        .sidebar .nav-link i { margin-right: 10px; width: 20px; text-align: center; }
+        
+        .badge-new { background-color: #dc3545; color: white; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; float: right; }
 
-        /* Main Content Styling */
-        .main-content {
-            margin-left: 260px;
-            padding: 20px;
-        }
-
-        /* Top Header */
+        /* Main Content */
+        .main-content { margin-left: 260px; padding: 20px; }
+        
         .top-header {
-            background-color: #ffffff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            background-color: #ffffff; padding: 12px 20px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
 
-        /* Cards & Banner */
         .referral-banner {
-            background-color: #0088ff;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
-            cursor: pointer;
+            background-color: #0088ff; color: white; padding: 12px 20px;
+            border-radius: 8px; text-align: center; font-weight: bold;
+            margin-bottom: 20px; cursor: pointer;
         }
+
         .membership-card {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 20px;
+            background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px;
+            padding: 20px; text-align: center; margin-bottom: 20px;
         }
+
         .balance-card {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            color: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white;
+            border-radius: 12px; padding: 20px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Content Sections */
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-        }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
 
-        /* Table Styling */
         .table-container {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
+            background: #ffffff; border-radius: 12px; padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Modal Banner Styling */
+        .membership-banner-modal {
+            background: #1e293b; color: white; text-align: center; padding: 10px; border-radius: 8px 8px 0 0;
+        }
+        .discount-card {
+            background: #d1e7dd; border: 1px solid #badbcc; color: #0f5132;
+            border-radius: 8px; padding: 12px; font-weight: bold; text-align: center;
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-            .main-content {
-                margin-left: 0;
-            }
+            .sidebar { position: relative; width: 100%; height: auto; }
+            .main-content { margin-left: 0; }
         }
     </style>
 </head>
@@ -146,33 +85,35 @@
         </div>
         <nav class="nav flex-column" id="sidebarMenu">
             <a class="nav-link active" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a class="nav-link" onclick="switchPage('mobile_details', this)"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Info Details <span class="badge-new">₹50</span></a>
+            <a class="nav-link" onclick="switchPage('ration_pdf', this)"><i class="fa-solid fa-file-pdf"></i> Ration PDF Service <span class="badge-new">NEW</span></a>
             <a class="nav-link" onclick="switchPage('transactions', this)"><i class="fa-solid fa-clock-rotate-left"></i> Transaction List</a>
             <a class="nav-link" onclick="switchPage('recharge', this)"><i class="fa-solid fa-wallet"></i> Wallet Recharge</a>
             <a class="nav-link" onclick="switchPage('nsdl', this)"><i class="fa-solid fa-id-card"></i> NSDL PAN Service</a>
             <a class="nav-link" onclick="switchPage('uti', this)"><i class="fa-solid fa-id-card"></i> UTI PAN Service</a>
             <a class="nav-link" onclick="switchPage('aadhar', this)"><i class="fa-solid fa-fingerprint"></i> Aadhar Service</a>
             <a class="nav-link" onclick="switchPage('voter', this)"><i class="fa-solid fa-check-double"></i> Voter Service</a>
-            <a class="nav-link" onclick="switchPage('dl', this)"><i class="fa-solid fa-car"></i> DL Service <span class="badge-new">NEW</span></a>
-            <a class="nav-link text-danger" onclick="alert('Logging out...')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <a class="nav-link" onclick="switchPage('dl', this)"><i class="fa-solid fa-car"></i> DL Service</a>
+            <a class="nav-link text-danger" onclick="alert('Logged out!')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </nav>
     </div>
 
-    <!-- Main Content Body -->
+    <!-- Main Content -->
     <div class="main-content">
-        <!-- Top Navigation Header -->
+        <!-- Header -->
         <div class="top-header">
             <div>
                 <i class="fa-solid fa-bars me-2"></i>
                 <small class="text-muted">Sunday, 6 September 2026</small>
             </div>
             <div>
-                <button class="btn btn-danger btn-sm me-1" onclick="alert('Contacting Support')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
-                <button class="btn btn-warning btn-sm text-white me-1" onclick="switchPage('recharge', null)"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
-                <button class="btn btn-success btn-sm" onclick="alert('Current Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
+                <button class="btn btn-danger btn-sm me-1" onclick="alert('Helpdesk Online')"><i class="fa-solid fa-headset"></i> Help & Complaint</button>
+                <button class="btn btn-warning btn-sm text-white me-1" data-bs-toggle="modal" data-bs-target="#membershipModal"><i class="fa-solid fa-arrow-up"></i> ID Upgrade</button>
+                <button class="btn btn-success btn-sm" onclick="alert('Balance: ₹ 24.00')"><i class="fa-solid fa-wallet"></i> Check Wallet</button>
             </div>
         </div>
 
-        <!-- 1. DASHBOARD PAGE -->
+        <!-- 1. DASHBOARD -->
         <div id="dashboard" class="page-section active">
             <div class="referral-banner" onclick="copyReferral()">
                 YOUR REFERRAL LINK: HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE= <small>(CLICK TO COPY)</small>
@@ -181,8 +122,8 @@
             <div class="membership-card">
                 <h5 class="text-danger fw-bold">Membership Not Active</h5>
                 <p class="mb-2">Hello <strong>Raju</strong>,</p>
-                <p class="text-muted">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
-                <button class="btn btn-danger px-4" onclick="alert('Plans List Loading...')">🎯 VIEW PLANS</button>
+                <p class="text-muted mb-2">You have not activated any membership yet. Activate a plan to enjoy premium services at low cost.</p>
+                <button class="btn btn-danger px-4" data-bs-toggle="modal" data-bs-target="#membershipModal">🎯 VIEW PLANS</button>
             </div>
 
             <div class="balance-card">
@@ -232,35 +173,59 @@
             </div>
         </div>
 
-        <!-- 2. TRANSACTIONS PAGE -->
+        <!-- 2. MOBILE DETAILS SERVICE (₹50) -->
+        <div id="mobile_details" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-mobile-screen-button me-2"></i>Mobile Number Full Info Service</h4>
+                <p class="text-muted">Mobile number dalke owner ki puri details nikalein.</p>
+                <hr>
+                <div class="alert alert-info fw-bold">Service Rate: ₹ 50.00 per search</div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Enter 10-Digit Mobile Number:</label>
+                    <input type="text" class="form-control" placeholder="9876543210" maxlength="10">
+                </div>
+                <button class="btn btn-primary" onclick="alert('₹50 will be deducted from your wallet to fetch Mobile Details.')">Fetch Mobile Info (₹50)</button>
+            </div>
+        </div>
+
+        <!-- 3. RATION CARD TO RATION PDF SERVICE -->
+        <div id="ration_pdf" class="page-section">
+            <div class="table-container">
+                <h4><i class="fa-solid fa-file-pdf me-2"></i>Ration Card PDF Download Service</h4>
+                <p class="text-muted">Ration Card number se Ration PDF/Details prapt karein.</p>
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label">Select State:</label>
+                    <select class="form-select mb-3">
+                        <option>Uttar Pradesh</option>
+                        <option>Bihar</option>
+                        <option>Jharkhand</option>
+                        <option>Madhya Pradesh</option>
+                        <option>Rajasthan</option>
+                    </select>
+                    <label class="form-label">Ration Card Number / Member ID:</label>
+                    <input type="text" class="form-control" placeholder="Enter Ration Card No.">
+                </div>
+                <button class="btn btn-success" onclick="alert('Generating Ration Card PDF...')">Download Ration PDF</button>
+            </div>
+        </div>
+
+        <!-- 4. TRANSACTIONS -->
         <div id="transactions" class="page-section">
             <div class="table-container">
                 <h4><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h4>
-                <p class="text-muted">Aapke saare pichhle transactions yahan dikhenge.</p>
-                <table class="table table-striped">
+                <table class="table table-striped mt-3">
                     <thead>
-                        <tr>
-                            <th>Txn ID</th>
-                            <th>Date</th>
-                            <th>Service</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                        </tr>
+                        <tr><th>Txn ID</th><th>Date</th><th>Service</th><th>Amount</th><th>Status</th></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>TXN100293</td>
-                            <td>05 Sep 2026</td>
-                            <td>Aadhar Print</td>
-                            <td>₹ 10.00</td>
-                            <td><span class="badge bg-success">Success</span></td>
-                        </tr>
+                        <tr><td>TXN100293</td><td>05 Sep 2026</td><td>Aadhar Print</td><td>₹ 10.00</td><td><span class="badge bg-success">Success</span></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- 3. WALLET RECHARGE PAGE -->
+        <!-- 5. RECHARGE -->
         <div id="recharge" class="page-section">
             <div class="table-container">
                 <h4><i class="fa-solid fa-wallet me-2"></i>Add Balance</h4>
@@ -272,60 +237,76 @@
             </div>
         </div>
 
-        <!-- 4. GENERIC SERVICE PAGE TEMPLATE -->
-        <div id="nsdl" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-id-card me-2"></i>NSDL PAN Service</h4>
-                <p>New PAN Apply ya Correction ke liye form yahan se bharein.</p>
-                <button class="btn btn-success" onclick="alert('Form Opening...')">Apply New PAN</button>
-            </div>
-        </div>
-
-        <div id="uti" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-id-card me-2"></i>UTI PAN Service</h4>
-                <p>UTI Portal Service integration page.</p>
-            </div>
-        </div>
-
-        <div id="aadhar" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-fingerprint me-2"></i>Aadhar Services</h4>
-                <p>Aadhar download aur find services.</p>
-            </div>
-        </div>
-
-        <div id="voter" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-check-double me-2"></i>Voter Card Services</h4>
-                <p>Instant Voter Card PDF Download.</p>
-            </div>
-        </div>
-
-        <div id="dl" class="page-section">
-            <div class="table-container">
-                <h4><i class="fa-solid fa-car me-2"></i>Driving License Service</h4>
-                <p>DL details and PDF search.</p>
-            </div>
-        </div>
-
+        <!-- OTHER SERVICES -->
+        <div id="nsdl" class="page-section"><div class="table-container"><h4>NSDL PAN Service</h4></div></div>
+        <div id="uti" class="page-section"><div class="table-container"><h4>UTI PAN Service</h4></div></div>
+        <div id="aadhar" class="page-section"><div class="table-container"><h4>Aadhar Service</h4></div></div>
+        <div id="voter" class="page-section"><div class="table-container"><h4>Voter Service</h4></div></div>
+        <div id="dl" class="page-section"><div class="table-container"><h4>DL Service</h4></div></div>
     </div>
 
-    <!-- JavaScript For Interactivity -->
+    <!-- MEMBERSHIP & DISCOUNT POPUP MODAL (FROM SCREENSHOT) -->
+    <div class="modal fade" id="membershipModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="membership-banner-modal">
+                    <h5 class="mb-1 text-warning"><i class="fa-solid fa-bullseye"></i> MEMBERSHIP PLANS</h5>
+                    <small>Starter • Premium • Gold • Business</small>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center fw-bold mb-3">💸 Membership Kyun Lena Chahiye?</h5>
+                    
+                    <div class="alert alert-danger mb-3">
+                        <strong class="d-block mb-1">❌ Bina Membership:</strong>
+                        <small>Aadhar to PAN: ₹20 | RC: ₹30 | DL: ₹20 | Voter: ₹20 | PAN Detail: ₹10</small>
+                    </div>
+
+                    <div class="alert alert-success mb-3">
+                        <strong class="d-block mb-1">✅ Membership Lene Ke Baad:</strong>
+                        <small>Aadhar to PAN: ₹12-18 | RC: ₹10-25 | DL: ₹8-17 | Voter: ₹7-17 | PAN Detail: ₹3-8</small>
+                        <div class="mt-1 text-primary fw-bold">👉 Har service par 40% se 60% tak discount!</div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded border mb-3 text-center">
+                        <strong class="text-danger">📌 Samajh lo ek example:</strong>
+                        <div class="small mt-1">Agar aap 10 baar Aadhar to PAN use karte ho to:</div>
+                        <div class="small text-muted">Bina membership: 10 × ₹20 = ₹200</div>
+                        <div class="small text-muted">Business plan ke saath: 10 × ₹12 = ₹120</div>
+                        <div class="fw-bold text-success mt-1">👉 Bachat: ₹80 sirf ek service mein!</div>
+                    </div>
+
+                    <div class="discount-card">
+                        ✅ Membership Discount Lagu Hai Mobile Recharge aur NSDL New PAN Apply chodkar<br>
+                        <span class="text-danger">📌 BAAKI SABHI SERVICES PAR!</span><br>
+                        <small class="text-dark">Aadhar • PAN • Voter • RC • DL • Ration • Mobile Info • Aur Bhi Bahut Kuch</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="alert('Buy Plan Redirect...')">Buy Membership Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Pages switch karne ka function
+        // Page load hote hi screenshot wala popup dikhayega
+        window.onload = function() {
+            var myModal = new bootstrap.Modal(document.getElementById('membershipModal'));
+            myModal.show();
+        };
+
         function switchPage(pageId, element) {
-            // Hide all pages
             const pages = document.querySelectorAll('.page-section');
             pages.forEach(page => page.classList.remove('active'));
 
-            // Show selected page
             const selectedPage = document.getElementById(pageId);
             if (selectedPage) {
                 selectedPage.classList.add('active');
             }
 
-            // Highlight active sidebar item
             if (element) {
                 const links = document.querySelectorAll('.sidebar .nav-link');
                 links.forEach(link => link.classList.remove('active'));
@@ -333,14 +314,11 @@
             }
         }
 
-        // Copy referral code
         function copyReferral() {
-            const link = "HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE=";
-            navigator.clipboard.writeText(link);
-            alert("Referral link copied to clipboard!");
+            navigator.clipboard.writeText("HTTPS://PRINTSCARDS.COM/REGISTER?REFERRAL_CODE=");
+            alert("Referral link copied!");
         }
 
-        // Filter sidebar links from Search box
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toLowerCase();
             const links = document.querySelectorAll('#sidebarMenu .nav-link');
