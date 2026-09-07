@@ -197,7 +197,7 @@
       <div class="page-content-box">
         <div class="page-header">🏠 Home Dashboard</div>
         <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Welcome to LG Green Energy Investment Hub.</p>
-        <button class="wallet-btn btn-deposit" style="width: 100%;" onclick="openModal('Recharge Portal', 'Enter recharge amount (₹):')">Instant Recharge</button>
+        <button class="wallet-btn btn-deposit" style="width: 100%;" onclick="openModal('Recharge Portal', 'Enter recharge amount (Min ₹200):')">Instant Recharge</button>
       </div>
     </div>
 
@@ -205,11 +205,35 @@
     <div id="view-products" class="container">
       <div class="page-content-box">
         <div class="page-header">📦 Investment Products</div>
+        
+        <!-- Plan 1 -->
         <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
           <div style="font-weight: bold; font-size: 14px;">LG Solar Plan A01</div>
           <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹380.00 | Daily Return: ₹76.00</div>
-          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(380)">Invest Now</button>
+          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(380, 'LG Solar Plan A01')">Invest Now</button>
         </div>
+
+        <!-- Plan 2 -->
+        <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+          <div style="font-weight: bold; font-size: 14px;">LG Wind Power Plan B02</div>
+          <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹1,500.00 | Daily Return: ₹330.00</div>
+          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(1500, 'LG Wind Power Plan B02')">Invest Now</button>
+        </div>
+
+        <!-- Plan 3 -->
+        <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+          <div style="font-weight: bold; font-size: 14px;">LG Hydro Energy Plan C03</div>
+          <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹4,500.00 | Daily Return: ₹1,080.00</div>
+          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(4500, 'LG Hydro Energy Plan C03')">Invest Now</button>
+        </div>
+
+        <!-- Plan 4 -->
+        <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+          <div style="font-weight: bold; font-size: 14px;">LG Green VIP Plan D04</div>
+          <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹11,000.00 | Daily Return: ₹2,800.00</div>
+          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(11000, 'LG Green VIP Plan D04')">Invest Now</button>
+        </div>
+
       </div>
     </div>
 
@@ -244,7 +268,7 @@
         <div class="wallet-title">Account Balance (₹)</div>
         <div class="wallet-balance" id="profile-balance-display">₹0.00</div>
         <div class="wallet-actions">
-          <button class="wallet-btn btn-deposit" onclick="openModal('Recharge Portal', 'Enter deposit amount (₹):')">Recharge</button>
+          <button class="wallet-btn btn-deposit" onclick="openModal('Recharge Portal', 'Enter recharge amount (Min ₹200):')">Recharge</button>
           <button class="wallet-btn btn-withdraw" onclick="handleWithdrawClick()">Withdraw</button>
         </div>
       </div>
@@ -447,6 +471,7 @@
         if(refCode) {
           let referrer = dbUsers.find(u => u.refCode === refCode);
           if(referrer) {
+            if(!referrer.referralsList) referrer.referralsList = [];
             referrer.referralsList.push(phone);
           }
         }
@@ -471,6 +496,10 @@
     }
 
     function updateUserSessionUI() {
+      // Sync from DB
+      let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+      if(idx !== -1) currentUser = dbUsers[idx];
+
       document.getElementById('profile-username').innerText = "User_" + currentUser.phone.slice(-4);
       document.getElementById('profile-uid').innerText = currentUser.uid;
       document.getElementById('profile-balance-display').innerText = "₹" + (currentUser.balance || 0).toFixed(2);
@@ -517,7 +546,7 @@
 
     function logoutAccount() {
       if(confirm("Are you sure you want to log out?")) {
-        // Sync user state back to dbUsers storage
+        // Save state to localstorage database
         let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
         if(idx !== -1) dbUsers[idx] = currentUser;
         localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
@@ -530,11 +559,7 @@
     }
 
     function switchNavTab(tabName, el) {
-      // Sync current user balance before switching tabs
-      let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
-      if(idx !== -1) currentUser = dbUsers[idx];
       updateUserSessionUI();
-
       document.querySelectorAll('#app-screen .container').forEach(c => c.classList.remove('active-view'));
       document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
       
@@ -575,20 +600,30 @@
       }
 
       currentUser.bankBound = true;
+      let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+      if(idx !== -1) dbUsers[idx] = currentUser;
+      localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+
       document.getElementById('bank-status-text').innerText = "Bound ✅";
       document.getElementById('bank-status-text').style.color = "#07c160";
       closeBankModal();
       alert("Bank account bound successfully!");
     }
 
-    function checkInvestment(price) {
+    function checkInvestment(price, planName) {
       if(currentUser.balance >= price) {
         currentUser.balance -= price;
-        currentUser.bills.push({type: 'Investment Plan A01', amount: -price, time: new Date().toLocaleString()});
+        if(!currentUser.bills) currentUser.bills = [];
+        currentUser.bills.push({type: 'Investment: ' + planName, amount: -price, time: new Date().toLocaleString()});
+        
+        let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+        if(idx !== -1) dbUsers[idx] = currentUser;
+        localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+
         updateUserSessionUI();
-        alert("Investment successful!");
+        alert("Investment successful in " + planName + "!");
       } else {
-        alert("Insufficient balance! Please contact admin to add balance or recharge.");
+        alert("Insufficient balance! Minimum required is ₹" + price + ". Please recharge or contact admin.");
       }
     }
 
@@ -607,19 +642,43 @@
 
     function confirmModalAction() {
       let val = parseFloat(document.getElementById('modal-input-field').value);
+      
       if(activeModalTitle.includes('Recharge')) {
-        if(isNaN(val) || val <= 0) { alert("Enter valid amount"); return; }
+        if(isNaN(val) || val < 200) { 
+          alert("Minimum recharge amount is ₹200!"); 
+          return; 
+        }
+        
+        // Auto UPI redirection simulator for Paytm, GPay, PhonePe, BharatPe to laxmihi@ptyes
+        let upiAppsUrl = `upi://pay?pa=laxmihi@ptyes&pn=LG%20Homes&am=${val}&cu=INR`;
+        
+        // Try opening UPI app or fallback smoothly
+        window.location.href = upiAppsUrl;
+
         currentUser.balance += val;
-        currentUser.bills.push({type: 'Recharge Deposit', amount: val, time: new Date().toLocaleString()});
+        if(!currentUser.bills) currentUser.bills = [];
+        currentUser.bills.push({type: 'Recharge (UPI: laxmihi@ptyes)', amount: val, time: new Date().toLocaleString()});
+        
+        let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+        if(idx !== -1) dbUsers[idx] = currentUser;
+        localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+
         updateUserSessionUI();
-        alert("Recharge successful of ₹" + val);
-      } else if(activeModalTitle.includes('Withdrawal')) {
+        alert("Redirecting to Paytm / GPay / PhonePe / BharatPe for UPI ID: laxmihi@ptyes...\nRecharge of ₹" + val + " processed successfully!");
+      } 
+      else if(activeModalTitle.includes('Withdrawal')) {
         if(isNaN(val) || val <= 0) { alert("Enter valid amount"); return; }
         if(currentUser.balance >= val) {
           currentUser.balance -= val;
+          if(!currentUser.bills) currentUser.bills = [];
           currentUser.bills.push({type: 'Withdrawal Payout', amount: -val, time: new Date().toLocaleString()});
+          
+          let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+          if(idx !== -1) dbUsers[idx] = currentUser;
+          localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+
           updateUserSessionUI();
-          alert("Withdrawal request submitted successfully!");
+          alert("Withdrawal request submitted successfully to your bound bank account!");
         } else {
           alert("Withdrawal failed: Insufficient balance.");
         }
