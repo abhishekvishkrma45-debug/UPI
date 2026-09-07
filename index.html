@@ -93,6 +93,7 @@
 </head>
 <body>
 
+  <!-- USER AUTH SCREEN (LOGIN / REGISTER) -->
   <div id="auth-screen">
     <div class="auth-title" id="auth-title-text">Register Account</div>
     <div class="auth-subtitle" id="auth-subtitle-text">Join LG Clean Energy Portal</div>
@@ -123,6 +124,7 @@
     </div>
   </div>
 
+  <!-- ADMIN LOGIN SCREEN -->
   <div id="admin-login-screen">
     <div class="auth-title">Admin Login</div>
     <div class="auth-subtitle">Manage Users, Balances & Withdrawals</div>
@@ -144,26 +146,27 @@
     </div>
   </div>
 
+  <!-- ADMIN PANEL DASHBOARD -->
   <div id="admin-panel-screen">
     <div class="admin-card">
       <div class="admin-header">
         <span>🛠️ Admin Control Panel</span>
         <button class="wallet-btn btn-withdraw" style="padding: 5px 10px;" onclick="logoutAdmin()">Logout</button>
       </div>
-      <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Quickly add balance to users or monitor registrations.</p>
+      <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Quickly add balance to users or approve recharges.</p>
     </div>
 
     <div class="admin-card">
-      <div class="admin-header" style="font-size: 15px;">💰 Add Balance to User</div>
+      <div class="admin-header" style="font-size: 15px;">💰 Add Balance / Approve Recharge</div>
       <div class="form-group">
         <label class="form-label">Target User UID</label>
         <input type="text" id="target-uid" class="form-input" placeholder="e.g. 482910">
       </div>
       <div class="form-group">
-        <label class="form-label">Amount to Add (₹)</label>
+        <label class="form-label">Amount (₹)</label>
         <input type="number" id="target-amount" class="form-input" placeholder="e.g. 500">
       </div>
-      <button class="wallet-btn btn-deposit" style="width: 100%;" onclick="adminAddBalance()">Credit Balance</button>
+      <button class="wallet-btn btn-deposit" style="width: 100%;" onclick="adminAddBalance()">Credit Balance (Approve)</button>
     </div>
 
     <div class="admin-card">
@@ -179,24 +182,29 @@
             </tr>
           </thead>
           <tbody id="admin-users-table-body">
-            </tbody>
+            <!-- Dynamically filled -->
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 
+  <!-- MAIN APP WRAPPER -->
   <div id="app-screen">
     
+    <!-- VIEW 1: HOME -->
     <div id="view-home" class="container active-view">
       <div class="page-content-box">
         <div class="page-header">🏠 Home Dashboard</div>
         <p style="font-size: 13px; color: #666; margin-bottom: 12px;">Welcome to LG Green Energy Investment Hub.</p>
         
+        <!-- HOME SHORTCUT BUTTONS -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
           <button class="wallet-btn btn-deposit" style="width: 100%; padding: 12px;" onclick="openModal('Recharge Portal', 'Enter recharge amount (Min ₹200):')">💳 Recharge</button>
           <button class="wallet-btn btn-withdraw" style="width: 100%; padding: 12px;" onclick="handleWithdrawClick()">🏦 Withdraw</button>
         </div>
 
+        <!-- PROFIT & LOSS RULES / GUIDELINES BOX -->
         <div style="background: #fdf8f5; border-left: 4px solid var(--primary-color); padding: 12px; border-radius: 6px; margin-top: 15px;">
           <div style="font-weight: bold; font-size: 13px; color: #d93838; margin-bottom: 6px;">📢 Profit & Loss Rules / Guidelines</div>
           <ul style="font-size: 12px; color: #555; padding-left: 16px; line-height: 1.6;">
@@ -209,28 +217,33 @@
       </div>
     </div>
 
+    <!-- VIEW 2: PRODUCTS -->
     <div id="view-products" class="container">
       <div class="page-content-box">
         <div class="page-header">📦 Investment Products</div>
         
+        <!-- Plan 1 -->
         <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
           <div style="font-weight: bold; font-size: 14px;">LG Solar Plan A01</div>
           <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹380.00 | Daily Return: ₹76.00</div>
           <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(380, 'LG Solar Plan A01')">Invest Now</button>
         </div>
 
+        <!-- Plan 2 -->
         <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
           <div style="font-weight: bold; font-size: 14px;">LG Wind Power Plan B02</div>
           <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹1,500.00 | Daily Return: ₹330.00</div>
           <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(1500, 'LG Wind Power Plan B02')">Invest Now</button>
         </div>
 
+        <!-- Plan 3 -->
         <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
           <div style="font-weight: bold; font-size: 14px;">LG Hydro Energy Plan C03</div>
           <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹4,500.00 | Daily Return: ₹1,080.00</div>
           <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="checkInvestment(4500, 'LG Hydro Energy Plan C03')">Invest Now</button>
         </div>
 
+        <!-- Plan 4 -->
         <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
           <div style="font-weight: bold; font-size: 14px;">LG Green VIP Plan D04</div>
           <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹11,000.00 | Daily Return: ₹2,800.00</div>
@@ -240,6 +253,7 @@
       </div>
     </div>
 
+    <!-- VIEW 3: TEAM / REFERRAL LIST -->
     <div id="view-team" class="container">
       <div class="page-content-box">
         <div class="page-header">👥 Team Report & Referrals</div>
@@ -252,6 +266,434 @@
       </div>
     </div>
 
+    <!-- VIEW 4: ME / PROFILE -->
     <div id="view-me" class="container">
       <div class="user-header">
         <div class="user-info-row">
+          <div class="user-profile-left">
+            <div class="avatar-box">👤</div>
+            <div class="user-details">
+              <h2 id="profile-username">User_849201</h2>
+              <p>ID: <span id="profile-uid">948271</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet-card">
+        <div class="wallet-title">Account Balance (₹)</div>
+        <div class="wallet-balance" id="profile-balance-display">₹0.00</div>
+        <div class="wallet-actions">
+          <button class="wallet-btn btn-deposit" onclick="openModal('Recharge Portal', 'Enter recharge amount (Min ₹200):')">Recharge</button>
+          <button class="wallet-btn btn-withdraw" onclick="handleWithdrawClick()">Withdraw</button>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item" onclick="switchView('bills')">
+          <div class="menu-left"><span>📋</span> Bill Details</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="switchNavTab('products', document.querySelectorAll('.nav-item')[1])">
+          <div class="menu-left"><span>📦</span> My Investments</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="switchNavTab('team', document.querySelectorAll('.nav-item')[2])">
+          <div class="menu-left"><span>👥</span> Team Report</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item" onclick="openBankModal()">
+          <div class="menu-left"><span>💳</span> Bank Card Management</div>
+          <div class="menu-right"><span id="bank-status-text" style="color: #ff4d4d;">Not Bound</span> <span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="alert('Online Service: Connected to Support Agent.')">
+          <div class="menu-left"><span>🎧</span> Online Service</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="logout-container">
+        <button class="logout-btn" onclick="logoutAccount()">Log Out</button>
+      </div>
+    </div>
+
+    <!-- VIEW 5: BILLS -->
+    <div id="view-bills" class="container">
+      <div class="page-content-box">
+        <div class="page-header">📋 Bill Details</div>
+        <div id="bills-list-container">
+          <p style="font-size: 13px; color: #888; text-align: center; padding: 20px;">No transaction records found.</p>
+        </div>
+        <button class="wallet-btn btn-withdraw" style="width: 100%; margin-top: 10px;" onclick="switchView('me')">Back to Profile</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="switchNavTab('home', this)"><span>🏠</span>Home</div>
+      <div class="nav-item" onclick="switchNavTab('products', this)"><span>📦</span>Products</div>
+      <div class="nav-item" onclick="switchNavTab('team', this)"><span>👥</span>Team</div>
+      <div class="nav-item" onclick="switchNavTab('me', this)"><span>👤</span>Me</div>
+    </div>
+  </div>
+
+  <!-- MODAL POPUP -->
+  <div class="modal-overlay" id="custom-modal">
+    <div class="modal-card">
+      <div class="modal-title" id="modal-title-text">Notice</div>
+      <p id="modal-desc-text" style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
+      <input type="text" class="modal-input" id="modal-input-field" placeholder="Enter value...">
+      <div class="modal-btns">
+        <button class="modal-btn btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn btn-confirm" onclick="confirmModalAction()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANK CARD MODAL -->
+  <div class="modal-overlay" id="bank-modal">
+    <div class="modal-card">
+      <div class="modal-title">Bank Card Management</div>
+      <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Enter your bank account details for payouts:</p>
+      <input type="text" class="modal-input" id="bank-holder" placeholder="Account Holder Name">
+      <input type="text" class="modal-input" id="bank-acc" placeholder="Bank Account Number">
+      <input type="text" class="modal-input" id="bank-ifsc" placeholder="IFSC Code">
+      <div class="modal-btns">
+        <button class="modal-btn btn-cancel" onclick="closeBankModal()">Cancel</button>
+        <button class="modal-btn btn-confirm" onclick="saveBankDetails()">Save Bank</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isRegisterMode = true;
+    let currentUser = null;
+    let dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-title-text').innerText = isRegisterMode ? "Register Account" : "Account Login";
+      document.getElementById('auth-subtitle-text').innerText = isRegisterMode ? "Join LG Clean Energy Portal" : "Sign in to access dashboard";
+      document.getElementById('auth-submit-btn').innerText = isRegisterMode ? "Register" : "Login";
+      document.getElementById('ref-field-box').style.display = isRegisterMode ? "block" : "none";
+      document.getElementById('auth-switch-text').innerHTML = isRegisterMode ? 
+        "Already have an account? <span>Login</span>" : 
+        "Don't have an account? <span>Register</span>";
+    }
+
+    function showAdminLogin() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('admin-login-screen').style.display = 'block';
+    }
+
+    function backToUserAuth() {
+      document.getElementById('admin-login-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'block';
+    }
+
+    function handleAdminLogin() {
+      let u = document.getElementById('admin-user').value.trim();
+      let p = document.getElementById('admin-pass').value.trim();
+
+      if(u === 'admin' && p === 'admin123') {
+        document.getElementById('admin-login-screen').style.display = 'none';
+        document.getElementById('admin-panel-screen').style.display = 'block';
+        loadAdminUsersTable();
+      } else {
+        alert("Invalid Admin Credentials! Use admin / admin123");
+      }
+    }
+
+    function logoutAdmin() {
+      document.getElementById('admin-panel-screen').style.display = 'none';
+      document.getElementById('admin-user').value = '';
+      document.getElementById('admin-pass').value = '';
+      document.getElementById('auth-screen').style.display = 'block';
+    }
+
+    function loadAdminUsersTable() {
+      dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+      let tbody = document.getElementById('admin-users-table-body');
+      if(dbUsers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No users registered yet.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = dbUsers.map(u => `
+        <tr>
+          <td><b>${u.uid}</b></td>
+          <td>${u.phone}</td>
+          <td>₹${(u.balance || 0).toFixed(2)}</td>
+          <td>${u.refCode}</td>
+        </tr>
+      `).join('');
+    }
+
+    function adminAddBalance() {
+      let uid = document.getElementById('target-uid').value.trim();
+      let amt = parseFloat(document.getElementById('target-amount').value);
+
+      if(!uid || isNaN(amt)) {
+        alert("Please enter a valid UID and amount.");
+        return;
+      }
+
+      dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+      let user = dbUsers.find(u => u.uid.toString() === uid);
+      if(user) {
+        user.balance = (user.balance || 0) + amt;
+        if(!user.bills) user.bills = [];
+        user.bills.push({type: 'Admin Approved Recharge', amount: amt, time: new Date().toLocaleString()});
+        
+        localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+        alert(`Successfully added ₹${amt} to UID: ${uid}`);
+        loadAdminUsersTable();
+        document.getElementById('target-uid').value = '';
+        document.getElementById('target-amount').value = '';
+      } else {
+        alert("User UID not found!");
+      }
+    }
+
+    function handleAuthSubmit() {
+      let phone = document.getElementById('auth-phone').value.trim();
+      let pass = document.getElementById('auth-password').value.trim();
+      let refCode = document.getElementById('auth-referral').value.trim();
+
+      if(!phone || !pass) {
+        alert("Please fill in both phone and password.");
+        return;
+      }
+
+      dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+
+      if(isRegisterMode) {
+        let newUID = Math.floor(100000 + Math.random() * 900000);
+        let myRefCode = "LG" + Math.floor(1000 + Math.random() * 9000);
+        
+        currentUser = {
+          phone: phone,
+          pass: pass,
+          uid: newUID,
+          refCode: myRefCode,
+          referredBy: refCode || "None",
+          referralsList: [],
+          balance: 0.00,
+          bankBound: false,
+          bills: []
+        };
+
+        if(refCode) {
+          let referrer = dbUsers.find(u => u.refCode === refCode);
+          if(referrer) {
+            if(!referrer.referralsList) referrer.referralsList = [];
+            referrer.referralsList.push(phone);
+          }
+        }
+
+        dbUsers.push(currentUser);
+        localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+        alert("Registration successful! Your UID: " + newUID);
+      } else {
+        let found = dbUsers.find(u => u.phone === phone && u.pass === pass);
+        if(found) {
+          currentUser = found;
+        } else {
+          alert("Invalid phone number or password.");
+          return;
+        }
+        alert("Login successful!");
+      }
+
+      updateUserSessionUI();
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+    }
+
+    function updateUserSessionUI() {
+      dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+      let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+      if(idx !== -1) currentUser = dbUsers[idx];
+
+      document.getElementById('profile-username').innerText = "User_" + currentUser.phone.slice(-4);
+      document.getElementById('profile-uid').innerText = currentUser.uid;
+      document.getElementById('profile-balance-display').innerText = "₹" + (currentUser.balance || 0).toFixed(2);
+      document.getElementById('display-my-ref-link').innerText = "https://lg-homes.com/#/pages/register?invite=" + currentUser.refCode;
+      
+      if(currentUser.bankBound) {
+        document.getElementById('bank-status-text').innerText = "Bound ✅";
+        document.getElementById('bank-status-text').style.color = "#07c160";
+      } else {
+        document.getElementById('bank-status-text').innerText = "Not Bound";
+        document.getElementById('bank-status-text').style.color = "#ff4d4f";
+      }
+
+      renderReferralList();
+      renderBillsList();
+    }
+
+    function renderReferralList() {
+      let container = document.getElementById('referral-list-container');
+      if(!currentUser.referralsList || currentUser.referralsList.length === 0) {
+        container.innerHTML = `<p style="color: #999;">No referrals yet. Share your invite link!</p>`;
+      } else {
+        container.innerHTML = currentUser.referralsList.map((p, index) => `
+          <div style="padding: 6px 0; border-bottom: 1px solid #eee;">
+            <b>${index + 1}.</b> User: ${p.slice(0, 3)}****${p.slice(-2)} (Active)
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderBillsList() {
+      let container = document.getElementById('bills-list-container');
+      if(!currentUser.bills || currentUser.bills.length === 0) {
+        container.innerHTML = `<p style="font-size: 13px; color: #888; text-align: center; padding: 20px;">No transaction records found.</p>`;
+      } else {
+        container.innerHTML = currentUser.bills.map(b => `
+          <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-size: 13px;">
+            <div><b>${b.type}</b><br><span style="font-size:11px; color:#888;">${b.time}</span></div>
+            <div style="color: ${b.amount > 0 ? '#07c160' : '#ff4d4f'}; font-weight:bold;">₹${b.amount}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function logoutAccount() {
+      if(confirm("Are you sure you want to log out?")) {
+        syncUserData();
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'block';
+        document.getElementById('auth-phone').value = "";
+        document.getElementById('auth-password').value = "";
+      }
+    }
+
+    function syncUserData() {
+      dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
+      let idx = dbUsers.findIndex(u => u.uid === currentUser.uid);
+      if(idx !== -1) {
+        dbUsers[idx] = currentUser;
+      } else {
+        dbUsers.push(currentUser);
+      }
+      localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+    }
+
+    function switchNavTab(tabName, el) {
+      updateUserSessionUI();
+      document.querySelectorAll('#app-screen .container').forEach(c => c.classList.remove('active-view'));
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
+      
+      document.getElementById('view-' + tabName).classList.add('active-view');
+      if(el) el.classList.add('active');
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('#app-screen .container').forEach(c => c.classList.remove('active-view'));
+      document.getElementById('view-' + viewName).classList.add('active-view');
+    }
+
+    function handleWithdrawClick() {
+      if(!currentUser.bankBound) {
+        alert("Please bind your Bank Account details first before withdrawing!");
+        openBankModal();
+      } else {
+        openModal('Withdrawal Portal', 'Enter amount to withdraw (₹):');
+      }
+    }
+
+    function openBankModal() {
+      document.getElementById('bank-modal').style.display = 'flex';
+    }
+
+    function closeBankModal() {
+      document.getElementById('bank-modal').style.display = 'none';
+    }
+
+    function saveBankDetails() {
+      let name = document.getElementById('bank-holder').value;
+      let acc = document.getElementById('bank-acc').value;
+      let ifsc = document.getElementById('bank-ifsc').value;
+
+      if(!name || !acc || !ifsc) {
+        alert("Please fill in all bank details.");
+        return;
+      }
+
+      currentUser.bankBound = true;
+      syncUserData();
+
+      document.getElementById('bank-status-text').innerText = "Bound ✅";
+      document.getElementById('bank-status-text').style.color = "#07c160";
+      closeBankModal();
+      alert("Bank account bound successfully!");
+    }
+
+    function checkInvestment(price, planName) {
+      if(currentUser.balance >= price) {
+        currentUser.balance -= price;
+        if(!currentUser.bills) currentUser.bills = [];
+        currentUser.bills.push({type: 'Investment: ' + planName, amount: -price, time: new Date().toLocaleString()});
+        
+        syncUserData();
+        updateUserSessionUI();
+        alert("Investment successful in " + planName + "!");
+      } else {
+        alert("Insufficient balance! Minimum required is ₹" + price + ". Please recharge or contact admin.");
+      }
+    }
+
+    let activeModalTitle = '';
+    function openModal(title, desc) {
+      activeModalTitle = title;
+      document.getElementById('modal-title-text').innerText = title;
+      document.getElementById('modal-desc-text').innerText = desc;
+      document.getElementById('modal-input-field').value = '';
+      document.getElementById('custom-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('custom-modal').style.display = 'none';
+    }
+
+    function confirmModalAction() {
+      let val = parseFloat(document.getElementById('modal-input-field').value);
+      
+      if(activeModalTitle.includes('Recharge')) {
+        if(isNaN(val) || val < 200) { 
+          alert("Minimum recharge amount is ₹200!"); 
+          return; 
+        }
+        
+        let upiAppsUrl = `upi://pay?pa=laxmihi@ptyes&pn=LG%20Homes&am=${val}&cu=INR`;
+        window.location.href = upiAppsUrl;
+
+        if(!currentUser.bills) currentUser.bills = [];
+        currentUser.bills.push({type: 'Recharge Request (Pending Admin Approval)', amount: val, time: new Date().toLocaleString()});
+        
+        syncUserData();
+        updateUserSessionUI();
+        alert("Redirecting to UPI App...\nRecharge request submitted. Admin will approve and credit your balance shortly!");
+      } 
+      else if(activeModalTitle.includes('Withdrawal')) {
+        if(isNaN(val) || val <= 0) { alert("Enter valid amount"); return; }
+        if(currentUser.balance >= val) {
+          currentUser.balance -= val;
+          if(!currentUser.bills) currentUser.bills = [];
+          currentUser.bills.push({type: 'Withdrawal Payout (Processing)', amount: -val, time: new Date().toLocaleString()});
+          
+          syncUserData();
+          updateUserSessionUI();
+          alert("Withdrawal request submitted successfully to your bound bank account!");
+        } else {
+          alert("Withdrawal failed: Insufficient balance.");
+        }
+      }
+      closeModal();
+    }
+  </script>
+</body>
+</html>
