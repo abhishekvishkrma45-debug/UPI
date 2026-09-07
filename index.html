@@ -1,921 +1,425 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Earning Portal - Secured Dashboard</title>
+  <title>LG Homes - Portal</title>
   <style>
     :root {
-      --primary-color: #d32f2f;
-      --bg-color: #f2efe9;
+      --primary-color: #f53f3f;
+      --bg-color: #f7f8fa;
       --card-bg: #ffffff;
-      --text-color: #333333;
+      --text-main: #333333;
+      --text-sub: #999999;
+      --border-color: #ebedf0;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+    
+    /* Auth Screens */
+    #auth-screen { display: block; max-width: 400px; margin: 40px auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .auth-title { font-size: 22px; font-weight: bold; color: var(--primary-color); text-align: center; margin-bottom: 5px; }
+    .auth-subtitle { font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-label { font-size: 12px; font-weight: bold; color: #444; display: block; margin-bottom: 5px; }
+    .form-input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; background: #fafafa; }
+    .auth-switch { text-align: center; font-size: 13px; margin-top: 15px; color: #666; cursor: pointer; }
+    .auth-switch span { color: var(--primary-color); font-weight: bold; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-    body { background: var(--bg-color); color: var(--text-color); padding-bottom: 70px; }
+    /* Main App Views */
+    #app-screen { display: none; }
+    .container { max-width: 500px; margin: 0 auto; display: none; }
+    .container.active-view { display: block; }
 
-    .main-container { max-width: 500px; margin: 0 auto; padding: 15px; }
+    /* Top User Profile Header */
+    .user-header { background: linear-gradient(135deg, #ff4d4d, #f53f3f); padding: 25px 20px 45px 20px; color: white; position: relative; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+    .user-info-row { display: flex; align-items: center; justify-content: space-between; }
+    .user-profile-left { display: flex; align-items: center; gap: 15px; }
+    .avatar-box { width: 55px; height: 55px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .user-details h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .user-details p { font-size: 12px; opacity: 0.9; }
 
-    /* AUTH SECTION */
-    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    .card h3 { color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; font-size: 16px; }
-    label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-top: 10px; }
-    input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
-    .btn { width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary-color); }
-    .btn-secondary { background: #1976d2; margin-top: 8px; }
-    .btn-admin { background: #333; margin-top: 8px; }
+    /* Floating Balance Card */
+    .wallet-card { background: var(--card-bg); width: 90%; margin: -30px auto 15px auto; border-radius: 12px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
+    .wallet-title { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; }
+    .wallet-balance { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 15px; }
+    .wallet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .wallet-btn { padding: 10px 0; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+    .btn-deposit { background: #ff4d4d; color: white; }
+    .btn-withdraw { background: #f2f3f5; color: #323233; }
 
-    /* ASSETS / PROFILE TOP CARD */
-    .assets-top-card {
-      background: #ffffff;
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      margin-bottom: 15px;
-    }
-    .balance-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .balance-title { font-size: 12px; color: #777; }
-    .balance-amount { font-size: 24px; font-weight: 900; color: #111; margin-top: 2px; }
-    .user-phone-uid { font-size: 13px; color: #555; margin-top: 8px; font-weight: 600; }
+    /* Menu Section Blocks */
+    .menu-section { background: var(--card-bg); width: 90%; margin: 0 auto 15px auto; border-radius: 12px; padding: 5px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-left { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; color: #323233; }
+    .menu-left span { font-size: 18px; }
+    .menu-right { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-sub); }
+    .arrow { font-size: 14px; color: #c8c9cc; }
 
-    /* QUICK ACTION BUTTONS */
-    .quick-actions {
-      display: flex;
-      justify-content: space-between;
-      background: #ffffff;
-      padding: 15px 10px;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      margin-bottom: 15px;
-    }
-    .action-btn {
-      text-align: center;
-      flex: 1;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      color: #444;
-    }
-    .action-icon {
-      width: 45px; height: 45px;
-      background: #fce4e4;
-      color: var(--primary-color);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 6px auto;
-      font-size: 18px;
-    }
+    /* Logout Container */
+    .logout-container { width: 90%; margin: 25px auto; }
+    .logout-btn { width: 100%; padding: 12px; background: white; border: 1px solid var(--border-color); color: var(--primary-color); font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; text-align: center; }
 
-    /* USER CENTER LIST ITEMS */
-    .menu-card {
-      background: #ffffff;
-      padding: 15px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-      margin-bottom: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .menu-card span { font-size: 18px; font-weight: bold; color: #888; }
+    /* Generic Pages View */
+    .page-content-box { width: 90%; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .page-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 
-    /* PLAN CARDS */
-    .plan-card { background: #fff8e1; border: 2px dashed var(--primary-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-    .plan-title { font-size: 16px; font-weight: bold; color: #d32f2f; margin-bottom: 8px; }
-    .plan-details { font-size: 13px; color: #444; line-height: 1.6; }
-    .calc-box { background: #e8f5e9; color: #2e7d32; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-top: 8px; }
-
-    /* MODAL POPUP STYLES */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000;
-    }
-    .modal-box {
-      background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto;
-    }
-    .upi-option-btn {
-      width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between; font-size: 13px;
-    }
-    .upi-option-btn:hover { background: #f1f1f1; border-color: var(--primary-color); }
-
-    /* BOTTOM NAVIGATION BAR */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; width: 100%;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-      padding: 8px 0;
-      z-index: 1000;
-    }
-    .nav-item {
-      text-align: center;
-      font-size: 11px;
-      color: #777;
-      cursor: pointer;
-      font-weight: 600;
-      flex: 1;
-    }
+    /* Bottom Navigation Bar */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid var(--border-color); z-index: 100; }
+    .nav-item { text-align: center; font-size: 11px; color: #7d7e80; cursor: pointer; font-weight: 500; flex: 1; }
     .nav-item.active { color: var(--primary-color); }
-    .nav-item span { display: block; font-size: 20px; }
+    .nav-item span { display: block; font-size: 20px; margin-bottom: 2px; }
 
-    .section-view { display: none; }
-    .section-view.active-sec { display: block; }
+    /* Modal / Popups */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-card { background: white; width: 90%; max-width: 360px; padding: 20px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #111; }
+    .modal-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; margin-bottom: 12px; outline: none; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; }
+    .btn-cancel { background: #f2f3f5; color: #666; }
+    .btn-confirm { background: var(--primary-color); color: white; }
   </style>
 </head>
 <body>
 
-  <!-- AUTH SECTION (REGISTER & LOGIN) -->
-  <div id="auth-section" class="main-container">
-    <div class="card" id="reg-card" style="margin-top: 20px;">
-      <h3>📝 User Registration (Random Bonus ₹30-50)</h3>
-      <label>Full Name</label>
-      <input type="text" id="reg-name" placeholder="Enter Full Name">
-      <label>Mobile Number (Phone ID)</label>
-      <input type="text" id="reg-phone" placeholder="10-digit mobile number">
-      <label>Gmail Address</label>
-      <input type="email" id="reg-email" placeholder="example@gmail.com">
-      <label>Password (Min 8 Digits)</label>
-      <input type="password" id="reg-pass" placeholder="Minimum 8 characters">
-      <label>Referral Code (Mandatory)</label>
-      <input type="text" id="reg-ref" placeholder="Enter Uid / Referral Code">
-      <button class="btn" id="btn-register">Register Now</button>
-      <button class="btn btn-admin" type="button" onclick="openAdminLoginModal()">🔐 Admin Panel Login</button>
-      <p style="margin-top: 15px; font-size: 13px; text-align: center;">
-        Already Registered? <a href="#" id="link-show-login" style="color:var(--primary-color);">Login Here</a>
-      </p>
+  <div id="auth-screen">
+    <div class="auth-title" id="auth-title-text">Register Account</div>
+    <div class="auth-subtitle" id="auth-subtitle-text">Join LG Clean Energy Portal</div>
+    
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <input type="text" id="auth-phone" class="form-input" placeholder="Enter mobile number">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="auth-password" class="form-input" placeholder="Enter password">
     </div>
 
-    <div class="card" id="login-card" style="display:none; margin-top: 30px;">
-      <h3>🔐 User Login</h3>
-      <label>Email ID / Phone</label>
-      <input type="text" id="login-email" placeholder="Enter Email or Phone">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="Enter Password">
-      <button class="btn" id="btn-login">Login Portal</button>
-      <button class="btn btn-admin" type="button" onclick="openAdminLoginModal()">🔐 Admin Panel Login</button>
-      <p style="margin-top:15px; text-align: center;"><a href="#" id="link-back-reg" style="color:var(--primary-color);">Back to Register</a></p>
+    <div class="form-group" id="ref-field-box">
+      <label class="form-label">Referral Code (Optional)</label>
+      <input type="text" id="auth-referral" class="form-input" placeholder="Enter invite code if any">
+    </div>
+
+    <button class="wallet-btn btn-deposit" style="width: 100%; padding: 12px; font-size: 15px;" onclick="handleAuthSubmit()" id="auth-submit-btn">Register</button>
+    
+    <div class="auth-switch" onclick="toggleAuthMode()" id="auth-switch-text">
+      Already have an account? <span>Login</span>
     </div>
   </div>
 
-  <!-- ADMIN LOGIN MODAL -->
-  <div id="admin-login-modal" class="modal-overlay">
-    <div class="modal-box">
-      <h3 style="color:var(--primary-color); margin-bottom:10px;">🛡️ Admin Login Panel</h3>
-      <label>Admin Username</label>
-      <input type="text" id="admin-user-input" placeholder="Enter admin username">
-      <label>Admin Password</label>
-      <input type="password" id="admin-pass-input" placeholder="Enter password">
-      <button class="btn" style="margin-top:15px;" onclick="verifyAdminLogin()">Login as Admin</button>
-      <button class="btn" style="background:#6c757d; margin-top:8px;" onclick="closeAdminLoginModal()">Close</button>
-    </div>
-  </div>
-
-  <!-- ADMIN DASHBOARD PANEL -->
-  <div id="admin-dashboard-container" class="main-container" style="display:none;">
-    <div class="card" style="margin-top: 15px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary-color); padding-bottom:8px; margin-bottom:12px;">
-        <h3 style="margin:0; border:none; padding:0;">🛡️ Admin Control Panel</h3>
-        <button onclick="logoutAdmin()" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-size:11px; cursor:pointer;">Logout Admin</button>
+  <div id="app-screen">
+    
+    <div id="view-home" class="container">
+      <div class="page-content-box">
+        <div class="page-header">🏠 Home Dashboard</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Welcome to LG Green Energy Investment Hub.</p>
+        <button class="wallet-btn btn-deposit" style="width: 100%;" onclick="openModal('Recharge Portal', 'Enter recharge amount (₹):')">Instant Recharge</button>
       </div>
-
-      <p style="font-size:13px; color:#555; margin-bottom:10px;">Yahan se aap users ke deposit aur withdrawal requests ko Approve ya Reject kar sakte hain.</p>
-      
-      <h4 style="font-size:14px; color:#1976d2; margin-top:15px; margin-bottom:8px;">📥 Pending Deposit Requests</h4>
-      <div id="admin-deposits-list" style="font-size:12px; color:#444;">Koi pending deposit nahi hai.</div>
-
-      <h4 style="font-size:14px; color:#1976d2; margin-top:20px; margin-bottom:8px;">📤 Pending Withdrawal Requests</h4>
-      <div id="admin-withdrawals-list" style="font-size:12px; color:#444;">Koi pending withdrawal nahi hai.</div>
-    </div>
-  </div>
-
-  <!-- DEPOSIT MODAL POPUP WITH UTR & UPI OPTIONS -->
-  <div id="deposit-modal" class="modal-overlay">
-    <div class="modal-box">
-      <h3 style="color:var(--primary-color); margin-bottom:10px;">📥 Deposit Funds via UPI</h3>
-      <div style="background:#fff3cd; padding:8px; border-radius:6px; font-size:12px; color:#856404; margin-bottom:10px;">
-        Merchant UPI ID: <b>laxmihi@ptyes</b><br>Pehle kisi bhi UPI app se payment karein aur UTR ID niche enter karein.
-      </div>
-      
-      <label>Enter Amount (₹)</label>
-      <input type="number" id="deposit-amount-input" placeholder="e.g. 500" style="margin-bottom:8px;">
-      
-      <label>Enter 12-Digit UTR / Transaction ID</label>
-      <input type="text" id="deposit-utr-input" placeholder="e.g. 426512345678" style="margin-bottom:12px;">
-
-      <label style="margin-bottom:5px;">Select Payment App Used:</label>
-      <div class="upi-option-btn" onclick="submitUpiDeposit('Paytm')">
-        <span>📱 Paytm UPI</span> <span style="font-size:11px; color:#666;">Submit Request</span>
-      </div>
-      <div class="upi-option-btn" onclick="submitUpiDeposit('PhonePe')">
-        <span>🟣 PhonePe UPI</span> <span style="font-size:11px; color:#666;">Submit Request</span>
-      </div>
-      <div class="upi-option-btn" onclick="submitUpiDeposit('Google Pay')">
-        <span>🔵 Google Pay (GPay)</span> <span style="font-size:11px; color:#666;">Submit Request</span>
-      </div>
-
-      <button class="btn" style="background:#6c757d; margin-top:12px;" onclick="closeDepositModal()">Cancel</button>
-    </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER -->
-  <div id="portal-container" style="display:none;">
-    <div class="main-container">
-
-      <!-- TAB 1: HOME (PLANS) -->
-      <div id="tab-home" class="section-view">
-        <div class="card">
-          <h3>💎 Active Investment Plans</h3>
-          
-          <div class="plan-card">
-            <div class="plan-title">📦 Starter Plan (₹380)</div>
-            <div class="plan-details">
-              • Investment: <b>₹380</b> | Duration: <b>2 Days</b><br>
-              • Daily Income: <b>₹76 / Day (Auto Credit)</b>
-            </div>
-            <div class="calc-box">Total Return: ₹532</div>
-            <button class="btn" onclick="buyPlan(380, 'Starter Plan (₹380)', 76, 2, 532)">Invest ₹380 Now</button>
-          </div>
-
-          <div class="plan-card">
-            <div class="plan-title">🚀 Bronze Plan (₹750)</div>
-            <div class="plan-details">
-              • Investment: <b>₹750</b> | Duration: <b>3 Days</b><br>
-              • Daily Income: <b>₹180 / Day (Auto Credit)</b>
-            </div>
-            <div class="calc-box">Total Return: ₹1,290</div>
-            <button class="btn" onclick="buyPlan(750, 'Bronze Plan (₹750)', 180, 3, 1290)">Invest ₹750 Now</button>
-          </div>
-
-          <div class="plan-card">
-            <div class="plan-title">⚡ Silver Plan (₹1,500)</div>
-            <div class="plan-details">
-              • Investment: <b>₹1,500</b> | Duration: <b>5 Days</b><br>
-              • Daily Income: <b>₹380 / Day (Auto Credit)</b>
-            </div>
-            <div class="calc-box">Total Return: ₹1,900</div>
-            <button class="btn" onclick="buyPlan(1500, 'Silver Plan (₹1500)', 380, 5, 1900)">Invest ₹1,500 Now</button>
-          </div>
-
-          <div class="plan-card">
-            <div class="plan-title">🔥 Gold VIP Plan (₹3,000)</div>
-            <div class="plan-details">
-              • Investment: <b>₹3,000</b> | Duration: <b>7 Days</b><br>
-              • Daily Income: <b>₹800 / Day (Auto Credit)</b>
-            </div>
-            <div class="calc-box">Total Return: ₹5,600</div>
-            <button class="btn" onclick="buyPlan(3000, 'Gold VIP Plan (₹3000)', 800, 7, 5600)">Invest ₹3,000 Now</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- TAB 2: PRODUCTS & FINANCIAL HISTORY -->
-      <div id="tab-products" class="section-view">
-        <div class="card">
-          <h3>📦 My Invested Products & History</h3>
-          <p style="font-size:12px; color:#666; margin-bottom:10px;">Yahan aapke sabhi investment aur profit/deposit requests ka record dikhega.</p>
-          <div id="my-products-list" style="font-size:13px; color:#555;">Koi active product ya history nahi hai.</div>
-        </div>
-      </div>
-
-      <!-- TAB 3: WORK / TASKS -->
-      <div id="tab-work" class="section-view">
-        <div class="card">
-          <h3>🎯 Daily Task & Check-in</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:15px;">Roz check-in karein aur ₹10 ka daily reward paayein.</p>
-          <button class="btn" id="btn-claim-bonus" onclick="claimDailyBonus()">Claim Daily Bonus (₹10)</button>
-        </div>
-      </div>
-
-      <!-- TAB 4: TEAM & REFERRED MEMBERS -->
-      <div id="tab-team" class="section-view">
-        <div class="card">
-          <h3>👥 My Team & Referrals</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:10px;">Apna referral link dosto ko share karein.</p>
-          
-          <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-top:10px; font-size:12px; word-break: break-all;">
-            <b>Your Referral Link:</b><br>
-            <code id="referral-link-text" style="color:var(--primary-color); font-weight:bold;"></code>
-          </div>
-          
-          <button class="btn" style="margin-top:10px;" onclick="copyReferralLink()">📋 Copy Referral Link</button>
-          
-          <h3 style="margin-top:20px;">📜 Direct Team Members (With Numbers)</h3>
-          <div id="team-members-list" style="font-size:13px; color:#555; margin-top:10px;">Abhi koi team member nahi hai.</div>
-        </div>
-      </div>
-
-      <!-- TAB 5: ASSETS / PROFILE -->
-      <div id="tab-assets" class="section-view active-sec">
-        
-        <div class="assets-top-card">
-          <div class="balance-header">
-            <div>
-              <div class="balance-title">Available Balance</div>
-              <div class="balance-amount">₹<span id="user-balance">0.00</span></div>
-            </div>
-            <div style="background:#eee; width:45px; height:45px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold;">QR</div>
-          </div>
-          <div class="user-phone-uid">
-            📞 <span id="profile-phone"></span> &nbsp;|&nbsp; 🆔 UID: <span id="profile-uid"></span>
-          </div>
-        </div>
-
-        <div class="quick-actions">
-          <div class="action-btn" onclick="openDepositModal()">
-            <div class="action-icon">📥</div>
-            Deposit
-          </div>
-          <div class="action-btn" onclick="openWithdrawModal()">
-            <div class="action-icon">📤</div>
-            Withdraw
-          </div>
-          <div class="action-btn" onclick="alert('Bills & Transaction History Section')">
-            <div class="action-icon">📋</div>
-            Bills
-          </div>
-          <div class="action-btn" onclick="alert('Foundation Section')">
-            <div class="action-icon">🏛️</div>
-            Foundation
-          </div>
-        </div>
-
-        <div style="font-size: 13px; font-weight: bold; color: #555; margin-bottom: 8px;">User Center</div>
-        
-        <div class="menu-card" onclick="switchTab('products', document.querySelectorAll('.nav-item')[1])">
-          <div>Investment History & Profit<br><span style="font-size:14px; color:#333;">Check all records</span></div>
-          <span>›</span>
-        </div>
-
-        <div class="menu-card" onclick="switchTab('team', document.querySelectorAll('.nav-item')[3])">
-          <div>Team Members List<br><span style="font-size:14px; color:#333;">View referrals with numbers</span></div>
-          <span>›</span>
-        </div>
-
-        <div class="menu-card" onclick="logoutUser()">
-          <div style="color: #d32f2f;">Logout Account</div>
-          <span>›</span>
-        </div>
-
-      </div>
-
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR -->
+    <div id="view-products" class="container">
+      <div class="page-content-box">
+        <div class="page-header">📦 Investment Products</div>
+        <div style="background: #faf8f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+          <div style="font-weight: bold; font-size: 14px;">LG Solar Plan A01</div>
+          <div style="font-size: 12px; color: #666; margin: 4px 0;">Price: ₹380.00 | Daily Return: ₹76.00</div>
+          <button class="wallet-btn btn-deposit" style="width: 100%; margin-top: 6px;" onclick="alert('Insufficient balance (₹0.00). Please recharge first.')">Invest Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-team" class="container">
+      <div class="page-content-box">
+        <div class="page-header">👥 Team Report & Referrals</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Your Referral Link: <br><span id="display-my-ref-link" style="color:var(--primary-color); font-weight:bold; word-break:break-all;">---</span></p>
+        <hr style="border:0; border-top:1px solid #eee; margin: 15px 0;">
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 8px;">Referred Users List:</div>
+        <div id="referral-list-container" style="font-size: 12px; color: #555;">
+          <p style="color: #999;">No referrals yet. Share your code to invite users!</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-me" class="container active-view">
+      <div class="user-header">
+        <div class="user-info-row">
+          <div class="user-profile-left">
+            <div class="avatar-box">👤</div>
+            <div class="user-details">
+              <h2 id="profile-username">User_849201</h2>
+              <p>ID: <span id="profile-uid">948271</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wallet-card">
+        <div class="wallet-title">Account Balance (₹)</div>
+        <div class="wallet-balance">₹0.00</div>
+        <div class="wallet-actions">
+          <button class="wallet-btn btn-deposit" onclick="openModal('Recharge Portal', 'Enter deposit amount (₹):')">Recharge</button>
+          <button class="wallet-btn btn-withdraw" onclick="handleWithdrawClick()">Withdraw</button>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item" onclick="switchView('bills')">
+          <div class="menu-left"><span>📋</span> Bill Details</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="switchNavTab('products', document.querySelectorAll('.nav-item')[1])">
+          <div class="menu-left"><span>📦</span> My Investments</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="switchNavTab('team', document.querySelectorAll('.nav-item')[2])">
+          <div class="menu-left"><span>👥</span> Team Report</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item" onclick="openBankModal()">
+          <div class="menu-left"><span>💳</span> Bank Card Management</div>
+          <div class="menu-right"><span id="bank-status-text" style="color: #ff4d4d;">Not Bound</span> <span class="arrow">›</span></div>
+        </div>
+        <div class="menu-item" onclick="alert('Online Service: Connected to Support Agent.')">
+          <div class="menu-left"><span>🎧</span> Online Service</div>
+          <div class="menu-right"><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="logout-container">
+        <button class="logout-btn" onclick="logoutAccount()">Log Out</button>
+      </div>
+    </div>
+
+    <div id="view-bills" class="container">
+      <div class="page-content-box">
+        <div class="page-header">📋 Bill Details</div>
+        <p style="font-size: 13px; color: #888; text-align: center; padding: 20px;">No transaction records found.</p>
+        <button class="wallet-btn btn-withdraw" style="width: 100%;" onclick="switchView('me')">Back to Profile</button>
+      </div>
+    </div>
+
     <div class="bottom-nav">
-      <div class="nav-item" onclick="switchTab('home', this)">
-        <span>🏠</span>Home
+      <div class="nav-item" onclick="switchNavTab('home', this)"><span>🏠</span>Home</div>
+      <div class="nav-item" onclick="switchNavTab('products', this)"><span>📦</span>Products</div>
+      <div class="nav-item" onclick="switchNavTab('team', this)"><span>👥</span>Team</div>
+      <div class="nav-item active" onclick="switchNavTab('me', this)"><span>👤</span>Me</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="custom-modal">
+    <div class="modal-card">
+      <div class="modal-title" id="modal-title-text">Notice</div>
+      <p id="modal-desc-text" style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
+      <input type="text" class="modal-input" id="modal-input-field" placeholder="Enter value...">
+      <div class="modal-btns">
+        <button class="modal-btn btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn btn-confirm" onclick="confirmModalAction()">Confirm</button>
       </div>
-      <div class="nav-item" onclick="switchTab('products', this)">
-        <span>📦</span>Products
-      </div>
-      <div class="nav-item" onclick="switchTab('work', this)">
-        <span>📋</span>Work
-      </div>
-      <div class="nav-item" onclick="switchTab('team', this)">
-        <span>👥</span>Team
-      </div>
-      <div class="nav-item active" onclick="switchTab('assets', this)">
-        <span>💼</span>Assets
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="bank-modal">
+    <div class="modal-card">
+      <div class="modal-title">Bank Card Management</div>
+      <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Enter your bank account details for payouts:</p>
+      <input type="text" class="modal-input" id="bank-holder" placeholder="Account Holder Name">
+      <input type="text" class="modal-input" id="bank-acc" placeholder="Bank Account Number">
+      <input type="text" class="modal-input" id="bank-ifsc" placeholder="IFSC Code">
+      <div class="modal-btns">
+        <button class="modal-btn btn-cancel" onclick="closeBankModal()">Cancel</button>
+        <button class="modal-btn btn-confirm" onclick="saveBankDetails()">Save Bank</button>
       </div>
     </div>
   </div>
 
   <script>
-    let usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-    let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-    let pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
-    const MERCHANT_UPI = "laxmihi@ptyes";
+    let isRegisterMode = true;
+    let currentUser = null;
+    let bankDetailsSaved = false;
 
-    window.onload = function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const refCode = urlParams.get('ref');
-      if(refCode) {
-        document.getElementById("reg-ref").value = refCode;
-      }
-    };
+    // Simulated Database to track registered users & referrals
+    let dbUsers = JSON.parse(localStorage.getItem('lg_db_users')) || [];
 
-    function checkDailyProfits() {
-      if(!currentUser) return;
-      let updated = false;
-      const todayStr = new Date().toDateString();
-
-      if(currentUser.history) {
-        currentUser.history.forEach(item => {
-          if(item.type === "Investment Plan" && item.status === "Active Investment") {
-            if(!item.lastCreditedDate) item.lastCreditedDate = item.startDate;
-            let lastDate = new Date(item.lastCreditedDate);
-            let currentDate = new Date(todayStr);
-
-            if(currentDate > lastDate && item.daysCompleted < item.totalDays) {
-              currentUser.balance += item.dailyIncome;
-              item.daysCompleted += 1;
-              item.lastCreditedDate = todayStr;
-              updated = true;
-
-              if(item.daysCompleted >= item.totalDays) {
-                item.status = "Completed ✅";
-              }
-            }
-          }
-        });
-      }
-      if(updated) updateStorage();
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-title-text').innerText = isRegisterMode ? "Register Account" : "Account Login";
+      document.getElementById('auth-subtitle-text').innerText = isRegisterMode ? "Join LG Clean Energy Portal" : "Sign in to access dashboard";
+      document.getElementById('auth-submit-btn').innerText = isRegisterMode ? "Register" : "Login";
+      document.getElementById('ref-field-box').style.display = isRegisterMode ? "block" : "none";
+      document.getElementById('auth-switch-text').innerHTML = isRegisterMode ? 
+        "Already have an account? <span>Login</span>" : 
+        "Don't have an account? <span>Register</span>";
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-      if(currentUser && currentUser.email) {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const latest = usersDB.find(u => u.email === currentUser.email);
-        if(latest) { 
-          currentUser = latest; 
-          localStorage.setItem("currentUser", JSON.stringify(currentUser)); 
-          checkDailyProfits();
-          showPortal();
-        } else {
-          localStorage.removeItem("currentUser");
-        }
+    function handleAuthSubmit() {
+      let phone = document.getElementById('auth-phone').value.trim();
+      let pass = document.getElementById('auth-password').value.trim();
+      let refCode = document.getElementById('auth-referral').value.trim();
+
+      if(!phone || !pass) {
+        alert("Please fill in both phone and password.");
+        return;
       }
 
-      document.getElementById("link-show-login").onclick = (e) => {
-        e.preventDefault();
-        document.getElementById("reg-card").style.display = "none";
-        document.getElementById("login-card").style.display = "block";
-      };
-
-      document.getElementById("link-back-reg").onclick = (e) => {
-        e.preventDefault();
-        document.getElementById("login-card").style.display = "none";
-        document.getElementById("reg-card").style.display = "block";
-      };
-
-      // REGISTER
-      document.getElementById("btn-register").onclick = function() {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const name = document.getElementById("reg-name").value.trim();
-        const phone = document.getElementById("reg-phone").value.trim();
-        const email = document.getElementById("reg-email").value.trim().toLowerCase();
-        const pass = document.getElementById("reg-pass").value;
-        const refCode = document.getElementById("reg-ref").value.trim();
-
-        if(!name || !phone || !email || pass.length < 8) {
-          alert("Kripya sabhi details sahi bharein (Password min 8 digits)!");
-          return;
-        }
-
-        if(!refCode) {
-          alert("Referral code dalna anivarya hai!");
-          return;
-        }
-
-        let referrerUser = usersDB.find(u => u.uniqueId === refCode);
-        if(!referrerUser && usersDB.length > 0) {
-          alert("Galat Referral Code! Kripya sahi referral code dalein.");
-          return;
-        }
-
-        if(usersDB.find(u => u.email === email)) {
-          alert("Ye Email ID pehle se registered hai! Kripya Login karein.");
-          return;
-        }
-
-        const uniqueId = Math.floor(100000000 + Math.random() * 900000000).toString();
-        const randomBonus = Math.floor(Math.random() * (50 - 30 + 1)) + 30;
-
-        const newUser = { 
-          uniqueId, 
-          name, 
-          phone, 
-          email, 
-          password: pass, 
-          referredBy: refCode, 
-          balance: randomBonus, 
-          lastCheckIn: "", 
-          teamMembers: [],
-          history: [{
-            type: "Bonus",
-            details: `Registration Bonus (Random)`,
-            amount: randomBonus,
-            date: new Date().toDateString(),
-            status: "Credited ✅"
-          }] 
+      if(isRegisterMode) {
+        // Create new user
+        let newUID = Math.floor(100000 + Math.random() * 900000);
+        let myRefCode = "LG" + Math.floor(1000 + Math.random() * 9000);
+        
+        currentUser = {
+          phone: phone,
+          pass: pass,
+          uid: newUID,
+          refCode: myRefCode,
+          referredBy: refCode || "None",
+          referralsList: []
         };
 
-        if(referrerUser) {
-          if(!referrerUser.teamMembers) referrerUser.teamMembers = [];
-          referrerUser.teamMembers.push({ name: name, uniqueId: uniqueId, phone: phone, date: new Date().toDateString() });
-          const refIndex = usersDB.findIndex(u => u.uniqueId === refCode);
-          if(refIndex !== -1) usersDB[refIndex] = referrerUser;
+        // If user registered with someone's referral code, add to that referrer's list
+        if(refCode) {
+          let referrer = dbUsers.find(u => u.refCode === refCode);
+          if(referrer) {
+            referrer.referralsList.push(phone);
+          }
         }
 
-        usersDB.push(newUser);
-        currentUser = newUser;
-        updateStorage();
-        alert(`Registration Successful! Aapko ₹${randomBonus} ka welcome bonus mila hai 🎉`);
-        showPortal();
-      };
-
-      // LOGIN
-      document.getElementById("btn-login").onclick = function() {
-        usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-        const loginId = document.getElementById("login-email").value.trim().toLowerCase();
-        const pass = document.getElementById("login-pass").value;
-
-        if(!loginId || !pass) {
-          alert("Kripya Email/Phone aur Password dono bharein!");
-          return;
-        }
-
-        const user = usersDB.find(u => (u.email === loginId || u.phone === loginId) && u.password === pass);
-
-        if(user) {
-          currentUser = user;
-          if(!currentUser.history) currentUser.history = [];
-          if(!currentUser.teamMembers) currentUser.teamMembers = [];
-          localStorage.setItem("currentUser", JSON.stringify(currentUser));
-          checkDailyProfits();
-          updateStorage();
-          showPortal();
+        dbUsers.push(currentUser);
+        localStorage.setItem('lg_db_users', JSON.stringify(dbUsers));
+        alert("Registration successful! Your UID: " + newUID);
+      } else {
+        // Login mode
+        let found = dbUsers.find(u => u.phone === phone && u.pass === pass);
+        if(found) {
+          currentUser = found;
         } else {
-          alert("Galat Email/Phone ya Password!");
-        }
-      };
-    });
-
-    // ADMIN LOGIN FUNCTIONS
-    window.openAdminLoginModal = function() {
-      document.getElementById("admin-login-modal").style.display = "flex";
-    };
-
-    window.closeAdminLoginModal = function() {
-      document.getElementById("admin-login-modal").style.display = "none";
-    };
-
-    window.verifyAdminLogin = function() {
-      let u = document.getElementById("admin-user-input").value.trim();
-      let p = document.getElementById("admin-pass-input").value;
-
-      if(u === "admin" && p === "admin123") {
-        closeAdminLoginModal();
-        document.getElementById("auth-section").style.display = "none";
-        document.getElementById("portal-container").style.display = "none";
-        document.getElementById("admin-dashboard-container").style.display = "block";
-        renderAdminDashboard();
-      } else {
-        alert("Galat Admin Username ya Password!");
-      }
-    };
-
-    window.logoutAdmin = function() {
-      document.getElementById("admin-dashboard-container").style.display = "none";
-      document.getElementById("auth-section").style.display = "block";
-    };
-
-    window.renderAdminDashboard = function() {
-      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
-      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-
-      let dList = document.getElementById("admin-deposits-list");
-      let wList = document.getElementById("admin-withdrawals-list");
-
-      let depReqs = pendingRequests.filter(r => r.type === "Deposit" && r.status === "Pending ⏳");
-      let witReqs = pendingRequests.filter(r => r.type === "Withdrawal" && r.status === "Pending ⏳");
-
-      dList.innerHTML = depReqs.length === 0 ? "Koi pending deposit request nahi hai." : "";
-      depReqs.forEach(req => {
-        dList.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:8px;">
-          <b>User:</b> ${req.userName} (${req.userPhone})<br>
-          <b>Amount:</b> ₹${req.amount} via ${req.appName}<br>
-          <b>UTR ID:</b> <span style="color:var(--primary-color); font-weight:bold;">${req.utrId}</span><br>
-          <b>Date:</b> ${req.date}<br>
-          <button onclick="approveRequest('${req.id}', 'approve')" style="background:#2e7d32; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; cursor:pointer; font-weight:bold; color:white;">Approve ✅</button>
-          <button onclick="approveRequest('${req.id}', 'reject')" style="background:#d32f2f; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; margin-left:6px; cursor:pointer; font-weight:bold; color:white;">Reject ❌</button>
-        </div>`;
-      });
-
-      wList.innerHTML = witReqs.length === 0 ? "Koi pending withdrawal request nahi hai." : "";
-      witReqs.forEach(req => {
-        wList.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:8px;">
-          <b>User:</b> ${req.userName} (${req.userPhone})<br>
-          <b>Withdrawal Amount:</b> ₹${req.amount}<br>
-          <b>Date:</b> ${req.date}<br>
-          <button onclick="approveRequest('${req.id}', 'approve')" style="background:#2e7d32; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; cursor:pointer; font-weight:bold; color:white;">Approve Payment ✅</button>
-          <button onclick="approveRequest('${req.id}', 'reject')" style="background:#d32f2f; color:#white; border:none; padding:6px 12px; border-radius:4px; margin-top:6px; margin-left:6px; cursor:pointer; font-weight:bold; color:white;">Reject ❌</button>
-        </div>`;
-      });
-    };
-
-    window.approveRequest = function(reqId, action) {
-      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
-      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-
-      let reqIdx = pendingRequests.findIndex(r => r.id === reqId);
-      if(reqIdx === -1) return;
-      let req = pendingRequests[reqIdx];
-
-      let targetUser = usersDB.find(u => u.email === req.userEmail);
-
-      if(action === 'approve') {
-        req.status = "Approved ✅";
-        if(targetUser) {
-          if(!targetUser.history) targetUser.history = [];
-          if(req.type === "Deposit") {
-            targetUser.balance += req.amount;
-            targetUser.history.push({
-              type: "Deposit",
-              details: `Deposit via ${req.appName} (UTR: ${req.utrId})`,
-              amount: req.amount,
-              date: req.date,
-              status: "Approved ✅"
-            });
-          } else if(req.type === "Withdrawal") {
-            targetUser.history.push({
-              type: "Withdrawal",
-              details: "Bank Transfer Payout",
-              amount: req.amount,
-              date: req.date,
-              status: "Approved & Paid 🚀"
-            });
-          }
-        }
-      } else {
-        req.status = "Rejected ❌";
-        if(targetUser) {
-          if(!targetUser.history) targetUser.history = [];
-          if(req.type === "Withdrawal") {
-            targetUser.balance += req.amount; // Refund back if rejected
-          }
-          targetUser.history.push({
-            type: req.type,
-            details: `${req.type} Rejected by Admin`,
-            amount: req.amount,
-            date: req.date,
-            status: "Rejected ❌"
-          });
-        }
-      }
-
-      localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
-      localStorage.setItem("usersDB", JSON.stringify(usersDB));
-      
-      if(currentUser && targetUser && currentUser.email === targetUser.email) {
-        currentUser = targetUser;
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      }
-
-      alert(`Request successfully ${action}d!`);
-      renderAdminDashboard();
-    };
-
-    window.claimDailyBonus = function() {
-      const todayStr = new Date().toDateString();
-      if(currentUser.lastCheckIn === todayStr) {
-        alert("Aapne aaj ka daily bonus pehle hi claim kar liya hai!");
-        return;
-      }
-
-      currentUser.balance += 10;
-      currentUser.lastCheckIn = todayStr;
-      if(!currentUser.history) currentUser.history = [];
-      currentUser.history.push({
-        type: "Daily Task",
-        details: "Daily Check-in Reward",
-        amount: 10,
-        date: todayStr,
-        status: "Credited ✅"
-      });
-
-      updateStorage();
-      alert("🎉 Success! ₹10 Daily Check-in Bonus added.");
-      showPortal();
-    };
-
-    window.copyReferralLink = function() {
-      const linkText = document.getElementById("referral-link-text").innerText;
-      navigator.clipboard.writeText(linkText).then(() => {
-        alert("Referral Link Copied Successfully! 🎉");
-      }).catch(err => {
-        alert("Copy nahi ho paya, manually copy karein.");
-      });
-    };
-
-    // DEPOSIT MODAL FUNCTIONS WITH UTR
-    window.openDepositModal = function() {
-      document.getElementById("deposit-amount-input.value") ? "" : document.getElementById("deposit-amount-input").value = "";
-      document.getElementById("deposit-utr-input").value = "";
-      document.getElementById("deposit-modal").style.display = "flex";
-    };
-
-    window.closeDepositModal = function() {
-      document.getElementById("deposit-modal").style.display = "none";
-    };
-
-    window.submitUpiDeposit = function(appName) {
-      let amtStr = document.getElementById("deposit-amount-input").value;
-      let utrId = document.getElementById("deposit-utr-input").value.trim();
-      let amt = parseFloat(amtStr);
-
-      if(!amt || isNaN(amt) || amt <= 0) {
-        alert("Kripya sahi deposit amount enter karein!");
-        return;
-      }
-
-      if(!utrId || utrId.length < 6) {
-        alert("Kripya 12-digit valid UTR / Transaction Reference ID enter karein!");
-        return;
-      }
-
-      closeDepositModal();
-
-      let reqObj = {
-        id: 'REQ_' + Math.floor(100000 + Math.random() * 900000),
-        type: "Deposit",
-        userEmail: currentUser.email,
-        userName: currentUser.name,
-        userPhone: currentUser.phone,
-        amount: amt,
-        appName: appName,
-        utrId: utrId,
-        date: new Date().toDateString(),
-        status: "Pending ⏳"
-      };
-
-      pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
-      pendingRequests.push(reqObj);
-      localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
-
-      if(!currentUser.history) currentUser.history = [];
-      currentUser.history.push({
-        type: "Deposit Request",
-        details: `Deposit Request ₹${amt} via ${appName} (UTR: ${utrId})`,
-        amount: amt,
-        date: new Date().toDateString(),
-        status: "Pending Admin Approval ⏳"
-      });
-
-      updateStorage();
-      alert("Deposit request successfully submit ho gayi hai! Admin approval ke baad balance aapke account me add kar diya jayega.");
-      showPortal();
-    };
-
-    window.openWithdrawModal = function() {
-      let amt = prompt("Enter Withdrawal Amount (₹):");
-      if(amt && !isNaN(amt) && amt > 0) {
-        let withdrawVal = parseFloat(amt);
-        if(currentUser.balance >= withdrawVal) {
-          currentUser.balance -= withdrawVal; // Deduct temporarily pending admin approval
-
-          let reqObj = {
-            id: 'REQ_' + Math.floor(100000 + Math.random() * 900000),
-            type: "Withdrawal",
-            userEmail: currentUser.email,
-            userName: currentUser.name,
-            userPhone: currentUser.phone,
-            amount: withdrawVal,
-            date: new Date().toDateString(),
-            status: "Pending ⏳"
+          // Fallback direct login for convenience
+          currentUser = {
+            phone: phone,
+            pass: pass,
+            uid: Math.floor(100000 + Math.random() * 900000),
+            refCode: "LG" + Math.floor(1000 + Math.random() * 9000),
+            referredBy: "None",
+            referralsList: []
           };
-
-          pendingRequests = JSON.parse(localStorage.getItem("pendingRequests")) || [];
-          pendingRequests.push(reqObj);
-          localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
-
-          if(!currentUser.history) currentUser.history = [];
-          currentUser.history.push({
-            type: "Withdrawal Request",
-            details: "Bank Transfer Payout Request",
-            amount: withdrawVal,
-            date: new Date().toDateString(),
-            status: "Pending Admin Approval ⏳"
-          });
-
-          updateStorage();
-          alert("Withdrawal Request submitted successfully! Waiting for admin approval.");
-          showPortal();
-        } else {
-          alert("Insufficient Balance!");
+          dbUsers.push(currentUser);
         }
-      }
-    };
-
-    window.buyPlan = function(price, planName, dailyInc, totalDays, totalReturn) {
-      if(currentUser.balance < price) {
-        alert("Wallet balance kam hai! Pehle deposit karein.");
-        return;
+        alert("Login successful!");
       }
 
-      currentUser.balance -= price;
-      if(!currentUser.history) currentUser.history = [];
-      const todayStr = new Date().toDateString();
-      
-      currentUser.history.push({
-        type: "Investment Plan",
-        details: `${planName} - Invested`,
-        amount: price,
-        dailyIncome: dailyInc,
-        totalDays: totalDays,
-        daysCompleted: 0,
-        startDate: todayStr,
-        lastCreditedDate: todayStr,
-        status: "Active Investment"
-      });
+      // Update UI with user data
+      document.getElementById('profile-username').innerText = "User_" + currentUser.phone.slice(-4);
+      document.getElementById('profile-uid').innerText = currentUser.uid;
+      document.getElementById('display-my-ref-link').innerText = "https://lg-homes.com/#/pages/register?invite=" + currentUser.refCode;
 
-      updateStorage();
-      alert("Plan successfully purchased!");
-      showPortal();
-    };
+      // Render Referral List
+      renderReferralList();
 
-    window.switchTab = function(tabName, element) {
-      document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active-sec'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      // Switch to App Screen
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+    }
 
-      if(tabName === 'home') document.getElementById('tab-home').classList.add('active-sec');
-      if(tabName === 'products') document.getElementById('tab-products').classList.add('active-sec');
-      if(tabName === 'work') document.getElementById('tab-work').classList.add('active-sec');
-      if(tabName === 'team') document.getElementById('tab-team').classList.add('active-sec');
-      if(tabName === 'assets') document.getElementById('tab-assets').classList.add('active-sec');
-
-      element.classList.add('active');
-    };
-
-    window.logoutUser = function() {
-      localStorage.removeItem("currentUser");
-      location.reload();
-    };
-
-    function showPortal() {
-      document.getElementById("auth-section").style.display = "none";
-      document.getElementById("admin-dashboard-container").style.display = "none";
-      document.getElementById("portal-container").style.display = "block";
-      document.getElementById("user-balance").innerText = currentUser.balance.toFixed(2);
-
-      document.getElementById("profile-phone").innerText = currentUser.phone || "919598064805";
-      document.getElementById("profile-uid").innerText = currentUser.uniqueId || "886232567";
-
-      document.getElementById("referral-link-text").innerText = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uniqueId}`;
-
-      const todayStr = new Date().toDateString();
-      const claimBtn = document.getElementById("btn-claim-bonus");
-      if(currentUser.lastCheckIn === todayStr) {
-        claimBtn.innerText = "Claimed Today ✅";
-        claimBtn.style.background = "#6c757d";
+    function renderReferralList() {
+      let container = document.getElementById('referral-list-container');
+      if(!currentUser.referralsList || currentUser.referralsList.length === 0) {
+        container.innerHTML = `<p style="color: #999;">No referrals yet. Share your invite link!</p>`;
       } else {
-        claimBtn.innerText = "Claim Daily Bonus (₹10)";
-        claimBtn.style.background = "var(--primary-color)";
-      }
-
-      let pList = document.getElementById("my-products-list");
-      pList.innerHTML = "";
-      if(!currentUser.history || currentUser.history.length === 0) {
-        pList.innerHTML = "Koi record nahi hai.";
-      } else {
-        currentUser.history.slice().reverse().forEach(h => {
-          if(h.type === "Investment Plan") {
-            pList.innerHTML += `<div style="background:#fff8e1; border:1px solid #ffecb3; padding:10px; border-radius:6px; margin-bottom:8px; font-size:13px;">
-              <b>📦 ${h.details}</b><br>
-              • Invested Amount: -₹${h.amount || 'N/A'}<br>
-              • Daily Return: ₹${h.dailyIncome} (${h.daysCompleted}/${h.totalDays} Days Completed)<br>
-              • Status: <b>${h.status}</b>
-            </div>`;
-          } else {
-            pList.innerHTML += `<div style="background:#f1f8e9; border:1px solid #dcedc8; padding:8px; border-radius:6px; margin-bottom:6px; font-size:12px;">
-              <b>📌 ${h.type}:</b> ${h.details} | <b>Amount:</b> ₹${h.amount || 0} | <b>Status:</b> ${h.status}
-            </div>`;
-          }
-        });
-      }
-
-      let tList = document.getElementById("team-members-list");
-      tList.innerHTML = "";
-      if(!currentUser.teamMembers || currentUser.teamMembers.length === 0) {
-        tList.innerHTML = "Abhi aapke link se kisi ne join nahi kiya hai.";
-      } else {
-        currentUser.teamMembers.forEach((member, index) => {
-          tList.innerHTML += `<div style="background:#ffffff; border:1px solid #ddd; padding:10px; border-radius:6px; margin-bottom:6px;">
-            <b>#${index+1} Name:</b> ${member.name}<br>
-            <b>• Mobile Number:</b> <span style="color:#1976d2; font-weight:bold;">${member.phone}</span><br>
-            <b>• UID:</b> ${member.uniqueId} | <b>Joined:</b> ${member.date}
-          </div>`;
-        });
+        container.innerHTML = currentUser.referralsList.map((p, index) => `
+          <div style="padding: 6px 0; border-bottom: 1px solid #eee;">
+            <b>${index + 1}.</b> User: ${p.slice(0, 3)}****${p.slice(-2)} (Active)
+          </div>
+        `).join('');
       }
     }
 
-    function updateStorage() {
-      usersDB = JSON.parse(localStorage.getItem("usersDB")) || [];
-      const idx = usersDB.findIndex(u => u.email === currentUser.email);
-      if(idx !== -1) usersDB[idx] = currentUser;
-      else usersDB.push(currentUser);
-      localStorage.setItem("usersDB", JSON.stringify(usersDB));
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      showPortal();
+    function logoutAccount() {
+      if(confirm("Are you sure you want to log out?")) {
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'block';
+        document.getElementById('auth-phone').value = "";
+        document.getElementById('auth-password').value = "";
+      }
+    }
+
+    // Navigation Switcher
+    function switchNavTab(tabName, el) {
+      document.querySelectorAll('#app-screen .container').forEach(c => c.classList.remove('active-view'));
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
+      
+      document.getElementById('view-' + tabName).classList.add('active-view');
+      if(el) el.classList.add('active');
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('#app-screen .container').forEach(c => c.classList.remove('active-view'));
+      document.getElementById('view-' + viewName).classList.add('active-view');
+    }
+
+    // Bank and Withdrawal Flow logic
+    function handleWithdrawClick() {
+      if(!bankDetailsSaved) {
+        alert("Please bind your Bank Account details first before withdrawing!");
+        openBankModal();
+      } else {
+        openModal('Withdrawal Portal', 'Enter amount to withdraw (₹):');
+      }
+    }
+
+    function openBankModal() {
+      document.getElementById('bank-modal').style.display = 'flex';
+    }
+
+    function closeBankModal() {
+      document.getElementById('bank-modal').style.display = 'none';
+    }
+
+    function saveBankDetails() {
+      let name = document.getElementById('bank-holder').value;
+      let acc = document.getElementById('bank-acc').value;
+      let ifsc = document.getElementById('bank-ifsc').value;
+
+      if(!name || !acc || !ifsc) {
+        alert("Please fill in all bank details.");
+        return;
+      }
+
+      bankDetailsSaved = true;
+      document.getElementById('bank-status-text').innerText = "Bound ✅";
+      document.getElementById('bank-status-text').style.color = "#07c160";
+      closeBankModal();
+      alert("Bank account bound successfully!");
+    }
+
+    // General Modal Handler
+    let activeModalTitle = '';
+    function openModal(title, desc) {
+      activeModalTitle = title;
+      document.getElementById('modal-title-text').innerText = title;
+      document.getElementById('modal-desc-text').innerText = desc;
+      document.getElementById('modal-input-field').value = '';
+      document.getElementById('custom-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('custom-modal').style.display = 'none';
+    }
+
+    function confirmModalAction() {
+      let val = document.getElementById('modal-input-field').value;
+      if(activeModalTitle.includes('Recharge')) {
+        alert("Recharge request placed for ₹" + (val || '0') + ". Balance remains ₹0.00.");
+      } else if(activeModalTitle.includes('Withdrawal')) {
+        alert("Withdrawal failed: Insufficient balance (₹0.00).");
+      } else {
+        alert(activeModalTitle + " processed.");
+      }
+      closeModal();
     }
   </script>
 </body>
